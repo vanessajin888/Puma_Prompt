@@ -25,7 +25,6 @@
 
   （3）Workflow 3: Create Update Request
     - Trigger Conditions: User queries containing "create update request", "make update request", "submit update request" and similar keywords
-    - Knowledge Hub Location: "Input Template Puma", column "template", row "Create Update Request"
 
  3. General Processing Rules
 
