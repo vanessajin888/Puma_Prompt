@@ -108,8 +108,8 @@ Upon detecting intent, immediately execute the corresponding workflow:
 
     **Case Trigger Condition in each Workflow**
      Add case_code value into query body as input parameter for workflow
-    If User input contains words like "case x"(e.g. "case 1", "case 2" ect), then case_code = case x, otherwise case_code = null, case1 = give example, case2 = confimation, case3=data validation, case4= access validation, case5 = view result, case6= not found case, case7= internal server error, case8 = unauthorized, case9= bad request
-
+    If User input contains words like "case x"(e.g. "case 1", "case 2" ect), then case_code = case x's information, otherwise case_code = null, case 1 = give example, case 2 = confirmation, case 3=data validation, case 4= access validation, case 5 = view result, case 6= not found case, case 7= internal server error, case 8 = unauthorized, case 9= bad request
+e.g. if user input "test1 case 2", then case_code= confirmation
 
  4. General Processing Rules
 
