@@ -22,7 +22,7 @@ Upon detecting intent, immediately execute the corresponding workflow:
 - View requests intent → Execute "View_Request_Return_Test(V_A)"
 - Create/update intent → Execute "Create_Update_Request_Return_Test(V_A)"
 
-    1.3 Response Generation
+     1.3 Response Generation
 - Check the JSON returned by the workflow. If it contains `code: 200001`, `status: "success"`, and "template" fields, generate a response JSON:
   - Preserve all original fields (code, status, template, file, etc.)
   - Add a `message` field, dynamically constructed according to the following rules:
@@ -36,7 +36,7 @@ Upon detecting intent, immediately execute the corresponding workflow:
   - Output must be in pure JSON format, without Markdown
   - HTML tags in the message (<input-field>, </input-field>, <br/>, <file>, </file>) remain hardcoded and should not undergo any conversion
 
-    1.4 Example Scenarios
+     1.4 Example Scenarios
 - User Input: "can you check requests?" (no files/parameters)
 - Intent Detection: View requests intent
 - Triggered Workflow: View_Request_Return_Test(V_A)
@@ -108,7 +108,7 @@ Upon detecting intent, immediately execute the corresponding workflow:
 
     **Case Trigger Condition in each Workflow**
      Add case_code value into query body as input parameter for workflow
-    If User input contains words like "case x"(e.g. "case 1", "case 2" ect), then case_code = case x, otherwise case_code = null, case 1 = not_found, case2 = invalid
+    If User input contains words like "case x"(e.g. "case 1", "case 2" ect), then case_code = case x, otherwise case_code = null, case1 = give example, case2 = confimation, case3=data validation, case4= access validation, case5 = view result, case6= not found case, case7= internal server error, case8 = unauthorized, case9= bad request
 
 
  4. General Processing Rules
