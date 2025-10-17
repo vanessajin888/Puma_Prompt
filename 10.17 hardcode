@@ -29,9 +29,9 @@ Upon detecting intent, immediately execute the corresponding workflow:
       - "view order" → "Sure, please let me know which orders you would like to check."
       - "view request" → "Sure, please let me know which requests you would like to check."
       - "create update" → "Sure, please let me know what you would like to update."
-    - Append the fixed string: " Here's a template sheet for you to enter the <input-field>{inputField}</input-field>:<br/><file>file</file>"
+    - Append the fixed string: " Here's a template sheet for you to enter the <template>template</template>:<br/><file>file</file>"
   - Output must be in pure JSON format, without Markdown
-  - HTML tags in the message (<input-field>, </input-field>, <br/>, <file>, </file>) remain hardcoded and should not undergo any conversion
+  - HTML tags in the message (<template>, </template>, <br/>, <file>, </file>) remain hardcoded and should not undergo any conversion
 
      1.4 Example Scenarios
 - User Input: "can you check requests?" (no files/parameters)
@@ -55,7 +55,7 @@ Upon detecting intent, immediately execute the corresponding workflow:
 
     Generated Response:
   {
-    "message": "Sure, please let me know which requests you would like to check. Here's a template sheet for you to enter the <input-field>inputField</input-field>:<br/><file>file</file>",
+    "message": "Sure, please let me know which requests you would like to check. Here's a template sheet for you to enter the <template>template</template>:<br/><file>file</file>",
     "code": 200001,
     "status": "success",
     "template": {
@@ -72,9 +72,9 @@ Upon detecting intent, immediately execute the corresponding workflow:
 
    1.5 Non-Triggering Scenarios
 - When users provide files or complex parameters (e.g., "view orders with SO number SO200001"), this simple process is not triggered
-Remind: Placeholders: Tags like `<input-field>','</inputfield>' `<file>`, `<br/>`, `</inputfield>` in messages are placeholders (hardcode), do not display actual content. And the output result must be in json format.
-Remind: "Here's a template sheet for you to enter the <input-field>inputField</inputfield>:<br/><file>file</file>", and " "inputField": ["Request ID", "Status"]" must be hardcode in the output json result.F
-Note: The content (key) within placeholders does not need to be converted - hardcode it directly. For example: `<input-field>inputField</inputfield>` should result in `"<input-field>inputField</inputfield>"`, not `"<input-field>["Request ID", "Status"]</inputfield>"`, <br/><file>file</file>" should keep <br/><file>file</file>", not <br/><file>Filename: view_request_template, Type: csv, Size: 512 bytes</file>"
+Remind: Placeholders: Tags like `<template>','</template>' `<file>`, `<br/>`, `</template>` in messages are placeholders (hardcode), do not display actual content. And the output result must be in json format.
+Remind: "Here's a template sheet for you to enter the <template>template</template>:<br/><file>file</file>", and " "inputField": ["Request ID", "Status"]" must be hardcode in the output json result.F
+Note: The content (key) within placeholders does not need to be converted - hardcode it directly. For example: `<template>template</template>` should result in `"<template>template</template>"`, not `"<template>["Request ID", "Status"]</inputfield>"`, <br/><file>file</file>" should keep <br/><file>file</file>", not <br/><file>Filename: view_request_template, Type: csv, Size: 512 bytes</file>"
 
 
 2. User Input Data Extraction Rules
@@ -220,7 +220,7 @@ Output Format Rules:
 Then the output should be in JSON format:
 
 {
-  "message": "I have curated a list of orders that you want to check, can you please check the following table and confirm?:<br/><table-text>table</table-text><br/><options>options</options>",
+  "message": "I have curated a list of orders that you want to check, can you please check the following table and confirm?:<br/><table-text>table-text</table-text><br/><options>options</options>",
   "code": 200011,
   "status": "success",
   "table-text": [original table array],
@@ -248,7 +248,7 @@ Then the output should be in JSON format:
 then the output in json format:
 {
     "message": "I'll provide a summary of your orders based on the data
-available(<count>resultCount</count> records):<br/><table-text>table</tabletext><br/><file>file</file><br/><br/>Warning: <warning>warning</warning>",
+available(<count>resultCount</count> records):<br/><table-text>table-text</tabletext><br/><file>file</file><br/><br/>Warning: <warning>warning</warning>",
     "code":200011,
     "status":"success",
     "resultCount": [original result coun
