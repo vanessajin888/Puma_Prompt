@@ -214,7 +214,7 @@ When processing received JSON objects, focus on the following fields:
  }
 then the output in json format:
 {
-  "message": "I have curated a list of orders that you want to check, can you please check the following table and confirm?:<br/><tabletext>table</table-text><br/><options>options</options>",
+  "message": "I have curated a list of orders that you want to check, can you please check the following table and confirm?:<br/><table-text>table</table-text><br/><options>options</options>",
   "code":200011,
   "status": "success",
   "table-text": [original table array],
@@ -241,7 +241,7 @@ then the output in json format:
 then the output in json format:
 {
     "message": "I'll provide a summary of your orders based on the data
-available(<count>resultCount</count> records):<br/><table-text>table</tabletext><br/><file>file</file><br/><br/>Warning: <warning>warning</warning>",
+available(<count>resultCount</count> records):<br/><table-text>table</table-text><br/><file>file</file><br/><br/>Warning: <warning>warning</warning>",
     "code":200011,
     "status":"success",
     "resultCount": [original result coun
@@ -262,7 +262,7 @@ available(<count>resultCount</count> records):<br/><table-text>table</tabletext
 
  C. Data Validation case (Status: error): in json format
 {
-  "message": "You request has invalid input, here are the record: <br/>Missing Required Fields (<count>missingRequiredFieldTableCount</count>):<br/><missing-required-field>missingRequiredFieldTable</missing requiredfield><br/><br/>Inactive Request: (<count>inactiveRequestTableCount</count>): <br/><inactive request>inactiveRequestTable</inactive-request><br/><br/>Duplicated Request (<count>duplicatedRequestTableCount</count>): <br/><duplicated-request>inactiveRequestTable</duplicated-request><br/><br/>Already Resolve Request: (<count>requestAlreadyResolveCount</count>): <br/><requestresolved>requestAlreadyResolveTable</request-resolved><br/><br/>No Change Make Request (<count>noChangeMakeTableCount</count>): <br/><nochange>noChangeMakeTable</no-change><br/>Please update your input to ensure all the requests is valid. Alternatively, you may choose to view only the requests available to you.<br/><br/>If the issue persists, please contact the admin for assistance.",
+  "message": "You request has invalid input, here are the record: <br/>Missing Required Fields (<count>missingRequiredFieldTableCount</count>):<br/><missing-required-field>missingRequiredFieldTable</missing requiredfield><br/><br/>Inactive Request: (<count>inactiveRequestTableCount</count>): <br/><inactive request>inactiveRequestTable</inactive-request><br/><br/>Duplicated Request (<count>duplicatedRequestTableCount</count>): <br/><duplicated-request>inactiveRequestTable</duplicated-request><br/><br/>Already Resolve Request: (<count>requestAlreadyResolveCount</count>): <br/><requestresolved>requestAlreadyResolveTable</request-resolved><br/><br/>No Change Make Request (<count>noChangeMakeTableCount</count>): <br/><no-change>noChangeMakeTable</no-change><br/>Please update your input to ensure all the requests is valid. Alternatively, you may choose to view only the requests available to you.<br/><br/>If the issue persists, please contact the admin for assistance.",
    "code":400001,
    "status":"error",
    "missingRequiredFieldTableCount": X, // where X is the value from input
@@ -281,7 +281,7 @@ available(<count>resultCount</count> records):<br/><table-text>table</tabletext
 
   D. Items Not Found (Status: error): in json format
 {
-  "message": "There are some request cannot found: (X request)<br/><notfound>notFoundTable</<not-found><br/>Please update your input to ensure the requests is existed.<br/><br/>If the issue persists, please contact the admin for assistance.",
+  "message": "There are some request cannot found: (X request)<br/><not-found>notFoundTable</<not-found><br/>Please update your input to ensure the requests is existed.<br/><br/>If the issue persists, please contact the admin for assistance.",
    "code":404001,
    "status":"error",
    "count": X, // where X is the value from input
