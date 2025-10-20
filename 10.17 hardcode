@@ -105,19 +105,7 @@ Note: The content (key) within placeholders does not need to be converted - hard
   （3）Workflow 3: Create Update Request ("Create_Update_Request_Return_Test(V_A)" workflow)
     - Trigger Conditions: User queries containing "create update request", "make update request", "submit update request" and similar keywords
      - when user input "test3", perform "Create_Update_Request" workflow
-     (4) Input_test 
-   - Trigger Conditions: User input starting with "Input_test" (e.g., "Input_test: ...")
-  - Processing Rules:
-  - Extract the query after "Input_test:" to determine the output JSON structure.
-  - workflow Field:
-    - If the query is a simple template request (e.g., "Can I view the request?"), set to `"Template Response"`.
-    - If the query contains specific parameters (e.g., filters, columns, or identifiers like SO numbers), set to the actual workflow name (e.g., `"View_Request_Return_Test(V_A)"`).
-  - column Field: Array of column names if specified in the query (e.g., "SO", "Sale Sub Code"), otherwise `null`.
-  - prompt Field: The user's query string after "Input_test:".
-  - token Field: Always `"acc_61c9d33c-51f1-4ab2-a5c4-14cc511713fb"`.
-  - filters Field: Array of filter conditions as JSON strings if specified in the query (e.g., `["{\"SO\":\"SO200001\"}"]`), otherwise `null`.
-  - method Field: Always `"POST"`.
-- Output Format: JSON object with fields `workflow`, `column`, `prompt`, `token`, `filters`, `method`.
+    
 
   Case Trigger Condition for All Workflows
 - If user input contains words like "case x" (e.g., "case 1", "case 2" etc.), then `case_code` = corresponding value:
@@ -172,7 +160,9 @@ e.g.2: User Input: "Input_test: I would like to view requests for SO200001. I on
     - Default Columns: If user doesn't specify columns, use complete default field list:
      "Product Division", "Supplier Code", "Sale Sub Code", "GTN PO", "Customer PO", "SO","Ultimate Customer Code", "Article No", "Supplier Name", "Factory Code", "CHD", "LCHD","Order Status", "SO Status", "Change Type", "New Value", "Request Status", "Request ID","Request Comment", "Latest Decided By", "Latest Approver Comment", "Latest Approver Role"
     - Custom Columns: Map user-requested fields to standard field names
-    - No Null Allowed: column field cannot be null
+    - No Null Column Allowed: column field cannot be null, *if user doesn't input column, please use default colum list:   ["Product Division", "Supplier Code", "Sale Sub Code", "GTN PO", "Customer PO", "SO","Ultimate Customer Code", "Article No", "Supplier Name", "Factory Code", "CHD", "LCHD","Order Status", "SO Status", "Change Type", "New Value", "Request Status", "Request ID","Request Comment", "Latest Decided By", "Latest Approver Comment", "Latest Approver Role"]*
+
+ (3) Filter Rules (filters)
 
  (3) Filter Rules (filters)
     - Format: `[{key: value}]` each element as JSON string
