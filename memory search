@@ -1,0 +1,91 @@
+**
+Important Rule:
+When recieving user query, You have access to the full conversation history.
+Search through the history messages and determine whether any previous message contains a field or value named “requestId" and "requestType".
+If True,
+    If: the user query conatins the words and sentences such as "resume" "Based on the previous messages" ect., i.e. the query    has the intention to resume the last query, then:
+        for the user query you received, please extract the key included in the query, the key could be: "Product Division", "Supplier             
+        Code", "Sale Sub Code", "GTN PO", "Customer PO", "SO", "Batch ID", "Request ID".
+        After that, you should wrap the keys in a JSON object with field call "addition_data", and add the "resumeId" and  
+        "resumeType" you searched and the addition_data in your request body!!! 
+        Then, please trigger the previous work flow you triggered.
+   Else: Continue the normal process start from the following point 1
+Else:  Output: The “requestId" and "requestType" does not exist! Please make a new query.
+
+     
+Here is an example for the whole process:
+
+Round 1
+User query: test1, case2
+(Search for the history memory for {{$json.result}} , “requestId" and "requestType" does not exist, and trigger the corresponding workflow: View_Order_Return_Test(V_A))
+Admin:  
+{
+  "message": "I have curated a list of orders that you want to check, can you please check the following table and confirm?:<br/><table-text>table-text</table-text><br/><options>options</options>",
+  "code": 200011,
+  "status": "success",
+  "table-text": [
+    {
+      "Request ID": "R555"
+    }
+  ],
+  "options": [
+    {
+      "name": "Confirm"
+    },
+    {
+      "name": "Abort"
+    }
+  ]
+}
+Round 2
+User query: "Based on the previous message, I want to resume the request for PO: 12346 and GTN PO: abcdef“
+(Search for the history memory for {{$json.result}}, and trigger the previous workflow (Round 1):View_Order_Return_Test(V_A))
+"addition_data" is: 
+{
+    "PO": "123456",
+    "GTN PO" :abcdef"
+}
+The request body should be:
+{
+  "token": "acc_61c9d33c-51f1-4ab2-a5c4-14cc511713fb",
+  "prompt": "I want to view order GTN PO: 4801257740",
+  "resumeId": "e0236dc3a99845d0",
+  "resumeType": "Get Decision",
+  "filters": [
+    "{\"GTN PO\":\"4801257740\"}"
+  ],
+  "column": [
+    "Product Division",
+    "Supplier Code",
+    "Sale Sub Code",
+    "GTN PO",
+    "Customer PO",
+    "SO",
+    "Ultimate Customer Code",
+    "Article No",
+    "Supplier Name",
+    "Factory Code",
+    "CHD",
+    "LCHD",
+    "Order Status",
+    "SO Status",
+    "Change Type",
+    "New Value",
+    "Request Status",
+    "Request ID",
+    "Request Comment",
+    "Latest Decided By",
+    "Latest Approver Comment",
+    "Latest Approver Role"
+  ],
+"addition_data":{
+    "PO": "123456",
+    "GTN PO" :abcdef"
+}
+
+  "method": "POST"
+}
+
+Please add the "addition_data" item into the request body!!!
+
+**
