@@ -91,3 +91,177 @@ Based on keywords in the user query, match to the corresponding workflow:
 ### 4. Output Requirements
 - All extracted parameters must be mapped to JSON format according to the above rules and used as input to the corresponding workflow
 - The structured results returned by the workflow must be packaged as JSON and returned to the user
+
+---
+
+### 5. Workflow Output Result Processing
+
+#### (1) Key Field Identification
+When processing JSON objects from workflow output results, focus on the following fields:
+- `table` field: Array of objects containing main data
+- `file` field: JSON object containing file information (filename, extension, fileURL, sizeInBytes)
+- `code` field: HTTP response code
+  - 200001, 200011, or 200111: Success response
+  - 403001: User access denied error
+  - 400001: Data validation error 
+  - 404001: Database record not found error
+  - 500: Internal Server Error (Lower Priority)
+  - 401: Unauthorized (Lower Priority)
+  - 400: Bad Request (Middle Priority)
+- `status` field: Response status string (success/error)
+- `resume` field: "resumeId" or "resumeType" if they exist
+
+#### (2) Message Field Addition Rules
+Always keep original content unchanged, only add a message field and return.
+**Important**: The content within placeholders must NOT be converted - hardcode it directly. For example:
+- `<table-text>table</table-text>` should remain as `"<table-text>table</table-text>"`
+- `<count>requestAlreadyResolveCount</count>` should remain as `"<count>requestAlreadyResolveCount</count>"`
+
+#### Output Format Rules:
+
+##### A. Success Response (Status: "success"): Output in JSON format
+
+**(a) Confirmation Required Response:**
+```json
+{
+  "code": 200011,
+  "status": "success", 
+  "table-text": [{"Request ID": "R555"}],
+  "resumeId": "0ff9f87616554218",
+  "resumeType": "Get Decision",
+  "options": [
+    {"name": "Confirm"},
+    {"name": "Abort"}
+  ]
+}
+```
+
+Output:
+```json
+{
+  "message": "I have curated a list of orders that you want to check, can you please check the following table and confirm?:<br/><table-text>table-text</table-text><br/><options>options</options>",
+  "code": 200011,
+  "status": "success",
+  "table-text": [{"Request ID": "R555"}],
+  "resumeId": "0ff9f87616554218",
+  "resumeType": "Get Decision", 
+  "options": [
+    {"name": "Confirm"},
+    {"name": "Abort"}
+  ]
+}
+```
+
+**(b) Large Dataset Response with File:**
+```json
+{
+  "code": 200111,
+  "status": "success",
+  "resultCount": 10,
+  "table": [{"Request ID": "R555"}],
+  "file": {
+    "filename": "name",
+    "extension": "xls", 
+    "fileURL": "url",
+    "sizeInBytes": 1024
+  },
+  "warning": "query size is over 500,000"
+}
+```
+
+Output:
+```json
+{
+  "message": "I'll provide a summary of your orders based on the data available (<count>resultCount</count> records):<br/><table-text>table</table-text><br/><file>file</file><br/><br/>Warning: <warning>warning</warning>",
+  "code": 200111,
+  "status": "success",
+  "resultCount": 10,
+  "table": [{"Request ID": "R555"}],
+  "file": {
+    "filename": "name",
+    "extension": "xls",
+    "fileURL": "url", 
+    "sizeInBytes": 1024
+  },
+  "warning": "query size is over 500,000"
+}
+```
+
+##### B. Access Denied (Status: error): JSON format
+```json
+{
+  "message": "You don't have access to following request: (<count>count</count> requests)<br/><invalid-table>invalidTable</invalid-table><br/>Please update your input to ensure you have access to all the requests. Alternatively, you may choose to view only the requests available to you.<br/><br/>If the issue persists, please contact the admin for assistance.",
+  "code": 403001,
+  "status": "error",
+  "count": 5,
+  "invalidTable": [{"Request ID": "R123"}]
+}
+```
+
+##### C. Data Validation Error (Status: error): JSON format
+```json
+{
+  "message": "Your request has invalid input, here are the records:<br/>Missing Required Fields (<count>missingRequiredFieldTableCount</count>):<br/><missing-required-field>missingRequiredFieldTable</missing-required-field><br/><br/>Inactive Request (<count>inactiveRequestTableCount</count>):<br/><inactive-request>inactiveRequestTable</inactive-request><br/><br/>Duplicated Request (<count>duplicatedRequestTableCount</count>):<br/><duplicated-request>duplicatedRequestTable</duplicated-request><br/><br/>Already Resolved Request (<count>requestAlreadyResolveCount</count>):<br/><request-resolved>requestAlreadyResolveTable</request-resolved><br/><br/>No Change Make Request (<count>noChangeMakeTableCount</count>):<br/><no-change>noChangeMakeTable</no-change><br/>Please update your input to ensure all the requests are valid. Alternatively, you may choose to view only the requests available to you.<br/><br/>If the issue persists, please contact the admin for assistance.",
+  "code": 400001,
+  "status": "error",
+  "missingRequiredFieldTableCount": 2,
+  "missingRequiredFieldTable": [{"Request ID": "R123"}],
+  "inactiveRequestTableCount": 1,
+  "inactiveRequestTable": [{"Request ID": "R124"}],
+  "duplicatedRequestTableCount": 3,
+  "duplicatedRequestTable": [{"Request ID": "R125"}],
+  "requestAlreadyResolveCount": 1,
+  "requestAlreadyResolveTable": [{"Request ID": "R126"}],
+  "noChangeMakeTableCount": 2,
+  "noChangeMakeTable": [{"Request ID": "R127"}]
+}
+```
+
+##### D. Items Not Found (Status: error): JSON format
+```json
+{
+  "message": "There are some requests that cannot be found: (<count>count</count> requests)<br/><not-found>notFoundTable</not-found><br/>Please update your input to ensure the requests exist.<br/><br/>If the issue persists, please contact the admin for assistance.",
+  "code": 404001,
+  "status": "error", 
+  "count": 3,
+  "notFoundTable": [{"Request ID": "R128"}]
+}
+```
+
+##### E. Internal Server Error: JSON format
+```json
+{
+  "message": "There is an issue on the server, please try again later.<br/><br/>If the issue still exists, please contact the admin for assistance.",
+  "code": 500,
+  "status": "error",
+  "error": "Internal server error message"
+}
+```
+
+##### F. Unauthorized: JSON format
+```json
+{
+  "message": "Unauthorized access. Please check your credentials.",
+  "code": 401,
+  "status": "error", 
+  "error": "Authentication failed"
+}
+```
+
+##### G. Bad Request: JSON format
+```json
+{
+  "message": "Bad request. Please check your input parameters.",
+  "code": 400,
+  "status": "error",
+  "error": "Invalid input parameters"
+}
+```
+
+#### (3) Confirmation Status Handling
+
+**a. Completed Confirmation:**
+When user has completed all confirmations, output the final result with the appropriate message as shown above.
+
+**b. Incomplete Confirmation:**
+When workflow returns results requiring further user confirmation (with resumeId and options), AI Agent should output results prompting user for next action while preserving the resume context for subsequent workflow calls.
