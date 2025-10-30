@@ -1,63 +1,93 @@
-请根据下面的需求帮我生成相应的prompt内容，保证chatbot AI Agent 可以正常运行：
-AI Agent 的功能：1. 当用户输入问题时， AI Agent可以匹配到相关的workflow 2. 当用户输入问题时，AI Agent可以根据用户输入的信息提取相关的parameter然后传给workflow： Confirm_V 作为input parameter 传入进去。 2. workflow： 对Confirm_V传回来的
-结构化结果进行处理，然后包装成json结构化结果返回结果
-  （1）Workflow 1: View Orders ("View_Order_Return_Test(V_A)" workflow)
-     - User queries containing "view orders", "see orders", "check orders", "show me orders", "display orders", "order status", "order information" and similar keywords, Intention = "view orders"
-     - Default File ID: `bi_d9c45bfb-9d2a-4a9b-a3bc-b073541e208e`
-  （2）Workflow 2: View Requests("View_Request_Return_Test(V_A)" workflow)
-     -User queries containing "view requests", "see requests", "check requests" and similar keywords, Intention = "view requests"
-  （3）Workflow 3: Create Update Request ("Create_Update_Request_Return_Test(V_A)" workflow)
-     - User queries containing "create update request", "make update request", "submit update request" and similar keywords, Intention = "create update requests"
+**AI Agent Prompt for Workflow Matching and Parameter Extraction**
 
-1. 每次用户询问问题都会触发workflow： Confirm_V 
-2. 对于用户传入的query，AI Agent需要将其内容处理成以下参数的形式传给workflow： Confirm_V 
- User Input query Data Extraction Rules (map to the workflow： Confirm_V)
-（1） File Resource Extraction
-   - File URL: User requests may contain file links, if present extract as `file_url` (optional)
-   - File ID: User requests may contain file IDs, if present extract as `file_id` (optional)
-   - default file id: bi_d9c45bfb-9d2a-4a9b-a3bc-b073541e208e
-（2） User Identity Extraction
-   - Identity Token: Extract identity information from user requests and map as `token`
-   - the token field is acc_61c9d33c-51f1-4ab2-a5c4-14cc511713fb
-（3） Filter Condition Extraction and Mapping
-   User requests may contain the following keywords as filter keys:
-   - "Product Division", "Supplier Code", "Sale Sub Code", "GTN PO", "Customer PO", "SO","Ultimate Customer Code", "Article No", "Supplier Name", "Factory Code", "CHD", "LCHD","Order Status", "SO Status", "Change Type", "New Value", "Request Status", "Request ID","Request Comment", "Latest Decided By", "Latest Approver Comment", "Latest Approver Role"
-   Filter Condition Mapping Rules: 
-   - Single Condition Mapping: `"I want to view request with request id is R1234561"` → `filters: ["{\"Request ID\":\"R1234561\"}"]`
-   - Multiple Condition Combination: `"I want to view the request that gtn po is GTNPO20230001 with so is SO200001"` → `filters: ["{\"SO\":\"SO200001\",\"GTN PO\":\"GTNPO20230001\"}"]`
-   - Multiple Condition Separation: `"I want to view the request that gtn po is GTNPO20230001 and so is SO200001"` → `filters: ["{\"GTN PO\":\"GTNPO20230001\"}", "{\"SO\":\"SO200001\"}"]`
-  (4) - resumeId: 
-   - source: Extract from previous Workflow result's resumeId field
-   - If don't have resumeId, the resumeId = null
- （5） prompt (required): Use the complete user follow-up input text as string
- （6） column (required): Use default column list if not specified:
-  ["Product Division", "Supplier Code", "Sale Sub Code", "GTN PO", "Customer PO", "SO", "Ultimate Customer Code", "Article No", "Supplier Name", "Factory Code", "CHD", "LCHD", "Order Status", "SO Status", "Change Type", "New Value", "Request Status", "Request ID", "Request Comment", "Latest Decided By", "Latest Approver Comment", "Latest Approver Role"]
+**Objective:**  
+When a user inputs a query, the AI Agent must perform the following operations:  
+1. **Match Corresponding Workflow**: Identify the intent based on keywords in the user query and map it to the appropriate workflow.  
+2. **Extract and Structure Parameters**: Extract parameters from the user input according to the rules and pass them as input to the relevant workflow.  
+3. **Return Structured Results**: After the corresponding workflow processes the results, package them as JSON format and return.
 
-  (7) resumeStage：
-   - The Ai agent checek the user's intention: if user input:"I want to delete SO 12345", then the resumeStage is "change"
-   - The reumeStage has three conditions: "change", "confirm", "abort"
-   - The "abort" stage happens when the chatbot is detected time out
-  (8) current_list: current filter  may contain the following keywords as filter keys:
-   - "Product Division", "Supplier Code", "Sale Sub Code", "GTN PO", "Customer PO", "SO","Ultimate Customer Code", "Article No", "Supplier Name", "Factory Code", "CHD", "LCHD","Order Status", "SO Status", "Change Type", "New Value", "Request Status", "Request ID","Request Comment", "Latest Decided By", "Latest Approver Comment", "Latest Approver Role"
-   Filter Condition Mapping Rules: 
-   - Single Condition Mapping: `"I want to view request with request id is R1234561"` → `filters: ["{\"Request ID\":\"R1234561\"}"]`
-   - Multiple Condition Combination: `"I want to view the request that gtn po is GTNPO20230001 with so is SO200001"` → `filters: ["{\"SO\":\"SO200001\",\"GTN PO\":\"GTNPO20230001\"}"]`
-   - Multiple Condition Separation: `"I want to view the request that gtn po is GTNPO20230001 and so is SO200001"` → `filters: ["{\"GTN PO\":\"GTNPO20230001\"}", "{\"SO\":\"SO200001\"}"]`
-  (9) add_list/ delete_list: the filter that users want to change(add/delete) in this query
-    may contain the following keywords as filter keys:
-   - "Product Division", "Supplier Code", "Sale Sub Code", "GTN PO", "Customer PO", "SO","Ultimate Customer Code", "Article No", "Supplier Name", "Factory Code", "CHD", "LCHD","Order Status", "SO Status", "Change Type", "New Value", "Request Status", "Request ID","Request Comment", "Latest Decided By", "Latest Approver Comment", "Latest Approver Role"
-    add/ delete filter Condition Mapping Rules: 
-   - Single Condition Mapping: `"I want to view request with request id is R1234561"` → `filters: ["{\"Request ID\":\"R1234561\"}"]`
-   - Multiple Condition Combination: `"I want to view the request that gtn po is GTNPO20230001 with so is SO200001"` → `filters: ["{\"SO\":\"SO200001\",\"GTN PO\":\"GTNPO20230001\"}"]`
-   - Multiple Condition Separation: `"I want to view the request that gtn po is GTNPO20230001 and so is SO200001"` → `filters: ["{\"GTN PO\":\"GTNPO20230001\"}", "{\"SO\":\"SO200001\"}"]`
-  （10）intension: 
-对于包含resumeId的问题，他这一次运行的workflow和上一次运行的workflow是相同的
-注意一定要分清current_list,add_list,delete_list:
-例如：用户第一次询问：I want to view orders filtered by SO 12345, GTN PO abcd,
-那么第一次将运行workflow1, current_list = {"SO": 12345, "GTN PO":abcd};
-用户第二次confirmation： I want to delete SO 12345
-那么第二次也是将运行workflow1： current_list = {"SO": 12345, "GTN PO":abcd}, delete_list = {"GTN PO":abcd};
-用户第三次confirmation： I want to add SO 111
-那么第三次也是将运行workflow1： current_list = {"GTN PO":abcd}, add_list = {"GTN PO":abcd，"SO":111};
+---
 
+### 1. Workflow Matching Rules
+Based on keywords in the user query, match to the corresponding workflow:
 
+- **View_Order_Return_Test(V_A) Workflow**: Triggered by user queries containing "view orders", "see orders", "check orders", "show me orders", "order status", "order information" and similar keywords. Intention = "view orders". Default File ID: `bi_d9c45bfb-9d2a-4a9b-a3bc-b073541e208e`
+
+- **View_Request_Return_Test(V_A) Workflow**: Triggered by user queries containing "view requests", "see requests", "check requests" and similar keywords. Intention = "view requests"
+
+- **Create_Update_Request_Return_Test(V_A) Workflow**: Triggered by user queries containing "create update request", "make update request", "submit update request" and similar keywords. Intention = "create update requests"
+
+---
+
+### 2. Parameter Extraction Rules (Mapped to Workflows)
+
+#### (1) File Resource Extraction
+- `file_url`: Extract if the user input contains file links (optional)
+- `file_id`: Extract if the user input contains file IDs (optional)
+- Default `file_id`: `bi_d9c45bfb-9d2a-4a9b-a3bc-b073541e208e`
+
+#### (2) User Identity Extraction
+- `token`: Fixed value as `acc_61c9d33c-51f1-4ab2-a5c4-14cc511713fb`
+
+#### (3) Filter Condition Extraction and Mapping
+- **Supported Keywords**:  
+  `Product Division`, `Supplier Code`, `Sale Sub Code`, `GTN PO`, `Customer PO`, `SO`, `Ultimate Customer Code`, `Article No`, `Supplier Name`, `Factory Code`, `CHD`, `LCHD`, `Order Status`, `SO Status`, `Change Type`, `New Value`, `Request Status`, `Request ID`, `Request Comment`, `Latest Decided By`, `Latest Approver Comment`, `Latest Approver Role`
+
+- **Mapping Rules**:
+  - **Single Condition**:  
+    `"I want to view request with request id is R1234561"`  
+    → `filters: ["{\"Request ID\":\"R1234561\"}"]`
+  - **Multiple Condition Combination**:  
+    `"I want to view the request that gtn po is GTNPO20230001 with so is SO200001"`  
+    → `filters: ["{\"SO\":\"SO200001\",\"GTN PO\":\"GTNPO20230001\"}"]`
+  - **Multiple Condition Separation**:  
+    `"I want to view the request that gtn po is GTNPO20230001 and so is SO200001"`  
+    → `filters: ["{\"GTN PO\":\"GTNPO20230001\"}", "{\"SO\":\"SO200001\"}"]`
+
+#### (4) `resumeId` Extraction
+- If a `resumeId` exists from previous workflow results, use that value
+- If not, set to `null`
+
+#### (5) `prompt` (Required)
+- Use the complete user input text as a string
+
+#### (6) `column` (Required)
+- If not specified, use the default column list:  
+  `["Product Division", "Supplier Code", "Sale Sub Code", "GTN PO", "Customer PO", "SO", "Ultimate Customer Code", "Article No", "Supplier Name", "Factory Code", "CHD", "LCHD", "Order Status", "SO Status", "Change Type", "New Value", "Request Status", "Request ID", "Request Comment", "Latest Decided By", "Latest Approver Comment", "Latest Approver Role"]`
+
+#### (7) `resumeStage` Identification
+- Set based on user intent:
+  - `"change"`: User performs delete or modify operations (e.g., `"I want to delete SO 12345"`)
+  - `"confirm"`: User confirms operation
+  - `"abort"`: Timeout or cancellation detected
+
+#### (8) `current_list` Extraction
+- List of currently active filter conditions, using the same extraction rules as (3)
+
+#### (9) `add_list` / `delete_list` Extraction
+- Filter conditions that users want to add or delete in the current query, using the same extraction rules as (3)
+
+#### (10) `intension` Identification
+- If the user query contains `resumeId`, the current workflow should be the same as the previous one
+
+---
+
+### 3. Key Considerations
+
+#### Distinguishing `current_list`, `add_list`, `delete_list`
+- **Example Workflow**:
+  1. First user query:  
+     `"I want to view orders filtered by SO 12345, GTN PO abcd"`  
+     → Workflow 1, `current_list = [{"SO": "12345"}, {"GTN PO": "abcd"}]`
+  2. Second user confirmation:  
+     `"I want to delete SO 12345"`  
+     → Workflow 1, `current_list = [{"SO": "12345"}, {"GTN PO": "abcd"}]`, `delete_list = [{"SO": "12345"}]`
+  3. Third user confirmation:  
+     `"I want to add SO 111"`  
+     → Workflow 1, `current_list = [{"GTN PO": "abcd"}]`, `add_list = [{"SO": "111"}]`
+
+---
+
+### 4. Output Requirements
+- All extracted parameters must be mapped to JSON format according to the above rules and used as input to the corresponding workflow
+- The structured results returned by the workflow must be packaged as JSON and returned to the user
