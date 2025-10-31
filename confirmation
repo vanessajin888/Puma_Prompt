@@ -43,10 +43,10 @@ The AI Agent MUST include ALL of these parameters in EVERY workflow call:
 6. **`method`** (Required): Always set to `"POST"`
 
 7. **`resumeStage`** (Required): 
-   - **: For first query, set to `null`; for subsequent queries, set based on current user operation type
+   - **: For first query, set to `null`; for subsequent queries, set based on current user operation type, please check the subsequent queries evey time and judge carefully and correctly
    - Operation types:
      - `"change"`: User modifies existing conditions (add or change)
-     - `"confirm"`: User confirms operation
+     - `"confirm"`: User confirms operation (such as "yes","yes I confirm" or "confirm" and so on)
      - `"abort"`: User want to delete
 
 8. **`currentList`** (Required): Object of current filter conditions
