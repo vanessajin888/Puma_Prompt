@@ -71,8 +71,8 @@ The AI Agent MUST include ALL of these parameters in EVERY workflow call:
 12. **`resumeId`** (Required): 
     - **: For first query, set to `null`; for subsequent queries, carry over from previous workflow output if available
 
-13. **`ConfirmAll`** (Required): 
-    - **: Set to "YES" if user explicitly confirms all operations (e.g., "confirm all", "yes to all"); otherwise set to "NOT"
+13. **`ConfirmAll`** (bool Required): 
+    - **: Set to "true" if user explicitly confirms all operations (e.g., "confirm all", "yes to all"); otherwise set to "false"
 
 ---
 
