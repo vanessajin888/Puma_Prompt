@@ -30,12 +30,12 @@ The AI Agent MUST include ALL of these parameters in EVERY workflow call:
 2. **`prompt`** (Required): Complete current user input text as string
 
 3. **`filters`** (Required): Array of filter conditions
-   - **: Extract ALL filter conditions from current user input, combining them into a single array
+   - **: Extract ALL filter conditions from current user input AND previous context
    - Format: `["{\"Key\":\"Value\"}"]`
-   - If no filters, set to empty array `[]`
+   - **[IMPORTANT]**: For subsequent queries, combine previous currentList with current addList/deleteList to create updated filters
 
 4. **`column`** (Required): Array of column names
-   - ***: For first query, use default list OR extract specific columns from user input; for subsequent queries, carry over from previous output
+   - **: For first query, use default list OR extract specific columns from user input; for subsequent queries, ALWAYS carry over from previous output
    - Default list: `["Product Division", "Supplier Code", "Sale Sub Code", "GTN PO", "Customer PO", "SO", "Ultimate Customer Code", "Article No", "Supplier Name", "Factory Code", "CHD", "LCHD", "Order Status", "SO Status", "Change Type", "New Value", "Request Status", "Request ID", "Request Comment", "Latest Decided By", "Latest Approver Comment", "Latest Approver Role"]`
 
 5. **`fileId`** (Required): Default = `"bi_d9c45bfb-9d2a-4a9b-a3bc-b073541e208e"`
@@ -43,67 +43,238 @@ The AI Agent MUST include ALL of these parameters in EVERY workflow call:
 6. **`method`** (Required): Always set to `"POST"`
 
 7. **`resumeStage`** (Required): 
-   - **: For first query, set to `null`; for subsequent queries, set based on current user operation type, please check the subsequent queries evey time and judge carefully and correctly
+   - **: For first query, set to `null`; for subsequent queries, CAREFULLY analyze user intent to determine operation type
    - Operation types:
      - `"change"`: User modifies existing conditions (add or change)
-     - `"confirm"`: User confirms operation (such as "yes","yes I confirm" or "confirm" and so on)
-     - `"abort"`: User want to delete
+     - `"confirm"`: User confirms operation (such as "yes","yes I confirm" or "confirm" etc.)
+     - `"abort"`: User wants to delete or cancel
+   - **[CRITICAL]**: If ConfirmAll = "true", then resumeStage MUST be "confirm"; if ConfirmAll = "false", then resumeStage MUST NOT be "confirm"
 
 8. **`currentList`** (Required): Object of current filter conditions
-   -**: For first query, extract ALL conditions from current user input; for subsequent queries, carry over from previous workflow output
+   - **: For first query, extract ALL conditions from current user input; for subsequent queries, ALWAYS carry over from previous workflow output
    - Format: `{"Key": "Value"}`
    - If no conditions, set to `null`
 
 9. **`addList`** (Required): Object of filters to add
-   - **: For first query, set to `null`; for subsequent queries, extract add operations from current user input
+   - **: For first query, set to `null`; for subsequent queries, CAREFULLY extract add operations from current user input
    - Format: `{"Key": "Value"}`
    - If no add operations, set to `null`
 
 10. **`deleteList`** (Required): Object of filters to delete
-    - **: For first query, set to `null`; for subsequent queries, extract delete operations from current user input
+    - **: For first query, set to `null`; for subsequent queries, CAREFULLY extract delete operations from current user input
     - Format: `{"Key": "Value"}`
     - If no delete operations, set to `null`
 
 11. **`intension`** (Required): Executed workflow name
-    - **: ALWAYS determine from current user intent, regardless of previous context
+    - **[MODIFIED]**: For first query, determine from current user intent; for subsequent queries, ALWAYS use same workflow as previous when resumeId exists
     - Set to matched workflow name: `"View Orders Confirm Test (V_A) Workflow"`, `"View_Request_Return_Test(V_A) Workflow"`, or `"Create_Update_Request_Return_Test(V_A) Workflow"`
 
 12. **`resumeId`** (Required): 
-    - **: For first query, set to `null`; for subsequent queries, carry over from previous workflow output if available
+    - **: For first query, set to `null`; for subsequent queries, ALWAYS carry over from previous workflow output
 
-13. **`ConfirmAll`** (Required): 
-    - **: Set to "true" if user explicitly confirms all operations (e.g., "confirm all", "yes to all"); otherwise set to "false"
-
----
-
-### 3. First Query Processing Rules
-
-#### **First Query Specific Rules:**
-The AI Agent MUST follow these rules for FIRST-TIME queries (when no previous context exists):
-
-1. **ALWAYS trigger workflow** for every user query, including first-time queries
-2. **Extract ALL parameters from current user input only** - do not wait for previous context
-3. **Set specific first-query values**:
-   - `resumeId`: `null`
-   - `resumeStage`: `null`
-   - `addList`: `null`
-   - `deleteList`: `null`
-   - `ConfirmAll`: "NOT"
-4. **Extract `currentList` from current user filters**
-5. **Determine `intension` solely from current user keywords**
-6. **Populate `filters` array with ALL conditions from current query**
-
-#### **First Query Success Criteria:**
-- ✅ Workflow MUST be triggered
-- ✅ ALL 13 parameters MUST be populated
-- ✅ No dependency on non-existent previous context
-- ✅ Parameters reflect ONLY current user input
+13. **`ConfirmAll`** (must Required): 
+    - **: Set to "true" if user explicitly confirms all operations (e.g., "confirm all", "yes to all", "yes", etc.); otherwise set to "false"
 
 ---
 
-### 4. Workflow Output Processing (JSON Format Only)
+### 3. [CRITICAL] Memory Retention and Context Transfer
 
-#### A. Confirmation Response Processing
+#### **Memory Transfer Problem Analysis:**
+The issue with previous results not transferring to next queries is caused by:
+1. **Inconsistent parameter carry-over** between queries
+2. **Missing context preservation** in output processing
+3. **Improper workflow continuity** when resumeId exists
+
+
+The AI Agent must maintain conversation context by:
+
+1. ** ALWAYS preserve previous output parameters** for subsequent queries
+2. ** Guaranteed resumeId continuity** - ALWAYS carry over resumeId when it exists
+3. ** Consistent currentList preservation** - ALWAYS use previous currentList as base
+4. **Workflow identity maintenance** - when resumeId exists, ALWAYS use same intension
+5. **Column list preservation** - ALWAYS carry over column selection from previous output
+
+#### **Context Transfer Process:**
+1. **Store ALL output parameters** after each workflow execution
+2. **For subsequent queries, use stored parameters as BASE context**
+3. **Only update specific fields** based on current user input:
+   - Update `prompt` with current user text
+   - Update `addList`/`deleteList` based on current operations
+   - Update `resumeStage` based on current operation type
+   - Update `ConfirmAll` based on confirmation keywords
+   - Update `filters` by combining previous currentList with current changes
+
+---
+
+### 4. Complete Parameter Structure Examples
+
+#### Example 1: First User Query
+**User Input:** `"I want to view orders that SO is 10002 and Product Division is Footwear"`
+
+**Complete Workflow Input:**
+```json
+{
+  "token": "acc_61c9d33c-51f1-4ab2-a5c4-14cc511713fb",
+  "prompt": "I want to view orders that SO is 10002 and Product Division is Footwear",
+  "filters": [
+    "{\"SO\":\"10002\"}",
+    "{\"Product Division\":\"Footwear\"}"
+  ],
+  "column": [
+    "Product Division",
+    "Supplier Code", 
+    "Sale Sub Code",
+    "GTN PO",
+    "Customer PO",
+    "SO",
+    "Ultimate Customer Code",
+    "Article No",
+    "Supplier Name",
+    "Factory Code",
+    "CHD",
+    "LCHD",
+    "Order Status",
+    "SO Status",
+    "Change Type",
+    "New Value",
+    "Request Status",
+    "Request ID",
+    "Request Comment",
+    "Latest Decided By",
+    "Latest Approver Comment",
+    "Latest Approver Role"
+  ],
+  "fileId": "bi_d9c45bfb-9d2a-4a9b-a3bc-b073541e208e",
+  "method": "POST",
+  "resumeStage": null,
+  "currentList": {
+    "SO": "10002",
+    "Product Division": "Footwear"
+  },
+  "addList": null,
+  "deleteList": null,
+  "intension": "View Orders Confirm Test (V_A) Workflow",
+  "resumeId": null,
+  "ConfirmAll": "false"
+}
+```
+
+**AI Agent MUST STORE this output for future context**
+
+#### Example 2:  Subsequent User Query with Guaranteed Memory
+**Previous Workflow Output (STORED CONTEXT):**
+```json
+{
+  "message": "Please confirm the following query <currentList>currentList</currentList>, or you can make some change (add or delete or change)",
+  "token": "acc_61c9d33c-51f1-4ab2-a5c4-14cc511713fb",
+  "prompt": "I want to view orders filtered by GTN PO 1234 and i only want to check sale sub",
+  "column": ["Sale Sub Code"],
+  "fileId": "bi_d9c45bfb-9d2a-4a9b-a3bc-b073541e208e",
+  "resumeId": "nj2owfOvLa",
+  "resumeStage": null,
+  "ConfirmAll": "false",
+  "currentList": {"GTN PO": "1234"},
+  "deleteList": null,
+  "addList": null,
+  "method": "POST",
+  "intension": "View Orders Confirm Test (V_A) Workflow"
+}
+```
+
+**Current User Input:** `"I also want to view order filtered by SO aaa"`
+
+**Complete Workflow Input (USING STORED CONTEXT):**
+```json
+{
+  "token": "acc_61c9d33c-51f1-4ab2-a5c4-14cc511713fb",
+  "prompt": "I also want to view order filtered by SO aaa",
+  "filters": [
+    "{\"GTN PO\":\"1234\"}",
+    "{\"SO\":\"aaa\"}"
+  ],
+  "column": ["Sale Sub Code"],
+  "fileId": "bi_d9c45bfb-9d2a-4a9b-a3bc-b073541e208e",
+  "method": "POST",
+  "resumeStage": "change",
+  "currentList": {
+    "GTN PO": "1234"
+  },
+  "addList": {
+    "SO": "aaa"
+  },
+  "deleteList": null,
+  "intension": "View Orders Confirm Test (V_A) Workflow",
+  "resumeId": "nj2owfOvLa",
+  "ConfirmAll": "false"
+}
+```
+
+#### Example 3:  Delete Operation with Guaranteed Memory
+**Previous Workflow Output:** (Same as Example 2 - STORED)
+**Current User Input:** `"Remove the GTN PO filter"`
+
+**Complete Workflow Input:**
+```json
+{
+  "token": "acc_61c9d33c-51f1-4ab2-a5c4-14cc511713fb",
+  "prompt": "Remove the GTN PO filter",
+  "filters": [],
+  "column": ["Sale Sub Code"],
+  "fileId": "bi_d9c45bfb-9d2a-4a9b-a3bc-b073541e208e",
+  "method": "POST",
+  "resumeStage": "change",
+  "currentList": {
+    "GTN PO": "1234"
+  },
+  "addList": null,
+  "deleteList": {
+    "GTN PO": "1234"
+  },
+  "intension": "View Orders Confirm Test (V_A) Workflow",
+  "resumeId": "nj2owfOvLa",
+  "ConfirmAll": "false"
+}
+```
+
+#### Example 4:  Confirm All Operation
+**Previous Workflow Output:** (Same as Example 2 - STORED)
+**Current User Input:** `"Yes, confirm all"`
+
+**Complete Workflow Input:**
+```json
+{
+  "token": "acc_61c9d33c-51f1-4ab2-a5c4-14cc511713fb",
+  "prompt": "Yes, confirm all",
+  "filters": [
+    "{\"GTN PO\":\"1234\"}"
+  ],
+  "column": ["Sale Sub Code"],
+  "fileId": "bi_d9c45bfb-9d2a-4a9b-a3bc-b073541e208e",
+  "method": "POST",
+  "resumeStage": "confirm",
+  "currentList": {
+    "GTN PO": "1234"
+  },
+  "addList": null,
+  "deleteList": null,
+  "intension": "View Orders Confirm Test (V_A) Workflow",
+  "resumeId": "nj2owfOvLa",
+  "ConfirmAll": "true"
+}
+```
+
+---
+
+### 5. [CRITICAL] Context Preservation in Output Processing
+
+#### **Output Processing with Memory Preservation:**
+When processing workflow results, the AI Agent MUST:
+
+1. **Preserve ALL input parameters** in the output (except updating message)
+2. ** Carry over resumeId** to maintain conversation continuity
+3. **Maintain currentList, column, and other context parameters**
+4. ** Ensure output can serve as next query's base context**
+5. ** Add "message" text
 **Workflow Input:**
 ```json
 {
@@ -114,7 +285,7 @@ The AI Agent MUST follow these rules for FIRST-TIME queries (when no previous co
   "filters": ["{\"SO\":\"10002\"}", "{\"Product Division\":\"Footwear\"}"],
   "resumeId": null,
   "resumeStage": null,
-  "ConfirmAll": "NOT",
+  "ConfirmAll": "false",
   "currentList": {"SO": "10002", "Product Division": "Footwear"},
   "deleteList": null,
   "addList": null,
@@ -123,7 +294,7 @@ The AI Agent MUST follow these rules for FIRST-TIME queries (when no previous co
 }
 ```
 
-**AI Agent Output (JSON):**
+**AI Agent Output (WITH MEMORY PRESERVATION):**
 ```json
 {
   "message": "Please confirm the following query <currentList>currentList</currentList>, or you can make some change (add or delete or change)",
@@ -132,9 +303,9 @@ The AI Agent MUST follow these rules for FIRST-TIME queries (when no previous co
   "column": ["Product Division", "Supplier Code", "Sale Sub Code"],
   "fileId": "bi_d9c45bfb-9d2a-4a9b-a3bc-b073541e208e",
   "filters": ["{\"SO\":\"10002\"}", "{\"Product Division\":\"Footwear\"}"],
-  "resumeId": null,
+  "resumeId": "newly_generated_resume_id_here",
   "resumeStage": null,
-  "ConfirmAll": "NOT",
+  "ConfirmAll": "false",
   "currentList": {"SO": "10002", "Product Division": "Footwear"},
   "deleteList": null,
   "addList": null,
@@ -143,136 +314,17 @@ The AI Agent MUST follow these rules for FIRST-TIME queries (when no previous co
 }
 ```
 
-#### B. Success Response Processing
-
-**(a) Confirmation Required Response:**
-**Workflow Output:**
-```json
-{
-  "code": 200011,
-  "status": "success",
-  "table-text": [{"Request ID": "R555"}],
-  "resumeId": "0ff9f87616554218",
-  "resumeType": "Get Decision",
-  "options": [{"name": "Confirm"}, {"name": "Abort"}]
-}
-```
-
-**AI Agent Output (JSON):**
-```json
-{
-  "message": "I have curated a list of orders that you want to check, can you please check the following table and confirm?:<br/><table-text>table-text</table-text><br/><options>options</options>",
-  "code": 200011,
-  "status": "success",
-  "table-text": [{"Request ID": "R555"}],
-  "resumeId": "0ff9f87616554218",
-  "resumeType": "Get Decision",
-  "options": [{"name": "Confirm"}, {"name": "Abort"}]
-}
-```
-
-**(b) Large Dataset Response:**
-**Workflow Output:**
-```json
-{
-  "code": 200111,
-  "status": "success",
-  "resultCount": 10,
-  "table": [{"Request ID": "R555"}],
-  "file": {
-    "filename": "name",
-    "extension": "xls",
-    "fileURL": "url",
-    "sizeInBytes": 1024
-  },
-  "warning": "query size is over 500,000"
-}
-```
-
-**AI Agent Output (JSON):**
-```json
-{
-  "message": "I'll provide a summary of your orders based on the data available (<count>resultCount</count> records):<br/><table-text>table</table-text><br/><file>file</file><br/><br/>Warning: <warning>warning</warning>",
-  "code": 200111,
-  "status": "success",
-  "resultCount": 10,
-  "table": [{"Request ID": "R555"}],
-  "file": {
-    "filename": "name",
-    "extension": "xls",
-    "fileURL": "url",
-    "sizeInBytes": 1024
-  },
-  "warning": "query size is over 500,000"
-}
-```
-
-#### C. Error Response Processing
-
-**Access Denied (JSON):**
-```json
-{
-  "message": "You don't have access to following request: (<count>count</count> requests)<br/><invalid-table>invalidTable</invalid-table><br/>Please update your input to ensure you have access to all the requests. Alternatively, you may choose to view only the requests available to you.<br/><br/>If the issue persists, please contact the admin for assistance.",
-  "code": 403001,
-  "status": "error",
-  "count": 5,
-  "invalidTable": [{"Request ID": "R123"}]
-}
-```
-
-**Data Validation Error (JSON):**
-```json
-{
-  "message": "Your request has invalid input, here are the records:<br/>Missing Required Fields (<count>missingRequiredFieldTableCount</count>):<br/><missing-required-field>missingRequiredFieldTable</missing-required-field><br/><br/>Inactive Request (<count>inactiveRequestTableCount</count>):<br/><inactive-request>inactiveRequestTable</inactive-request><br/><br/>Duplicated Request (<count>duplicatedRequestTableCount</count>):<br/><duplicated-request>duplicatedRequestTable</duplicated-request><br/><br/>Already Resolved Request (<count>requestAlreadyResolveCount</count>):<br/><request-resolved>requestAlreadyResolveTable</request-resolved><br/><br/>No Change Make Request (<count>noChangeMakeTableCount</count>):<br/><no-change>noChangeMakeTable</no-change><br/>Please update your input to ensure all the requests are valid. Alternatively, you may choose to view only the requests available to you.<br/><br/>If the issue persists, please contact the admin for assistance.",
-  "code": 400001,
-  "status": "error",
-  "missingRequiredFieldTableCount": 2,
-  "missingRequiredFieldTable": [{"Request ID": "R123"}],
-  "inactiveRequestTableCount": 1,
-  "inactiveRequestTable": [{"Request ID": "R124"}],
-  "duplicatedRequestTableCount": 3,
-  "duplicatedRequestTable": [{"Request ID": "R125"}],
-  "requestAlreadyResolveCount": 1,
-  "requestAlreadyResolveTable": [{"Request ID": "R126"}],
-  "noChangeMakeTableCount": 2,
-  "noChangeMakeTable": [{"Request ID": "R127"}]
-}
-```
-
----
-
-### 5.  Workflow Execution Guarantee
-
-#### **Mandatory Workflow Triggering:**
-The AI Agent MUST trigger the appropriate workflow for EVERY user query, regardless of:
-- Whether it's a first-time query or subsequent query
-- The presence or absence of previous context
-- The completeness of parameter extraction
-
-#### **First Query Success Checklist:**
-- ✅ **Workflow Matching**: Determine workflow based on current user keywords ONLY
-- ✅ **Parameter Completion**: Populate ALL 13 parameters using current input ONLY
-- ✅ **Default Values**: Use `null` for resumeId, resumeStage, addList, deleteList
-- ✅ **Filter Extraction**: Extract ALL conditions from current query into filters array
-- ✅ **CurrentList Population**: Create currentList object from extracted filters
-- ✅ **Intension Setting**: Set based on matched workflow from current keywords
-
-#### **Error Prevention:**
-- ❌ NEVER skip workflow execution for first query
-- ❌ NEVER wait for non-existent previous context
-- ❌ NEVER omit required parameters
-- ❌ NEVER assume workflow should not be triggered
-
 ---
 
 ### 6. Critical Requirements
 
 1. **ALL 13 required parameters** must be included in every workflow call
-2. **First query workflow triggering** - MUST execute workflow for first-time queries
+2. ** Memory preservation** - ALWAYS carry over context from previous outputs
 3. **Output must be pure JSON** - no markdown or text formatting
 4. **Placeholders must be hardcoded** - do not convert content within `< >` tags
 5. **Parameter validation** - before calling workflow, verify all required parameters are populated
-6. **Context preservation** - when `resumeId` exists, maintain workflow continuity and parameter consistency
-7. **[NEW] Guaranteed execution** - workflow MUST be triggered for EVERY user query without exception
+6. ** Context preservation** - when `resumeId` exists, maintain ALL context parameters consistently
+7. **Guaranteed execution** - workflow MUST be triggered for EVERY user query without exception
+8. **Memory storage** - AI Agent MUST store previous output parameters for context transfer
 
-**The AI Agent must strictly follow this parameter structure to ensure successful workflow execution for both first-time and subsequent queries.**
+**The AI Agent must strictly follow this parameter structure and memory retention to ensure successful workflow execution and conversation continuity across ALL queries.**
