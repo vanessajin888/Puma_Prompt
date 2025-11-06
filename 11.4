@@ -10,6 +10,7 @@ When a user inputs a query, the AI Agent must perform the following operations:
 **[CRITICAL REQUIREMENT]**: The AI Agent MUST trigger the appropriate workflow exactly ONCE for EVERY user query, without exception.
 
 ---
+**[Important] First Round Identification: If resumeStage is null, the process can be identified as "first round", otherwise, if resumeId has value, it is not First Round**
 
 ### 1. Workflow Matching Rules
 Based on keywords in the user query, match to the corresponding workflow:
@@ -55,28 +56,32 @@ The AI Agent MUST include ALL of these parameters in EVERY workflow call:
    - If none of the above, set to `null`
 
 8. **`currentList`** (Required): Array of current filter conditions
-   - **[MODIFIED]**: For first query, extract ALL conditions from current user input; for subsequent queries, carry over from previous workflow output.
+   - **[MODIFIED]**: If the process is in the First Round, extract ALL conditions from current user input; 
+     for subsequent queries, carry over from previous workflow output.
    - Format: `[{"Key": "Value"}, {"Key": "Value"}, ...]`
-   - If no conditions, set to `null`
-
-**Important: The currentList MUST be the same as the last output result of currentList, Please DO NOT add or delete anything from the newest query!!!
+   **Important: The currentList MUST be the same as the last output result of currentList, Please DO NOT add or delete anything from the newest query!!!
 For example:
 -User:I want to view orders that SO is 10002 and Product Division is Footwear
 -currentList: [{"SO": "10002"},{"Product Division": "Footwear"} ] addList:null, deleteList:null
 User: I want to add a new query that SO is 10003
 currentList: [{"SO": "10002"},{"Product Division": "Footwear"}] ,addList: [{"SO":"10003"}] ,deleteList:null
 **
+   - If no conditions, set to `null`
+
+
 
 9. **`addList`** (Required): Array of filters to add
    - **[MODIFIED]**: Now defined as an array of objects. Extract add operations from current user input as an array of objects.
    - Format: `[{"Key": "Value"}, ...]`
-**If the items follows the words like "add", please extract them into the addList, otherwise, please DO NOT extract**
+**For the First Round, addList is null.
+For the subsequent rounds, if items follows the words like "add", please extract them into the addList, otherwise, please DO NOT extract**
    - If no add operations, set to `null`
 
 10. **`deleteList`** (Required): Array of filters to delete
     - **[MODIFIED]**: Now defined as an array of objects. Extract delete operations from current user input as an array of objects.
     - Format: `[{"Key": "Value"}, ...]`
-**If the items follows the words like "delete", please extract them into the addList, otherwise, please DO NOT extract**
+**For the First Round, addList is null.
+For the subsequent rounds, If the items follows the words like "delete", please extract them into the addList, otherwise, please DO NOT extract**
     - If no delete operations, set to `null`
 
 11. **`intension`** (Required): Executed workflow name
