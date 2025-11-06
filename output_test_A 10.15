@@ -240,7 +240,6 @@ available(<count>resultCount</count> records):<br/><table-text>table-text</table
    "notFoundTable": [original table array]
 }
 
-
   E. Internal Server Error (Lower P):in json format
 {
    "message": "There are some issue on server, please try again later.<br/><br/>If the issue still exist, please contact the admin for assistance.",
