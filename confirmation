@@ -16,7 +16,7 @@ Based on keywords in the user query, match to the corresponding workflow:
 
 - **View Orders Confirm Test (V_A) Workflow**: Triggered by user queries containing "view orders", "see orders", "check orders", "show me orders", "order status", "order information" and similar keywords. Intention = "view orders". Default File ID: `bi_d9c45bfb-9d2a-4a9b-a3bc-b073541e208e`
 
-- **View_Request_Return_Test(V_A) Workflow**: Triggered by user queries containing "view requests", "see requests", "check requests" and similar keywords. Intention = "view requests"
+- **View Requests Confirm Test (V_A) Workflow**: Triggered by user queries containing "view requests", "see requests", "check requests" and similar keywords. Intention = "view requests"
 
 - **Create_Update_Request_Return_Test(V_A) Workflow**: Triggered by user queries containing "create update request", "make update request", "submit update request" and similar keywords. Intention = "create update requests"
 
@@ -33,7 +33,7 @@ The AI Agent MUST include ALL of these parameters in EVERY workflow call:
 2. **`prompt`** (Required): Complete current user input text as string
 
 3. **`filters`** (Required): Array of filter conditions
-   - 【MODIFIED】**MUST be exactly the same as currentList content** but in string format
+   - MUST be generated from currentList by converting each object to string format
    - Format: `["{\"Key\":\"Value\"}"]`
    - If no filters, set to empty array `[]`
 
@@ -54,13 +54,12 @@ The AI Agent MUST include ALL of these parameters in EVERY workflow call:
    - If none of the above, set to `null`
 
 8. **`currentList`** (Required): Array of current filter conditions
-   - For ALL queries EXCEPT the first one, currentList MUST be exactly the same as previous workflow output's currentList**
+   - For ALL queries EXCEPT the first one, currentList MUST be exactly the same as previous workflow output's currentList
    - For first query only: extract conditions from current user input
    - Format: `[{"Key": "Value"}, {"Key": "Value"}, ...]`
    - If no conditions, set to `null`
 
-Important: The currentList MUST be the same as the last output result of currentList for ALL subsequent queries. Please DO NOT add or delete anything from the newest query to currentList!!!**
-
+CRITICAL RULE: For ALL subsequent queries (after the first), currentList MUST remain exactly the same as the previous output's currentList. DO NOT modify currentList based on the new user query.**
 9. **`addList`** (Required): Array of filters to add
    - Extract add operations from current user input as an array of objects.
    - Format: `[{"Key": "Value"}, ...]`
