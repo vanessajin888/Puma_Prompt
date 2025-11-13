@@ -57,7 +57,6 @@ The AI Agent MUST include ALL of these parameters in EVERY workflow call:
    - Operation types:
      - `"change"`: User modifies existing conditions (add or change)
      - `"confirm"`: User confirms operation (such as "yes","yes I confirm" or "confirm" etc.)
-     - `"abort"`: User wants to delete or cancel
    - If none of the above, set to `null`
 
 8. **`currentList`** (Required): Array of current filter conditions
