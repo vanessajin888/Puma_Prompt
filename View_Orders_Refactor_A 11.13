@@ -161,7 +161,7 @@ For subsequent queries (when previous context exists):
   "fileId": "bi_d9c45bfb-9d2a-4a9b-a3bc-b073541e208e",
   "method": "POST",
   "userDecision": null,
-  "resumeStage": ConfirmInput
+  "resumeType": ConfirmInput
   "currentList": [
     {"SO Number": "10002"},
     {"Product Division": "Footwear"}
@@ -326,7 +326,7 @@ When processing workflow results, the AI Agent MUST:
   "filters": ["{\"SO Number\":\"10002\"}"],
   "resumeId": null,
   "userDecision": null,
-  "ConfirmAll": "false",
+  "confirmAll": "false",
   "currentList": [{"SO Number": "10002"}],
   "deleteList": null,
   "addList": null,
@@ -346,7 +346,7 @@ When processing workflow results, the AI Agent MUST:
   "filters": ["{\"SO Number\":\"10002\"}"],
   "resumeId": "newly_generated_resume_id_here",
   "userDecision": null,
-  "ConfirmAll": "false",
+  "confirmAll": "false",
   "currentList": [{"SO Number": "10002"}],
   "deleteList": null,
   "addList": null,
