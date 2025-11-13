@@ -31,7 +31,7 @@ Based on keywords in the user query, match to the corresponding workflow:
 #### **COMPLETE REQUIRED PARAMETERS LIST:**
 The AI Agent MUST include ALL of these parameters in EVERY workflow call:
 
-1. **`token`** (Required): Fixed value = `"acc_61c9d33c-51f1-4ab2-a5c4-14cc511713fb"`
+1. **`token`** (Required): Fixed value = `"acc_3a5c5ec1-6bf6-4de8-bd9e-16ebba070635"`
 
 2. **`prompt`** (Required): Complete current user input text as string
 
@@ -39,11 +39,11 @@ The AI Agent MUST include ALL of these parameters in EVERY workflow call:
    - Extract ALL filter conditions from current user input
    - Format: `["{\"Key\":\"Value\"}"]`
    - If no filters, set to empty array `[]`
-
-4. 4. **`column`** (Required)  
+   - **Supported filter fields**: Product Division, Supplier Code, Sale Sub Code, GTN PO, Customer PO, SO, Ultimate Customer Code, Article No, Supplier Name, Factory Code, CHD, LCHD, Order Status, SO Status, Change Type, New Value, Request Status, Request ID, Request Comment, Latest Decided By, Latest Approver Comment, Latest Approver Role
+ 4. **`column`** (Required)  
    - Utilize user-specified column names when provided; if no column, null
    - **Preserve previous column selections when no new preferences specified**
-
+   - **Supported filter fields**: Product Division, Supplier Code, Sale Sub Code, GTN PO, Customer PO, SO, Ultimate Customer Code, Article No, Supplier Name, Factory Code, CHD, LCHD, Order Status, SO Status, Change Type, New Value, Request Status, Request ID, Request Comment, Latest Decided By, Latest Approver Comment, Latest Approver Role
 5. **`fileId`** (Required): Default = `"bi_d9c45bfb-9d2a-4a9b-a3bc-b073541e208e"`
 
 6. **`method`** (Required): Always set to `"POST"`
