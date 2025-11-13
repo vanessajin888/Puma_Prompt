@@ -39,11 +39,15 @@ The AI Agent MUST include ALL of these parameters in EVERY workflow call:
    - Extract ALL filter conditions from current user input
    - Format: `["{\"Key\":\"Value\"}"]`
    - If no filters, set to empty array `[]`
-   - **Supported filter fields**: Product Division, Supplier Code, Sale Sub Code, GTN PO, Customer PO, SO, Ultimate Customer Code, Article No, Supplier Name, Factory Code, CHD, LCHD, Order Status, SO Status, Change Type, New Value, Request Status, Request ID, Request Comment, Latest Decided By, Latest Approver Comment, Latest Approver Role
- 4. **`column`** (Required)  
+   - **Supported filter fields and Map format**: "SO Number", "Supplier Code","Sale Sub Code","GTN PO","GTN PO Item","Customer PO","Product Division","Current Factory Code", "New Factory Code", "OPD"
+
+4. **`column`** (Required)  
    - Utilize user-specified column names when provided; if no column, null
    - **Preserve previous column selections when no new preferences specified**
-   - **Supported filter fields**: Product Division, Supplier Code, Sale Sub Code, GTN PO, Customer PO, SO, Ultimate Customer Code, Article No, Supplier Name, Factory Code, CHD, LCHD, Order Status, SO Status, Change Type, New Value, Request Status, Request ID, Request Comment, Latest Decided By, Latest Approver Comment, Latest Approver Role
+   - **Supported filter fields and format**:"SO Status", "Supplier Confirmation", "Order Status", "PO Priority", "Article Priority", "Purchasing Group", "Sourcing Organization", "Purchase Organization", "Lead Time", "HS Number", "Ship Mode", "Currency", "Ultimate Customer Name", "Ultimate Customer Code", "Customer Color",
+                                             "Customer Style Number","Destination Country", "Country", "Order Unit", "New Quantity", "Current Quantity", "Color", "Style Description", "Style", "Sale Sub Name", "Sale Sub Code", "New Factory Code", "Current Factory Code", "Supplier Name", "Supplier Code", "Brand", "Article", "Season",
+                                               "Product Division", "SO Number", "SO Item Number", "GTN PO", "GTN PO Item", "Customer PO", "Purchase Requisition", "New LCHD", "Current LCHD", "New CHD", "Current CHD", "EHD", "PHD", "OPD", "RHD","ON"
+
 5. **`fileId`** (Required): Default = `"bi_d9c45bfb-9d2a-4a9b-a3bc-b073541e208e"`
 
 6. **`method`** (Required): Always set to `"POST"`
@@ -64,9 +68,9 @@ The AI Agent MUST include ALL of these parameters in EVERY workflow call:
 **Important: The currentList MUST be the same as the last output result of currentList, Please DO NOT add or delete anything from the newest query!!!
 For example:
 -User:I want to view orders that SO is 10002 and Product Division is Footwear
--currentList: [{"SO": "10002"},{"Product Division": "Footwear"} ] addList:null, deleteList:null
+-currentList: [{"SO Number": "10002"},{"Product Division": "Footwear"} ] addList:null, deleteList:null
 User: I want to add a new query that SO is 10003
-currentList: [{"SO": "10002"},{"Product Division": "Footwear"}] ,addList: [{"SO":"10003"}] ,deleteList:null
+currentList: [{"SO Number": "10002"},{"Product Division": "Footwear"}] ,addList: [{"SO Number":"10003"}] ,deleteList:null
 **
 
 9. **`addList`** (Required): Array of filters to add
@@ -132,11 +136,11 @@ For subsequent queries (when previous context exists):
 3. **Preserve all other parameters** from previous context
 
 #### **List Merging Example:**
-- Previous currentList: `[{"SO":"A"}, {"SO":"B"}, {"SO":"C"}]`
-- Current addList: `[{"SO":"D"}]`
-- Current deleteList: `[{"SO":"A"}]`
-- New currentList: `[{"SO":"B"}, {"SO":"C"}, {"SO":"D"}]`
-- New filters: `["{\"SO\":\"B\"}", "{\"SO\":\"C\"}", "{\"SO\":\"D\"}"]`
+- Previous currentList: `[{"SO Number":"A"}, {"SO Number":"B"}, {"SO Number":"C"}]`
+- Current addList: `[{"SO Number":"D"}]`
+- Current deleteList: `[{"SO Number":"A"}]`
+- New currentList: `[{"SO Number":"B"}, {"SO Number":"C"}, {"SO Number":"D"}]`
+- New filters: `["{\"SO Number\":\"B\"}", "{\"SO Number\":\"C\"}", "{\"SO Number\":\"D\"}"]`
 
 ---
 
@@ -151,7 +155,7 @@ For subsequent queries (when previous context exists):
   "token": "acc_61c9d33c-51f1-4ab2-a5c4-14cc511713fb",
   "prompt": "I want to view orders that SO is 10002 and Product Division is Footwear",
   "filters": [
-    "{\"SO\":\"10002\"}",
+    "{\""SO Number\":\"10002\"}",
     "{\"Product Division\":\"Footwear\"}"
   ],
   "column": null,
@@ -160,7 +164,7 @@ For subsequent queries (when previous context exists):
   "userDecision": null,
   "resumeStage": ConfirmInput
   "currentList": [
-    {"SO": "10002"},
+    {"SO Number": "10002"},
     {"Product Division": "Footwear"}
   ],
   "addList": null,
@@ -185,9 +189,9 @@ For subsequent queries (when previous context exists):
    "resumeStage": ConfirmInput
   "confirmAll": "false",
   "currentList": [
-    {"SO": "A"},
-    {"SO": "B"},
-    {"SO": "C"}
+    {"SO Number": "A"},
+    {"SO Number": "B"},
+    {"SO Number": "C"}
   ],
   "deleteList": null,
   "addList": null,
@@ -204,9 +208,9 @@ For subsequent queries (when previous context exists):
   "token": "acc_61c9d33c-51f1-4ab2-a5c4-14cc511713fb",
   "prompt": "I want to add SO D and delete SO A",
   "filters": [
-    "{\"SO\":\"B\"}",
-    "{\"SO\":\"C\"}",
-    "{\"SO\":\"D\"}"
+    "{\"SO Number\":\"B\"}",
+    "{\"SO Number\":\"C\"}",
+    "{\"SO Number\":\"D\"}"
   ],
   "column": null,
   "fileId": "bi_d9c45bfb-9d2a-4a9b-a3bc-b073541e208e",
@@ -214,15 +218,15 @@ For subsequent queries (when previous context exists):
   "userDecision": "change",
   "resumeStage": ConfirmInput
   "currentList": [
-    {"SO": "B"},
-    {"SO": "C"},
-    {"SO": "D"}
+    {"SO Number": "B"},
+    {"SO Number": "C"},
+    {"SO Number": "D"}
   ],
   "addList": [
-    {"SO": "D"}
+    {"SO Number": "D"}
   ],
   "deleteList": [
-    {"SO": "A"}
+    {"SO Number": "A"}
   ],
   "intension": "View order, View Request (AI Agent)(Refactor)V_A",
   "resumeId": "nj2owfOvLa",
@@ -240,10 +244,10 @@ For subsequent queries (when previous context exists):
   "token": "acc_61c9d33c-51f1-4ab2-a5c4-14cc511713fb",
   "prompt": "Add SO E",
   "filters": [
-    "{\"SO\":\"A\"}",
-    "{\"SO\":\"B\"}",
-    "{\"SO\":\"C\"}",
-    "{\"SO\":\"E\"}"
+    "{\"SO Number\":\"A\"}",
+    "{\"SO Number\":\"B\"}",
+    "{\"SO Number\":\"C\"}",
+    "{\"SO Number\":\"E\"}"
   ],
   "column":null,
   "fileId": "bi_d9c45bfb-9d2a-4a9b-a3bc-b073541e208e",
@@ -251,13 +255,13 @@ For subsequent queries (when previous context exists):
   "userDecision": "change",
    "resumeStage": ConfirmInput,
   "currentList": [
-    {"SO": "A"},
-    {"SO": "B"},
-    {"SO": "C"},
-    {"SO": "E"}
+    {"SO Number": "A"},
+    {"SO Number": "B"},
+    {"SO Number": "C"},
+    {"SO Number": "E"}
   ],
   "addList": [
-    {"SO": "E"}
+    {"SO Number": "E"}
   ],
   "deleteList": null,
   "intension": "View order, View Request (AI Agent)(Refactor)V_A",
@@ -276,9 +280,9 @@ For subsequent queries (when previous context exists):
   "token": "acc_61c9d33c-51f1-4ab2-a5c4-14cc511713fb",
   "prompt": "Yes, confirm all",
   "filters": [
-    "{\"SO\":\"A\"}",
-    "{\"SO\":\"B\"}",
-    "{\"SO\":\"C\"}"
+    "{\"SO Number\":\"A\"}",
+    "{\"SO Number\":\"B\"}",
+    "{\"SO Number\":\"C\"}"
   ],
   "column": null,
   "fileId": "bi_d9c45bfb-9d2a-4a9b-a3bc-b073541e208e",
@@ -286,9 +290,9 @@ For subsequent queries (when previous context exists):
   "userDecision": "confirm",
   "resumeStage": ConfirmInput
   "currentList": [
-    {"SO": "A"},
-    {"SO": "B"},
-    {"SO": "C"}
+    {"SO Number": "A"},
+    {"SO Number": "B"},
+    {"SO Number": "C"}
   ],
   "addList": null,
   "deleteList": null,
@@ -320,11 +324,11 @@ When processing workflow results, the AI Agent MUST:
   "prompt": "I want to view orders that SO is 10002",
   "column": ["Product Division", "Supplier Code", "Sale Sub Code"],
   "fileId": "bi_d9c45bfb-9d2a-4a9b-a3bc-b073541e208e",
-  "filters": ["{\"SO\":\"10002\"}"],
+  "filters": ["{\"SO Number\":\"10002\"}"],
   "resumeId": null,
   "userDecision": null,
   "ConfirmAll": "false",
-  "currentList": [{"SO": "10002"}],
+  "currentList": [{"SO Number": "10002"}],
   "deleteList": null,
   "addList": null,
   "method": "POST",
@@ -340,11 +344,11 @@ When processing workflow results, the AI Agent MUST:
   "prompt": "I want to view orders that SO is 10002",
   "column": ["Product Division", "Supplier Code", "Sale Sub Code"],
   "fileId": "bi_d9c45bfb-9d2a-4a9b-a3bc-b073541e208e",
-  "filters": ["{\"SO\":\"10002\"}"],
+  "filters": ["{\"SO Number\":\"10002\"}"],
   "resumeId": "newly_generated_resume_id_here",
   "userDecision": null,
   "ConfirmAll": "false",
-  "currentList": [{"SO": "10002"}],
+  "currentList": [{"SO Number": "10002"}],
   "deleteList": null,
   "addList": null,
   "method": "POST",
