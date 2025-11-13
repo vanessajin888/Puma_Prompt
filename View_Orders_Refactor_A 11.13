@@ -48,7 +48,7 @@ The AI Agent MUST include ALL of these parameters in EVERY workflow call:
 
 6. **`method`** (Required): Always set to `"POST"`
 
-7. **`resumeStage`** (Required): 
+7. **`userDecision`** (Required): 
    - Set based on current user operation type
    - Operation types:
      - `"change"`: User modifies existing conditions (add or change)
@@ -89,7 +89,12 @@ currentList: [{"SO": "10002"},{"Product Division": "Footwear"}] ,addList: [{"SO"
     - Set to `null` for all queries (simplified for guaranteed execution)
 
 13. **`confirmAll`** (Required): 
-    - Set to "true" if user explicitly confirms all operations; otherwise set to "false"
+    - Set to "true" if user explicitly confirms all operations; otherwise set to "false" 
+
+14. **'resumeStage'**(Required):
+   - **Initial query**: `null`
+   - **Subsequent queries**: **Must exactly match previous output's `resumeStage`**
+   - Three type of "resumeStage": 'ConfirmInput', 'AccessValidation', 'DataValidation'
 
 ---
 
@@ -116,7 +121,7 @@ For subsequent queries (when previous context exists):
 2. **Update specific fields based on current user input**:
    - Update `prompt` with current user text
    - Update `addList` and `deleteList` from current user input (as arrays of objects)
-   - Update `resumeStage` based on current operation type
+   - Update `userDecision` based on current operation type
    - Update `confirmAll` based on confirmation keywords
    - **[NEW] Merge currentList, addList, and deleteList correctly**:
      - Start with `previous currentList` (array of objects)
@@ -152,7 +157,8 @@ For subsequent queries (when previous context exists):
   "column": null,
   "fileId": "bi_d9c45bfb-9d2a-4a9b-a3bc-b073541e208e",
   "method": "POST",
-  "resumeStage": null,
+  "userDecision": null,
+  "resumeStage": ConfirmInput
   "currentList": [
     {"SO": "10002"},
     {"Product Division": "Footwear"}
@@ -175,7 +181,8 @@ For subsequent queries (when previous context exists):
   "column": null,
   "fileId": "bi_d9c45bfb-9d2a-4a9b-a3bc-b073541e208e",
   "resumeId": "nj2owfOvLa",
-  "resumeStage": null,
+  "userDecision": null,
+   "resumeStage": ConfirmInput
   "confirmAll": "false",
   "currentList": [
     {"SO": "A"},
@@ -204,7 +211,8 @@ For subsequent queries (when previous context exists):
   "column": null,
   "fileId": "bi_d9c45bfb-9d2a-4a9b-a3bc-b073541e208e",
   "method": "POST",
-  "resumeStage": "change",
+  "userDecision": "change",
+  "resumeStage": ConfirmInput
   "currentList": [
     {"SO": "B"},
     {"SO": "C"},
@@ -240,7 +248,8 @@ For subsequent queries (when previous context exists):
   "column":null,
   "fileId": "bi_d9c45bfb-9d2a-4a9b-a3bc-b073541e208e",
   "method": "POST",
-  "resumeStage": "change",
+  "userDecision": "change",
+   "resumeStage": ConfirmInput,
   "currentList": [
     {"SO": "A"},
     {"SO": "B"},
@@ -274,7 +283,8 @@ For subsequent queries (when previous context exists):
   "column": null,
   "fileId": "bi_d9c45bfb-9d2a-4a9b-a3bc-b073541e208e",
   "method": "POST",
-  "resumeStage": "confirm",
+  "userDecision": "confirm",
+  "resumeStage": ConfirmInput
   "currentList": [
     {"SO": "A"},
     {"SO": "B"},
@@ -312,7 +322,7 @@ When processing workflow results, the AI Agent MUST:
   "fileId": "bi_d9c45bfb-9d2a-4a9b-a3bc-b073541e208e",
   "filters": ["{\"SO\":\"10002\"}"],
   "resumeId": null,
-  "resumeStage": null,
+  "userDecision": null,
   "ConfirmAll": "false",
   "currentList": [{"SO": "10002"}],
   "deleteList": null,
@@ -332,7 +342,7 @@ When processing workflow results, the AI Agent MUST:
   "fileId": "bi_d9c45bfb-9d2a-4a9b-a3bc-b073541e208e",
   "filters": ["{\"SO\":\"10002\"}"],
   "resumeId": "newly_generated_resume_id_here",
-  "resumeStage": null,
+  "userDecision": null,
   "ConfirmAll": "false",
   "currentList": [{"SO": "10002"}],
   "deleteList": null,
