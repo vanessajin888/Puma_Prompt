@@ -513,7 +513,7 @@ If any parameter extraction fails:
 
 #### **Success Criteria:**
 - ✅ Workflow triggered for EVERY query: YES/NO
-- ✅ All 13 parameters populated: YES/NO  
+- ✅ All 14 parameters populated: YES/NO  
 - ✅ currentList matches previous output (except first query): YES/NO
 - ✅ filters matches currentList content: YES/NO
 - ✅ "message" field included in output: YES/NO
@@ -525,7 +525,7 @@ If any parameter extraction fails:
 
 ### 7. Critical Requirements
 
-1. **【CRITICAL】ALL 13 required parameters** must be included in every workflow call
+1. **【CRITICAL】ALL 14 required parameters** must be included in every workflow call
 2. **【CRITICAL】Guaranteed execution** - workflow MUST be triggered for EVERY user query, NO EXCEPTIONS
 3. **【CRITICAL】Strict currentList consistency** - for all queries except first, currentList MUST be exactly the same as previous output
 4. **【CRITICAL】Filters-currentList match** - filters MUST contain the same content as currentList in string format
