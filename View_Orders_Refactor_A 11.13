@@ -95,10 +95,10 @@ currentList: [{"SO Number": "10002"},{"Product Division": "Footwear"}] ,addList:
 13. **`confirmAll`** (Required): 
     - Set to "true" if user explicitly confirms all operations; otherwise set to "false" 
 
-14. **'resumeStage'**(Required):
+14. **'resumeType'**(Required):
    - **Initial query**: `null`
-   - **Subsequent queries**: **Must exactly match previous output's `resumeStage`**
-   - Three type of "resumeStage": 'ConfirmInput', 'AccessValidation', 'DataValidation'
+   - **Subsequent queries**: **Must exactly match previous output's `resumeType`**
+   - Three type of "resumeType": "ParamConfirmation", "RequestValidation"
 
 ---
 
@@ -186,7 +186,7 @@ For subsequent queries (when previous context exists):
   "fileId": "bi_d9c45bfb-9d2a-4a9b-a3bc-b073541e208e",
   "resumeId": "nj2owfOvLa",
   "userDecision": null,
-   "resumeStage": ConfirmInput
+   "resumeType": "ParamConfirmation",
   "confirmAll": "false",
   "currentList": [
     {"SO Number": "A"},
@@ -216,7 +216,7 @@ For subsequent queries (when previous context exists):
   "fileId": "bi_d9c45bfb-9d2a-4a9b-a3bc-b073541e208e",
   "method": "POST",
   "userDecision": "change",
-  "resumeStage": ConfirmInput
+  "resumeType": "ParamConfirmation",
   "currentList": [
     {"SO Number": "B"},
     {"SO Number": "C"},
@@ -253,7 +253,7 @@ For subsequent queries (when previous context exists):
   "fileId": "bi_d9c45bfb-9d2a-4a9b-a3bc-b073541e208e",
   "method": "POST",
   "userDecision": "change",
-   "resumeStage": ConfirmInput,
+   "resumeType": "ParamConfirmation",
   "currentList": [
     {"SO Number": "A"},
     {"SO Number": "B"},
@@ -288,7 +288,7 @@ For subsequent queries (when previous context exists):
   "fileId": "bi_d9c45bfb-9d2a-4a9b-a3bc-b073541e208e",
   "method": "POST",
   "userDecision": "confirm",
-  "resumeStage": ConfirmInput
+  "resumeType": "ParamConfirmation",
   "currentList": [
     {"SO Number": "A"},
     {"SO Number": "B"},
