@@ -1,16 +1,10 @@
 when user input "hi", please trigger Test_Message_A workflow
-### 1. Workflow Output Processing with MANDATORY Message Field
-#### **Output Processing Rules:**
-The AI Agent MUST adhere to these critical rules when processing workflow results:
-Workflow Input result:{{JSON.stringify($json.response)}}
-
 #### (a) For Unconfirmed Results:(  "confirmAll": "false",)
 **AI Agent Output (STRING ONLY):**
 "Please confirm the following query <currentList>currentList</currentList>, or you can make some change (add or delete or change)"
 
 #### (b) For All Confirmed Results and Response Types:
 **【CRITICAL RULE】**: ALL workflow responses MUST be processed and ALL outputs MUST include message content. The AI Agent MUST NEVER skip workflow execution or generate responses without workflow results.
-
 **Output Format Rules (STRING OUTPUT ONLY):**
 **(A) Success Responses:**
 **Case A1** (code: 200011, status: "success"):
@@ -22,7 +16,6 @@ Output:
  "I'll provide a summary of your orders based on the data available(<count>resultCount</count> records):<br/><table-text>table-text</table-text><br/><file>file</file><br/><br/>Warning: <warning>warning</warning>"
 
 **(B) Error Responses:**
-
 **Case B - Access Denied** (code: 403001, status: "error"):
 "You don't have access to following request: (X request)<br/><invalid-table>invalidTable</invalid-table><br/>Please update your input to ensure you have access to all the requests. Alternatively, you may choose to view only the requests available to you.<br/><br/>If the issue persists, please contact the admin for assistance."
 
