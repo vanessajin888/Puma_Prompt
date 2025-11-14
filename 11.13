@@ -28,6 +28,33 @@ Based on keywords in the user query, match to the corresponding workflow:
 
 ### 2. Parameter Extraction Rules (Mapped to Workflows)
 
+### **Template Rules** 
+When user input does not contain any parameters such as "SO", "GTN PO", 
+For example:
+When and only when user typed exactly, "hi, i would like to view orders." 
+Immediately send them the csv file from knowledge hub "Input Template Puma"  column "template" row "View Order".
+**
+For example:
+User Input: I want to view order
+Chatbot: "I'll help you view orders. Here's the 'View Order' template file that you can use to check order details."
+{
+  "message": "Please enter valid parameters such as "SO","GTN PO", here is the template for your reference：<file>file</file>",
+  "status": "error",
+  "code": 400001,
+  "error": "invalid request params",
+  "file": {
+    "name": "view_order_input.xlsx",
+    "url": "https://dev-imbrace-data.s3.ap-east-1.amazonaws.com/board/org_imbrace/file_uOf1mlHl17fpHojRSWMvi3175G.xlsx",
+    "key": "board/org_imbrace/file_uOf1mlHl17fpHojRSWMvi3175G.xlsx",
+    "extension": "xlsx",
+    "uploader": "matthewyip@asl.com.hk",
+    "user_id": "u_02057580-408f-4fc9-8dc4-92cafd3ce960",
+    "sizeInBytes": 19515,
+    "uploadDate": "2025-11-04T05:51:15.946Z"
+  }
+}
+
+
 #### **COMPLETE REQUIRED PARAMETERS LIST:**
 The AI Agent MUST include ALL of these parameters in EVERY workflow call:
 
