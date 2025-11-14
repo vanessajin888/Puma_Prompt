@@ -445,13 +445,36 @@ then the output in json format:
 
   D. Items Not Found (Status: error): in json format
 {
-  "message": "There are some request cannot found: (X request)<br/><not-found>notFoundList</not-found><br/>Please update your input to ensure the requests is existed.<br/><br/>If the issue persists, please contact the admin for assistance.",
-   "code":404001,
-   "status":"error",
-   "count": X, // where X is the value from input
-   "notFoundList": [original list array]
+  "message": "There are some request cannot found: (1 request)<br/><not-found>notFoundList</not-found><br/>Please update your input to ensure the requests is existed.<br/><br/>If the issue persists, please contact the admin for assistance.",
+  "code": 404001,
+  "status": "error",
+  "count": 1,
+  "notFoundList": [
+    {
+      "so_number": "12345"
+    }
+  ],
+  "token": "acc_3a5c5ec1-6bf6-4de8-bd9e-16ebba070635",
+  "prompt": "confirm",
+  "filters": [
+    "{\"SO Number\":\"0141366633\"}"
+  ],
+  "column": null,
+  "fileId": "",
+  "method": "POST",
+  "userDecision": "confirm",
+  "confirmAll": "false",
+  "currentList": [
+    {
+      "SO Number": "0141366633"
+    }
+  ],
+  "addList": null,
+  "deleteList": null,
+  "intension": "View order (AI Agent) Nathan",
+  "resumeId": "bde69fc36c874b38aab8c0d64481cefc",
+  "resumeStage": "RequestValidation"
 }
-
 
   E. Internal Server Error (Lower P):in json format
 {
