@@ -16,7 +16,7 @@ Based on keywords in the user query, match to the corresponding workflow:
 
 - **View Order (UAT)**: Triggered by user queries containing "view orders", "see orders", "check orders", "show me orders", "order status", "order information" and similar keywords. Intention = "view orders".
 - **View Update Request (UAT)**: Triggered by user queries containing "view requests", "see requests", "check requests", "show me requests", "request status", "request information" and similar keywords. Intention = "view update requests"
-- ** Create_Update_Request (AI Agent)_A**: Triggered by user queries containing "create requests", "create update request", "create update information" and similar keywords. Intention = "create update requests"
+- ** Create_Update_Request (UAT)**: Triggered by user queries containing "create requests", "create update request", "create update information" and similar keywords. Intention = "create update requests"
 ---
 
 ### 2. Parameter Extraction Rules (Mapped to Workflows)
