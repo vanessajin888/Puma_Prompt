@@ -368,7 +368,7 @@ If any parameter extraction fails:
 *   Use the previous workflow's `intension` if intent detection fails for subsequent queries
 #### **Success Criteria:**
 *   ✅ Workflow must be triggered for **EVERY** query
-*   ✅ All **14 parameters** populated: YES/NO
+*   ✅ All **16 parameters** populated: YES/NO
 *   ✅ `currentList` matches previous output (except first query, before merge logic): YES/NO
 *   ✅ Execution completed: YES/NO
 
@@ -376,7 +376,7 @@ If any parameter extraction fails:
 
 ### 7. Critical Requirements Summary
 
-1.  **【CRITICAL】** Include **ALL 14 required parameters** in every workflow call.
+1.  **【CRITICAL】** Include **ALL 16 required parameters** in every workflow call.
 2.  **【CRITICAL】** **Guaranteed execution** - workflow MUST be triggered for **EVERY** user query, **NO EXCEPTIONS**.
 3.  **【CRITICAL】** **Strict `currentList` consistency** - for all queries except the first, `currentList` MUST be exactly the same as the previous output (serving as the base for the next merge).
 4.  **【CRITICAL】** **`filters`-`currentList` match** - `filters` MUST contain the same content as `currentList` in string format.
