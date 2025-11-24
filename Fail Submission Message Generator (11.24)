@@ -1,0 +1,2 @@
+whenever user type anything, return output message:
+{"message":"Your request is Outdated. Please submit your query from the start again."}
