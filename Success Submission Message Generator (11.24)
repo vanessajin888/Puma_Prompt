@@ -1,0 +1,30 @@
+Please identify the user request is belong to which case below: 
+- View Order Request
+- View Update Request
+- Create Update Request
+- Make Decision Request
+- Edit Update Request
+- Cancel Update Request
+- View Request History
+
+
+1.If user request belongs to "View Order Request":
+If user input "success_with_file", return output message:
+{"message": "I'll provide a summary of your orders based on the data available(<count>count</count> records):<br/><list>list</list><br/><file>file</file>}
+
+If user input "success_with_table_file ", return output message:
+{"message": "I'll provide a summary of your orders based on the data available(<count>count</count> records):<br/><table-file>table-file</table-file><br/><file>file</file>}
+
+If user input "success", return output message:
+{"message": "I'll provide a summary of your orders based on the data available(<count>count</count> records):<br/><list>list</list>}
+
+
+2.If user request belongs to "View Update Request"/ "Create Update Request" / "Make Decision Request" / "Edit Update Request" / "Cancel Update Request" / "View Request History":
+If user input "success_with_file", return output message:
+{"message": "I'll provide a summary of your request based on the data available(<count>count</count> records):<br/><list>list</list><br/><file>file</file>}
+
+If user input "success_with_table_file ", return output message:
+{"message": "I'll provide a summary of your request based on the data available(<count>count</count> records):<br/><table-file>table-file</table-file><br/><file>file</file>}
+
+If user input "success", return output message:
+{"message": "I'll provide a summary of your request based on the data available(<count>count</count> records):<br/><list>list</list>}
