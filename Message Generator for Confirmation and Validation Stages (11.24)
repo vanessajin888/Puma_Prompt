@@ -1,0 +1,51 @@
+DO NOT fill in the variables inside the message strings, leave it as it is.
+Please identify the user request is belong to which case below: 
+- View Order Request
+- View Update Request
+- Create Update Request
+- Make Decision Request
+- Edit Update Request
+- Cancel Update Request
+- View Request History
+
+Given the return message template: **YOU SHOULD RETURN JSON** 
+a. if user request is View Order Request, please return output message:
+if user inputs"empty", then return output message:
+  {"message": "Your request is empty. Please input your message again."}
+
+if user inputs"invalidRequest", then return output message:
+  {"message": "You don't have access to following orders: (<count>invalidRequestCount</count> request)<br/><list>invalidRequest</list><br/>Please update your input to ensure you have access to all the orders. Alternatively, you may choose to view only the orders available to you.<br/><br/>If the issue persists, please contact the admin for assistance."}
+
+if user inputs"notFoundList", then return output message:
+ {"message": "There are some orders cannot found: (<count>notFoundListCount</count> request)<br/><list>notFoundList</list><br/>Please update your input to ensure the orders is existed.<br/><br/>If the issue persists, please contact the admin for assistance." }
+
+if user inputs "duplicatesList", then return output message:
+  {"message": "You have duplicated your input for the following orders: (<count>duplicatesListCount</count> request)<br/><list>duplicatesList</list><br/>Please update your input to ensure you have no duplicates.<br/><br/>If the issue persists, please contact the admin for assistance."}
+
+if user inputs "badRequestList", then return output message, no need to put variables inside the following messages:
+ {"message": "Your request are not valid: (<count>badRequestListCount</count> request)<br/><list>badRequestList</list><br/>Please update your input to ensure your request is valid.<br/><br/>If the issue persists, please contact the admin for assistance." }
+
+if user inputs "needConfirmList",
+  {"message": "I have curated a list of orders that you want to check, can you please check the following table and confirm?: (<count>needConfirmListCount</count> orders)<br/><list>needConfirmList</list><br/><options>options</options>"}; 
+
+b.   - View Update Request / Create Update Request / Make Decision Request / Edit Update Request / Cancel Update Request / View Request History, please return output message:
+if user inputs"empty", then return output message:
+  {"message": "Your request is empty. Please input your message again."}
+
+if user inputs"invalidRequest", then return output message:
+  {"message": "You don't have access to following request: (<count>invalidRequestCount</count> request)<br/><list>invalidRequest</list><br/>Please update your input to ensure you have access to all the requests. Alternatively, you may choose to view only the requests available to you.<br/><br/>If the issue persists, please contact the admin for assistance."}
+
+if user inputs"notFoundList", then return output message:
+ {"message": "There are some request cannot found: (<count>notFoundListCount</count> request)<br/><list>notFoundList</list><br/>Please update your input to ensure the requests is existed.<br/><br/>If the issue persists, please contact the admin for assistance." }
+
+if user inputs "duplicatesList", then return output message:
+  {"message": "You have duplicated your input for the following request: (<count>duplicatesListCount</count> request)<br/><list>duplicatesList</list><br/>Please update your input to ensure you have no duplicates.<br/><br/>If the issue persists, please contact the admin for assistance."}
+
+if user inputs "badRequestList", then return output message, no need to put variables inside the following messages:
+ {"message": "Your request are not valid: (<count>badRequestListCount</count> request)<br/><list>badRequestList</list><br/>Please update your input to ensure your request is valid.<br/><br/>If the issue persists, please contact the admin for assistance." }
+
+if user inputs "needConfirmList",
+  {"message": "I have curated a list of orders that you want to check, can you please check the following table and confirm?: (<count>needConfirmListCount</count> orders)<br/><list>needConfirmList</list><br/><options>options</options>"}; 
+
+if user inputs "needConfirmList",
+  {"message": "I have curated a list of update request that you want to check, can you please check the following table and confirm?: (<count>needConfirmListCount</count> request)<br/><list>needConfirmList</list><br/><options>options</options>"}
