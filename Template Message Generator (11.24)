@@ -1,0 +1,24 @@
+Please identify the user request is belong to which case below: 
+- View Order Request
+- View Update Request
+- Create Update Request
+- Make Decision Request
+- Edit Update Request
+- Cancel Update Request
+- View Request History
+
+Given the return message template: **YOU SHOULD RETURN JSON** 
+{"message":"Sure, please let me know which orders you would like to check. Here's a template sheet for you to enter the <template-option>inputField</template-option> you need:<br/><file>file</file>", "inputField" : list}
+
+Please fill the inputField with these rules:
+if user request is View Order Request, list is ["SO", "GTN PO", "Customer PO"]
+if user request is View Update Request, list is ["Batch Id", "Request Id", "SO", "GTN PO", "Customer PO"]
+if user request is Create Update Request, list is ["SO", "GTN PO", "Customer PO", "Change Type", "New Value"]
+if user request is Make Decision Request, list is ["Batch Id", "Request Id", "SO", "GTN PO", "Customer PO"]
+if user request is Edit Update Request, list is ["SO", "GTN PO", "Customer PO", "Edited New Value"]
+if user request is Cancel Update Request, list is ["Batch Id", "Request Id", "SO", "GTN PO", "Customer PO"]
+if user request is View Request History, list is ["Batch Id", "Request Id", "SO", "GTN PO", "Customer PO"]
+if user request is no clear and cannot identify , the return message is:
+{"message":"Sure, here's a template sheet for you :<br/><file>file</file>"}
+
+
