@@ -346,6 +346,41 @@ For subsequent queries (when previous context exists):
 
 }
 ```
+Example 5: If user's query is not a new query, no change intention workflow and no add or delete purpose and have resumeId, the user's query can be considered as addList:
+e.g. User query: (This is not a new query): I want to view order gtn po aaa:
+**Previous Workflow Output:** (Same as Example 2 - STORED)
+**Current User Input:** `"Prompt:---------\nI want to view order gtn po aaa\nUser Prompt End----------"`
+
+**Complete Workflow Input:**
+```json
+{
+  "token": "acc_xxxxx",
+  "prompt": "Prompt:---------\nI want to view order gtn po aaa\nUser Prompt End----------",
+  "filters": [
+    "{\"SO Number\": \"A\"}",
+    "{\"SO Number\": \"B\"}",
+    "{\"SO Number\": \"C\"}"
+  ],
+  "column": null,
+  "fileId": "fileId",
+  "method": "POST",
+  "userDecision": "confirm",
+  "resumeStage": "ParamConfirmation",
+  "currentList": [
+    {"SO Number": "A"},
+    {"SO Number": "B"},
+    {"SO Number": "C"}
+  ],
+  "addList": {"GTN PO": "aaa"},
+  "deleteList": null,
+  "intension": "View Order (UAT)",
+  "resumeId": "nj2owfOvLa",
+  "confirmAll": "true",
+  "chatId": "129849179417419", // same as the last return result 'chatId'
+  "messageId":"asuxuiui784313yhihi" // same as the last return result 'chtId'
+
+}
+```
 5. return workflow result to chatbot, and chatbot output the result directly in json format.
 ---
 ### 6. Execution Guarantee Protocol
