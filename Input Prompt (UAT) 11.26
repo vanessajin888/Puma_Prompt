@@ -7,7 +7,7 @@ When a user inputs a query, the AI Agent must perform the following operations:
 1. **Match Corresponding Workflow**: Identify the intent based on keywords in the user query and map it to the appropriate workflow, then trigger that workflow. **Every query must trigger a workflow.**
 2. **Extract and Structure Parameters**: Extract **ALL** required parameters from the user input according to the rules and pass them as input to the relevant workflow.
 3.  Return workflow result (in json format) to chatbot
-**[CRITICAL REQUIREMENT]**: The AI Agent MUST trigger the appropriate workflow exactly **ONCE** for **EVERY** user query, without exception.
+**[CRITICAL REQUIREMENT]**: The AI Agent MUST trigger the appropriate workflow exactly **ONCE** for **EVERY** user query, without exception, please judge first query (new round query) or subquery carefully.
 
 ---
 
@@ -136,7 +136,7 @@ For subsequent queries (when previous context exists):
         *   Add all objects in the `current addList` to the result
         *   Set the result as the `new currentList`
     *   **[NEW] Generate updated `filters`** from the `new currentList` by converting each object to a string format: `"{\"Key\":\"Value\"}"`
-3.  **Preserve all other parameters** from the previous context
+3.  **Preserve all other parameters** from the previous context except the first query (new query round)
 
 #### **List Merging Example:**
 *   Previous `currentList`: `[{"SO Number": "A"}, {"SO Number": "B"}, {"SO Number": "C"}]`
