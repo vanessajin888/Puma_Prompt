@@ -66,9 +66,10 @@ The AI Agent MUST include **ALL** of these parameters in **EVERY** workflow call
 6.  **`method`** (Required): Always set to `"POST"`
 7.  **`userDecision`** (Required):
     *   Set based on the current user prompt decision:
+        *   For the first query, 'userDecision' is null
         *   `"change"`: User modifies existing conditions (add or delete or change)
         *   `"confirm"`: User confirms operation (e.g., "yes", "yes I confirm", "confirm")
-    *   If none of the above, set to `null`
+
 8.  **`currentList`** (Required): Array of current filter conditions
     *   **[MODIFIED]**: Defined as an array of objects. Extract **ALL** conditions from the current user input as an array of objects.
     *   Format: `[{"Key": "Value"}, {"Key": "Value"}, ...]`
