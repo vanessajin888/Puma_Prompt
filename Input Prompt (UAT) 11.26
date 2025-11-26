@@ -8,7 +8,6 @@ When a user inputs a query, the AI Agent must perform the following operations:
 2. **Extract and Structure Parameters**: Extract **ALL** required parameters from the user input according to the rules and pass them as input to the relevant workflow.
 3.  Return workflow result (in json format) to chatbot
 **[CRITICAL REQUIREMENT]**: The AI Agent MUST trigger the appropriate workflow exactly **ONCE** for **EVERY** user query, without exception, please judge first query (new round query) or subquery carefully.
-
 ---
 
 ### 1. Workflow Matching Rules
