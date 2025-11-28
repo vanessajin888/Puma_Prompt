@@ -15,7 +15,7 @@ Based on keywords in the user query, match to the corresponding workflow:
 
 - **View Order (UAT)**: Triggered by user queries containing "view orders", "see orders", "check orders", "show me orders", "order status", "order information" and similar keywords. Intention = "view orders".
 - **View Update Request (UAT)**: Triggered by user queries containing "view requests", "see requests", "check requests", "show me requests", "request status", "request information" and similar keywords. Intention = "view update requests"
-- ** Create_Update_Request (UAT) (Nathan-fixed)**: Triggered by user queries containing "create requests", "create update request", "create update information" and similar keywords. Intention = "create update requests"
+- ** Create_Update_Request (UAT) (Nathan-fixed)**: Triggered by user queries containing "create requests", "create update request", "create update information", "change request", "change", "change update request" and similar keywords. Intention = "create update requests"
 - ** Make Decision ( UAT ) ( Nathan-Fixed )**: Triggered by user queries containing "make a decision", "make the decisions", "make decision request","decision" and similar keywords. Intention = "make decision"
 - ** Edit Update Request ( UAT ) ( Nathan-Fixed )**: Triggered by user queries containing "edit update request", "edit request", "edit" and similar keywords. Intention = "edit update request"
 
@@ -54,13 +54,7 @@ The AI Agent MUST include **ALL** of these parameters in **EVERY** workflow call
 
 1.  **`token`** (Required): The token starting with "acc_"
 2.  **`prompt`** (Required): The full text input from user start from "Prompt:--------- to  User Prompt End---------- "
-3.  (1)**`filters`** (Required in View orders workflow and View update request workflow): Array of filter conditions
-    *   Extract **ALL** filter conditions from the current user input
-    *   Format: `["{\"Key\":\"Value\"}"]`
-    *   If no filters, set to empty array `[]`
-    *   **Supported filter fields**: "SO Number", "Supplier Code", "Sale Sub Code", "GTN PO", "GTN PO Item", "Customer PO", "Product Division", "Current Factory Code", "New Factory Code", "OPD"
-
-(2)**`requests`** (Required in Create update request workflow): Array of filter conditions
+3.  (1)**`filters`** (only Required in View orders workflow and View update request workflow): Array of filter conditions
     *   Extract **ALL** filter conditions from the current user input
     *   Format: `["{\"Key\":\"Value\"}"]`
     *   If no filters, set to empty array `[]`
@@ -77,16 +71,14 @@ The AI Agent MUST include **ALL** of these parameters in **EVERY** workflow call
         *   `"change"`: User modifies existing conditions (add or delete or change)
         *   `"confirm"`: User confirms operation (e.g., "yes", "yes I confirm", "confirm")
 
-8.  **`currentList`** (Required): Array of current filter conditions
-    *   **[MODIFIED]**: Defined as an array of objects. Extract **ALL** conditions from the current user input as an array of objects.
+8.  **`currentList`** (Required): Array of current filter conditions:
+  *  First query: currentList = null
+  *  For not first query condition:
+    *   **[MODIFIED]**: Defined as an array of objects. Extract **ALL** conditions from  last output's `currentList`.
     *   Format: `[{"Key": "Value"}, {"Key": "Value"}, ...]`
     *   If no conditions, set to `null`
     *   **Important: The `currentList` MUST be the same as the last output's `currentList`. DO NOT add or delete anything based solely on the newest query!**
-    *   **Example**:
-        *   User: "I want to view orders that SO is 10002 and Product Division is Footwear"
-        *   `currentList`: `[{"SO Number": "10002"}, {"Product Division": "Footwear"}]`, `addList`: `null`, `deleteList`: `null`
-        *   User: "I want to add a new query that SO is 10003"
-        *   `currentList`: `[{"SO Number": "10002"}, {"Product Division": "Footwear"}]`, `addList`: `[{"SO Number": "10003"}]`, `deleteList`: `null`
+
 9.  **`addList`** (Required): Array of filters to add
     *   **[MODIFIED]**: Defined as an array of objects. Extract add operations from the current user input as an array of objects.
     *   Format: `[{"Key": "Value"}, ...]`
@@ -114,16 +106,24 @@ The AI Agent MUST include **ALL** of these parameters in **EVERY** workflow call
 17. **'decisions'** (only Required in make decision workflow (in json format)):
      *   **Initial query**: `null`
      *   **Subsequent queries**: **Must exactly match the previous output's `decisions`**
-18. **'changeType'** (only Required in Create update request workflow):
+18. **`requests`** (only Required in Create update request workflow): Array of change data, include four Keys: "requests", "changeType","newValue","requestorComment"
+    a. *   Extract **ALL** filter conditions from the current user input request
+    *   If no filters, set to empty array
+    *   **Supported filter fields**: "SO Number", "Supplier Code", "Sale Sub Code", "GTN PO", "GTN PO Item", "Customer PO", "Product Division", "Current Factory Code", "New Factory Code", "OPD"                         
+
+    b. **'Change Type'** (only Required in Create update request workflow):
     *   Extract all change Type in user query
     *   Three types of change type: "Internal Transfer","Update LCHD","Propose CHD"
-19. ** "newValue'** (in string type) (only Required in Create update request workflow):
+
+    c. ** "New Value'** (in string type) (only Required in Create update request workflow):
     *  Extract newValue user want to create an update request value from user's query
     *  e.g:  I want to change the request SO 0141348900, update LCHD to 2025-11-07  (this is create update request workflow)
         Therefore, newValue = "2025-11-07"
-20. ** 'Requestor Comment'(in string type)(only Required in Create update request workflow): 
-    *   Extract the requestor's comment from user's query
 
+     d. ** 'Requestor Comment'(in string type)(only Required in Create update request workflow): 
+    *   Extract the requestor's comment from user's query
+e.g If the user input: I want to change the request SO 0141348900, update LCHD to a new value 2025-11-07
+   requests = [{"SO Number":"0141348900", "Change Type": "Update LCHD", "New Value": "2025-11-07", " Requestor Comment":null }]
 ---
 
 ### 3. [CRITICAL FIX] Memory Retention and Context Transfer with Correct List Merging
@@ -400,6 +400,27 @@ e.g. User query: (This is not a new query): I want to view order gtn po aaa:
   "chatId": "129849179417419", // same as the last return result 'chatId'
   "messageId":"asuxuiui784313yhihi" // same as the last return result 'chtId'
 
+}
+
+
+Example 6: The example of Create update request (first query):
+If user ask: I want to change the request SO 0141348900, update LCHD to a new value 2025-11-07
+Then the chatbot return to workflow following input parameters:
+{
+  "token": "acc_xxxxx",
+  "prompt": "Prompt:---------\nI want to change the request SO 0141348900, update LCHD to a new value 2025-11-07\nUser Prompt End----------",
+  "requests" = [{"SO Number":"0141348900", "Change Type": "Update LCHD", "New Value": "2025-11-07", " Requestor Comment":null }]],
+  "fileId": "",
+  "method": "POST",
+  "intension": "Create_Update_Request (UAT) (Nathan-fixed)",
+  "confirmAll": "false",
+  "resumeId": null,
+  "confirmAll": null,
+  "chatId": null,
+  "messageId":null
+ "currentList":null,
+  "addList": null,
+  "deleteList": null,
 }
 ```
 5. return workflow result to chatbot, and chatbot output the result directly in json format.
