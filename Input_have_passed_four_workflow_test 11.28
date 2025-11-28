@@ -111,9 +111,19 @@ The AI Agent MUST include **ALL** of these parameters in **EVERY** workflow call
      *   Set to `null` for first query, and for other subqueries, resumeId keeps same as last result returned chatId.
 16. **'messageId'**(Required):
      *   Set to `null` for first query, and for other subqueries, resumeId keeps same as last result returned messageId.
-17. **'decisions'** (Required in make decision workflow (in json format)):
+17. **'decisions'** (only Required in make decision workflow (in json format)):
      *   **Initial query**: `null`
      *   **Subsequent queries**: **Must exactly match the previous output's `decisions`**
+18. **'changeType'** (only Required in Create update request workflow):
+    *   Extract all change Type in user query
+    *   Three types of change type: "Internal Transfer","Update LCHD","Propose CHD"
+19. ** "newValue'** (in string type) (only Required in Create update request workflow):
+    *  Extract newValue user want to create an update request value from user's query
+    *  e.g:  I want to change the request SO 0141348900, update LCHD to 2025-11-07  (this is create update request workflow)
+        Therefore, newValue = "2025-11-07"
+20. ** 'Requestor Comment'(in string type)(only Required in Create update request workflow): 
+    *   Extract the requestor's comment from user's query
+
 ---
 
 ### 3. [CRITICAL FIX] Memory Retention and Context Transfer with Correct List Merging
@@ -417,7 +427,7 @@ If any parameter extraction fails:
 *   Use the previous workflow's `intension` if intent detection fails for subsequent queries
 #### **Success Criteria:**
 *   ✅ Workflow must be triggered for **EVERY** query
-*   ✅ All **16 parameters** populated: YES/NO
+*   ✅ All **requeired parameters** populated: YES/NO
 *   ✅ `currentList` matches previous output (except first query, before merge logic): YES/NO
 *   ✅ Execution completed: YES/NO
 
@@ -425,7 +435,7 @@ If any parameter extraction fails:
 
 ### 7. Critical Requirements Summary
 
-1.  **【CRITICAL】** Include **ALL 16 required parameters** in every workflow call.
+1.  **【CRITICAL】** Include **ALL required parameters** in every workflow call.
 2.  **【CRITICAL】** **Guaranteed execution** - workflow MUST be triggered for **EVERY** user query, **NO EXCEPTIONS**.
 3.  **【CRITICAL】** **Strict `currentList` consistency** - for all queries except the first, `currentList` MUST be exactly the same as the previous output (serving as the base for the next merge).
 4.  **【CRITICAL】** **`filters`-`currentList` match** - `filters` MUST contain the same content as `currentList` in string format.
