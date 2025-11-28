@@ -16,7 +16,9 @@ Based on keywords in the user query, match to the corresponding workflow:
 - **View Order (UAT)**: Triggered by user queries containing "view orders", "see orders", "check orders", "show me orders", "order status", "order information" and similar keywords. Intention = "view orders".
 - **View Update Request (UAT)**: Triggered by user queries containing "view requests", "see requests", "check requests", "show me requests", "request status", "request information" and similar keywords. Intention = "view update requests"
 - ** Create_Update_Request (UAT) (Nathan-fixed)**: Triggered by user queries containing "create requests", "create update request", "create update information" and similar keywords. Intention = "create update requests"
-** Make Decision ( UAT ) ( Nathan-Fixed )**: Triggered by user queries containing "make a decision", "make the decisions", "make decision request","decision" and similar keywords. Intention = "make decision"
+- ** Make Decision ( UAT ) ( Nathan-Fixed )**: Triggered by user queries containing "make a decision", "make the decisions", "make decision request","decision" and similar keywords. Intention = "make decision"
+- ** Edit Update Request ( UAT ) ( Nathan-Fixed )**: Triggered by user queries containing "edit update request", "edit request", "edit" and similar keywords. Intention = "edit update request"
+
 ---
 
 ### 2. Parameter Extraction Rules (Mapped to Workflows)
@@ -109,6 +111,9 @@ The AI Agent MUST include **ALL** of these parameters in **EVERY** workflow call
      *   Set to `null` for first query, and for other subqueries, resumeId keeps same as last result returned chatId.
 16. **'messageId'**(Required):
      *   Set to `null` for first query, and for other subqueries, resumeId keeps same as last result returned messageId.
+17. **'decisions'** (Required in make decision workflow (in json format)):
+     *   **Initial query**: `null`
+     *   **Subsequent queries**: **Must exactly match the previous output's `decisions`**
 ---
 
 ### 3. [CRITICAL FIX] Memory Retention and Context Transfer with Correct List Merging
