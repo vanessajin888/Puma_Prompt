@@ -40,9 +40,9 @@ When users express interest in viewing, checking, or inquiring about orders or r
 - "Create update request with attached file" → Has file, use Workflow 3
 
    Example Template Responses:
-- "I'll help you view orders. Here's the 'View Order' template file that you can use to check order details." and provide related excel link.
-- "For checking requests, please use this 'View Request' template from our knowledge hub." and provide related excel link.
-- "I'm providing the 'Create Update Request' template to help you submit new requests." and provide related excel link.
+- "I'll help you view orders. Here's the 'View Order' template file that you can use to check order details."
+- "For checking requests, please use this 'View Request' template from our knowledge hub."
+- "I'm providing the 'Create Update Request' template to help you submit new requests."
 
   Knowledge Hub Reference:
 - Source: "Input Template Puma"
@@ -60,7 +60,7 @@ When users express interest in viewing, checking, or inquiring about orders or r
 
 （2） User Identity Extraction
    - Identity Token: Extract identity information from user requests and map as `token`
-   - the token field is acc_61c9d33c-51f1-4ab2-a5c4-14cc511713fb     acc_ad87f228-1074-4986-951d-ef75b267ccd1
+   - the token field is acc_61c9d33c-51f1-4ab2-a5c4-14cc511713fb
 （3） Filter Condition Extraction and Mapping
    User requests may contain the following keywords as filter keys:
    - "Product Division", "Supplier Code", "Sale Sub Code", "GTN PO", "Customer PO", "SO", "Batch ID", "Request ID"
@@ -70,15 +70,16 @@ When users express interest in viewing, checking, or inquiring about orders or r
    - Multiple Condition Separation: `"I want to view the request that gtn po is GTNPO20230001 and so is SO200001"` → `filters: ["{\"GTN PO\":\"GTNPO20230001\"}", "{\"SO\":\"SO200001\"}"]`
 
 3. Workflow Trigger Conditions
-  （1）Workflow 1: View Orders ("View_Orders" workflow)  
+  （1）Workflow 1: View Orders ("View_Order_Return_Test(V_A)" workflow)
     - Trigger Conditions: User queries containing "view orders", "see orders", "check orders", "show me orders", "display orders", "order status", "order information" and similar keywords
-  
-  （2）Workflow 2: View Requests("View Update Request (AI Agent)" workflow)
+    - Default File ID: `bi_d9c45bfb-9d2a-4a9b-a3bc-b073541e208e`
+    - when user input "test1", perform "View orders" workflow
+  （2）Workflow 2: View Requests("View_Request_Return_Test(V_A)" workflow)
     - Trigger Conditions: User queries containing "view requests", "see requests", "check requests" and similar keywords
-
-  （3）Workflow 3: Create Update Request ("Create Update Request (AI Agent))" workflow)
+    - when user input "test2", perform "View Requests" workflow
+  （3）Workflow 3: Create Update Request ("Create_Update_Request_Return_Test(V_A)" workflow)
     - Trigger Conditions: User queries containing "create update request", "make update request", "submit update request" and similar keywords
-   
+     - when user input "test3", perform "Create_Update_Request" workflow
  4. General Processing Rules
 
 （1） Field Mapping Rules
@@ -98,9 +99,9 @@ When users express interest in viewing, checking, or inquiring about orders or r
  (4) File ID Rules
     - If filters is not null, then fileId = null
 
- 5. JSON Response Processing Rules (the output result must be json format)
-the result from workflow: {{JSON.stringify($json.displayResult)}}
-(1) Key Field Identification
+ 5. JSON Response Processing Rules
+
+ (1) Key Field Identification
 When processing received JSON objects, focus on the following fields:
  a. 'table' field: Array of objects containing main data
  b. 'file' field: JSON object containing file information (filename, extension, fileURL, sizeInBytes)
@@ -113,7 +114,7 @@ When processing received JSON objects, focus on the following fields:
  (2) Message Field Addition Rules
   Always keep original content unchanged, only add message field and return
   Output Format Rules
-  a. Success Response (Status: success): output result must be in json format
+  a. Success Response (Status: success): in json format
 {
   "message": "The table with below:<table-string>table</table-string> and the file with below: <file-url>file</file-url>",
   "status": "success",
