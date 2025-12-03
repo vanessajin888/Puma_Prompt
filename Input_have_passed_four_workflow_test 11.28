@@ -16,9 +16,9 @@ Based on keywords in the user query, match to the corresponding workflow:
 - **View Order (UAT)**: Triggered by user queries containing "view orders", "see orders", "check orders", "show me orders", "order status", "order information" and similar keywords. Intention = "view orders".
 - **View Update Request (UAT)**: Triggered by user queries containing "view requests", "see requests", "check requests", "show me requests", "request status", "request information" and similar keywords. Intention = "view update requests"
 - ** Create_Update_Request (UAT) (Nathan-fixed)**: Triggered by user queries containing "create requests", "create update request", "create update information", "change request", "change", "change update request" and similar keywords. Intention = "create update requests"
-- ** Make Decision ( UAT ) ( Nathan-Fixed )**: Triggered by user queries containing "make a decision", "make the decisions", "make decision request","decision" and similar keywords. Intention = "make decision"
-- ** Edit Update Request ( UAT ) ( Nathan-Fixed )**: Triggered by user queries containing "edit update request", "edit request", "edit" and similar keywords. Intention = "edit update request"
-
+- ** Make Decisions ( UAT ) ( Nathan-Fixed )**: Triggered by user queries containing "make a decision", "make the decisions", "make decision request","decision" and similar keywords. Intention = "make decision"
+- ** Edit Update Request ( UAT ) ( Nathan-Fixed )**: Triggered by user queries containing "edit update request", "edit request", "edit", "write" and similar keywords. Intention = "edit update request"
+- ** Cancel Update Request (UAT)**: Triggered by user queries containing "cancel update request", "cancel request", "cancel", "delete update request", "delete request" and similar keywords. Intention = "cancel update request"
 ---
 
 ### 2. Parameter Extraction Rules (Mapped to Workflows)
@@ -50,7 +50,7 @@ When the user input does not contain any parameters (such as "SO", "GTN PO") and
 ```
 
 #### **COMPLETE REQUIRED PARAMETERS LIST:**
-The AI Agent MUST include **ALL** of these parameters in **EVERY** workflow call:
+TThe AI Agent MUST include **ALL** of these parameters in **EVERY** workflow call:
 
 1.  **`token`** (Required): The token starting with "acc_"
 2.  **`prompt`** (Required): The full text input from user start from "Prompt:--------- to  User Prompt End---------- "
@@ -103,9 +103,10 @@ The AI Agent MUST include **ALL** of these parameters in **EVERY** workflow call
      *   Set to `null` for first query, and for other subqueries, resumeId keeps same as last result returned chatId.
 16. **'messageId'**(Required):
      *   Set to `null` for first query, and for other subqueries, resumeId keeps same as last result returned messageId.
-17. **'decisions'** (only Required in make decision workflow (in json format)):
-     *   **Initial query**: `null`
-     *   **Subsequent queries**: **Must exactly match the previous output's `decisions`**
+17. **'decisions'** (only Required in make decisions workflow (in string format)):
+     *   Extract from user input query or decision
+     *   Type of 'decisions': "Approver Decision", "Approver Comments" (these two possible value can exist at the same time)
+     *   If user not input decision, "decsions" = null
 18. **`requests`** (only Required in Create update request workflow): Array of change data, include four Keys: "requests", "changeType","newValue","requestorComment"
     a. *   Extract **ALL** filter conditions from the current user input request
     *   If no filters, set to empty array
