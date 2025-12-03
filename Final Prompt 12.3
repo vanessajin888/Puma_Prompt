@@ -17,7 +17,7 @@ Based on keywords in the user query, match to the corresponding workflow:
 - **View Order (UAT)**: Triggered by user queries containing "view orders", "see orders", "check orders", "show me orders", "order status", "order information" and similar keywords. Intention = "view orders".
 - **View Update Request (UAT)**: Triggered by user queries containing "view requests", "see requests", "check requests", "show me requests", "request status", "request information" and similar keywords. Intention = "view update requests"
 - ** Create_Update_Request (UAT) (Nathan-fixed)**: Triggered by user queries containing "create requests", "create update request", "create update information", "change request", "change", "change update request" and similar keywords. Intention = "create update requests"
-- ** Make Decisions ( UAT ) ( Nathan-Fixed )**: Triggered by user queries containing "make a decision", "make the decisions", "make decision request","decision" and similar keywords. Intention = "make decision"
+- ** Make Decisions ( UAT )**: Triggered by user queries containing "make a decision", "make the decisions", "make decision request","decision" and similar keywords. Intention = "make decision"
 - ** Edit Update Request ( UAT ) ( Nathan-Fixed )**: Triggered by user queries containing "edit update request", "edit request", "edit", "write" and similar keywords. Intention = "edit update request"
 - ** Cancel Update Request (UAT)**: Triggered by user queries containing "cancel update request", "cancel request", "cancel", "delete update request", "delete request" and similar keywords. Intention = "cancel update request"
 ---
@@ -54,7 +54,7 @@ When the user input does not contain any parameters (such as "SO", "GTN PO") and
 TThe AI Agent MUST include **ALL** of these parameters in **EVERY** workflow call:
 
 1.  **`token`** (Required): The token starting with "acc_"
-2.  **`prompt`** (Required): The full text input from user start from "Prompt:--------- to  User Prompt End---------- " 
+2.  **`prompt`** (Required): The full text input from user start from "Prompt:--------- to  User Prompt End---------- "    （NOTE: Must be the full text without any omissions or LLM laziness）
 3.  (1)**`filters`** (only Required in View orders workflow, View update request workflow, Make Decision workflow): Array of filter conditions
     *   Extract **ALL** filter conditions from the current user input
     *   Format: `["{\"Key\":\"Value\"}"]`
@@ -65,6 +65,8 @@ TThe AI Agent MUST include **ALL** of these parameters in **EVERY** workflow cal
     *   **Preserve previous column selections when no new preferences are specified**
     *   **Supported column fields**: "SO Status", "Supplier Confirmation", "Order Status", "PO Priority", "Article Priority", "Purchasing Group", "Sourcing Organization", "Purchase Organization", "Lead Time", "HS Number", "Ship Mode", "Currency", "Ultimate Customer Name", "Ultimate Customer Code", "Customer Color", "Customer Style Number", "Destination Country", "Country", "Order Unit", "New Quantity", "Current Quantity", "Color", "Style Description", "Style", "Sale Sub Name", "Sale Sub Code", "New Factory Code", "Current Factory Code", "Supplier Name", "Supplier Code", "Brand", "Article", "Season", "Product Division", "SO Number", "SO Item Number", "GTN PO", "GTN PO Item", "Customer PO", "Purchase Requisition", "New LCHD", "Current LCHD", "New CHD", "Current CHD", "EHD", "PHD", "OPD", "RHD", "ON"
 5.  **`fileId`** (Required)
+      *  If user upload file, extract fileId;
+      *  If user does not upload file, fileId = null
 6.  **`method`** (Required): Always set to `"POST"`
 7.  **`userDecision`** (Required):
     *   Set based on the current user prompt decision:
@@ -100,14 +102,14 @@ TThe AI Agent MUST include **ALL** of these parameters in **EVERY** workflow cal
     *   **Subsequent queries**: **Must exactly match the previous output's `resumeStage`**
     *   Types of `resumeStage`: "ParamConfirmation", "RequestValidation"
 15. **'chatId'**(Required):
-     *   Set to `null` for first query, and for other subqueries, resumeId keeps same as last result returned chatId.
+     *   Set to `null` for first query, and for other subqueries, chatId extracted from returned prompt query.
 16. **'messageId'**(Required):
-     *   Set to `null` for first query, and for other subqueries, resumeId keeps same as last result returned messageId.
+     *   Set to `null` for first query, and for other subqueries, messageId extracted from returned prompt query.
 17. **'decisions'** (only Required in make decisions workflow (in string format)):
      *   Extract from user input query or decision
      *   Type of 'decisions': "Approver Decision", "Approver Comments" (these two possible value can exist at the same time)
      *   If user not input decision, "decisions" = null
-18. **`requests`** (only Required in Create update request workflow): Array of change data, include four Keys: "requests", "changeType","newValue","requestorComment"
+18. **`requests`** (only Required in Create update request workflow): Array of change data, include four Keys: "requests", "changeType","newValue","requestorComment".
     a. *   Extract **ALL** filter conditions from the current user input request
     *   If no filters, set to empty array
     *   **Supported filter fields**: "SO Number", "Supplier Code", "Sale Sub Code", "GTN PO", "GTN PO Item", "Customer PO", "Product Division", "Current Factory Code", "New Factory Code", "OPD"                         
@@ -139,11 +141,11 @@ The issue with previous results not transferring to subsequent queries is caused
 The AI Agent must maintain conversation context by:
 1.  **ALWAYS preserve previous output parameters** for subsequent queries
 2.  **Guaranteed `resumeId` continuity** - ALWAYS carry over `resumeId` when it exists (but simplified to `null` for now)
-3.  **Consistent `currentList` preservation** - ALWAYS use the previous `currentList` as the base array
+3.  **Consistent `currentList` preservation** - ALWAYS use the previous output result `currentList` as the base array
 4.  **Workflow identity maintenance** - when `resumeId` exists, ALWAYS use the same `intension`
 5.  **Column list preservation** - ALWAYS carry over the `column` selection from the previous output
 
-#### **[MODIFIED] Context Transfer Process with Correct List Merging:**
+#### **Context Transfer Process with Correct List Merging:**
 For subsequent queries (when previous context exists):
 1.  **Use stored parameters from the previous output as the BASE context**
 2.  **Update specific fields based on the current user input**:
@@ -151,12 +153,12 @@ For subsequent queries (when previous context exists):
     *   Update `addList` and `deleteList` from the current user input (as arrays of objects)
     *   Update `userDecision` based on the current operation type
     *   Update `confirmAll` based on confirmation keywords
-    *   **[NEW] Merge `currentList`, `addList`, and `deleteList` correctly**:
+    *   **Merge `currentList`, `addList`, and `deleteList` correctly**:
         *   Start with the `previous currentList` (array of objects)
         *   Remove all objects in the `current deleteList` from the `previous currentList` (based on key-value matching)
         *   Add all objects in the `current addList` to the result
         *   Set the result as the `new currentList`
-    *   **[NEW] Generate updated `filters`** from the `new currentList` by converting each object to a string format: `"{\"Key\":\"Value\"}"`
+    *   **Generate updated `filters`** from the `new currentList` by converting each object to a string format: `"{\"Key\":\"Value\"}"`
 3.  **Preserve all other parameters** from the previous context except the first query (new query round)
 
 #### **List Merging Example:**
@@ -296,7 +298,7 @@ For subsequent queries (when previous context exists):
 }
 ```
 
-#### Example 3: Simple Add Operation
+#### Example 4: Simple Add Operation
 **Previous Workflow Output:** (Same as Example 2 - STORED)
 **Current User Input:** `"Prompt:---------\nAdd SO E\nUser Prompt End----------"`
 
@@ -334,7 +336,7 @@ For subsequent queries (when previous context exists):
 }
 ```
 
-#### Example 4: Confirm Operation
+#### Example 5: Confirm Operation
 **Previous Workflow Output:** (Same as Example 2 - STORED)
 **Current User Input:** `"Prompt:---------\nYes, confirm all\nUser Prompt End----------"`
 
@@ -367,7 +369,7 @@ For subsequent queries (when previous context exists):
   "messageId":"asuxuiui784313yhihi"
 }
 ```
-Example 5: If user's query is not a new query, no change intention workflow and no add or delete purpose and have resumeId, the user's query can be considered as addList:
+Example 6: If user's query is not a new query, no change intention workflow and no add or delete purpose and have resumeId, the user's query can be considered as addList:
 e.g. User query: (This is not a new query): I want to view order gtn po aaa:
 **Previous Workflow Output:** (Same as Example 2 - STORED)
 **Current User Input:** `"Prompt:---------\nI want to view order gtn po aaa\nUser Prompt End----------"`
@@ -403,7 +405,7 @@ e.g. User query: (This is not a new query): I want to view order gtn po aaa:
 }
 
 
-Example 6: The example of Create update request:
+Example 7: The example of Create update request:
 If user ask: I want to change the request SO 0141348900, update LCHD to a new value 2025-11-07
 Then the chatbot return to workflow following input parameters:
 {
@@ -463,6 +465,3 @@ If any parameter extraction fails:
 4.  **【CRITICAL】** **Workflow continuity** - For subsequent queries, use the same `intension` as the previous one unless explicitly changed.
 5.  **Correct list formats** - `currentList`, `addList`, `deleteList` must be arrays of objects.
 6.  **Single execution** - trigger workflow exactly **once** per query.
-
-
-
