@@ -1,0 +1,807 @@
+{
+  "timestamp": "2025-12-10T09:33:13Z",
+  "accountId": "251988004827",
+  "identity": {
+    "arn": "arn:aws:iam::251988004827:user/imbrace-app-user"
+  },
+  "region": "us-west-2",
+  "requestId": "1a610100-5177-405e-bffd-9a58c4afb461",
+  "operation": "ConverseStream",
+  "modelId": "openai.gpt-oss-120b-1:0",
+  "input": {
+    "inputContentType": "application/json",
+    "inputBodyJson": {
+      "messages": [
+        {
+          "role": "user",
+          "content": [
+            {
+              "text": "Prompt:---------\nUser New Message: I also want to check so order 0123130281\n\nUser Token is: \nacc_54644f15-c08f-4bbd-8ab2-cd778f154486\n\nHere is the chat information: \n Chat Id : 06cd9432-a58d-4a22-bdcf-28be38c590ab, Message Id : cc71e907-dc75-4c68-b5d0-6ab358a82bb7\n\nHere is the resume information: \nResume Id : bcd61c63c53844ef99090bdd663d3d24\nResume Stage RequestValidation\n\nHere is the history of the converstion:\nHistory 0. user : I want to view order. Message Time : 1765358078\nHistory 1. user : I want to view order 0123142643. Message Time : 1765358246\nHistory 2. assistant : {\"status\": \"success\", \"code\": 200, \"resumeId\": \"bcd61c63c53844ef99090bdd663d3d24\", \"resumeStage\": \"ParamConfirmation\", \"workflowType\": \"view_order\", \"needConfirmList\": [{\"SO Number\": \"0123142643\"}], \"options\": [{\"name\": \"Confirm\"}, {\"name\": \"Abort\"}], \"needConfirmListCount\": 1, \"message\": \"I have curated a list of orders that you want to check, can you please check the following table and confirm?: (<count>needConfirmListCount</count> orders)<br/><list>needConfirmList</list><br/><options>options</options>\"}. Message Time : 1765358246\nHistory 3. user : Confirm. Message Time : 1765358283\nHistory 4. assistant : {\"status\": \"error\", \"code\": 403003, \"resumeId\": \"bcd61c63c53844ef99090bdd663d3d24\", \"resumeStage\": \"RequestValidation\", \"workflowType\": \"view_order\", \"error\": \"No access right\", \"invalidRequest\": [{\"SO Number\": \"0123142643\"}], \"options\": [{\"name\": \"Remove all Invalid\"}], \"invalidRequestCount\": 1, \"message\": \"You don't have access to the following orders: (<count>invalidRequestCount</count> request)<br/><list>invalidRequest</list><br/>Please update your input to ensure you have access to all the orders. Alternatively, you may choose to view only the orders available to you.<br/><br/>If the issue persists, please contact the admin for assistance.<br/><options>options</options>\"}. Message Time : 1765358283\nHistory 5. user : I also want to check so order 0123130281. Message Time : 1765358333\n\nUser Prompt End----------"
+            }
+          ]
+        },
+        {
+          "role": "assistant",
+          "content": [
+            {
+              "text": "{\n  \"message\": \"Processing your request to view additional order.\",\n  \"token\": \"acc_54644f15-c08f-4bbd-8ab2-cd778f154486\",\n  \"prompt\": \"Prompt:---------\\nUser New Message: I also want to check so order 0123130281\\n\\nUser Token is: \\nacc_54644f15-c08f-4bbd-8ab2-cd778f154486\\n\\nHere is the chat information: \\n Chat Id : 06cd9432-a58d-4a22-bdcf-28be38c590ab, Message Id : cc71e907-dc75-4c68-b5d0-6ab358a82bb7\\n\\nHere is the resume information: \\nResume Id : bcd61c63c53844ef99090bdd663d3d24\\nResume Stage RequestValidation\\n\\nHere is the history of the converstion:\\nHistory 0. user : I want to view order. Message Time : 1765358078\\nHistory 1. user : I want to view order 0123142643. Message Time : 1765358246\\nHistory 2. assistant : {\\\"status\\\": \\\"success\\\", \\\"code\\\": 200, \\\"resumeId\\\": \\\"bcd61c63c53844ef99090bdd663d3d24\\\", \\\"resumeStage\\\": \\\"ParamConfirmation\\\", \\\"workflowType\\\": \\\"view_order\\\", \\\"needConfirmList\\\": [{\\\"SO Number\\\": \\\"0123142643\\\"}], \\\"options\\\": [{\\\"name\\\": \\\"Confirm\\\"}, {\\\"name\\\": \\\"Abort\\\"}], \\\"needConfirmListCount\\\": 1, \\\"message\\\": \\\"I have curated a list of orders that you want to check, can you please check the following table and confirm?: (<count>needConfirmListCount</count> orders)<br/><list>needConfirmList</list><br/><options>options</options>\\\"}. Message Time : 1765358246\\nHistory 3. user : Confirm. Message Time : 1765358283\\nHistory 4. assistant : {\\\"status\\\": \\\"error\\\", \\\"code\\\": 403003, \\\"resumeId\\\": \\\"bcd61c63c53844ef99090bdd663d3d24\\\", \\\"resumeStage\\\": \\\"RequestValidation\\\", \\\"workflowType\\\": \\\"view_order\\\", \\\"error\\\": \\\"No access right\\\", \\\"invalidRequest\\\": [{\\\"SO Number\\\": \\\"0123142643\\\"}], \\\"options\\\": [{\\\"name\\\": \\\"Remove all Invalid\\\"}], \\\"invalidRequestCount\\\": 1, \\\"message\\\": \\\"You don't have access to the following orders: (<count>invalidRequestCount</count> request)<br/><list>invalidRequest</list><br/>Please update your input to ensure you have access to all the orders. Alternatively, you may choose to view only the orders available to you.<br/><br/>If the issue persists, please contact the admin for assistance.<br/><options>options</options>\\\"}. Message Time : 1765358283\\nHistory 5. user : I also want to check so order 0123130281. Message Time : 1765358333\\n\\nUser Prompt End----------\",\n  \"filters\": [\n    \"{\\\"SO Number\\\": \\\"0123142643\\\"}\",\n    \"{\\\"SO Number\\\": \\\"0123130281\\\"}\"\n  ],\n  \"column\": null,\n  \"fileId\": null,\n  \"method\": \"POST\",\n  \"userDecision\": \"change\",\n  \"resumeStage\": \"RequestValidation\",\n  \"currentList\": [\n    { \"SO Number\": \"0123142643\" },\n    { \"SO Number\": \"0123130281\" }\n  ],\n  \"addList\": [\n    { \"SO Number\": \"0123130281\" }\n  ],\n  \"deleteList\": null,\n  \"intension\": \"View Order\",\n  \"resumeId\": \"bcd61c63c53844ef99090bdd663d3d24\",\n  \"confirmAll\": \"false\",\n  \"removeAll\": \"false\",\n  \"chatId\": \"06cd9432-a58d-4a22-bdcf-28be38c590ab\",\n  \"messageId\": \"cc71e907-dc75-4c68-b5d0-6ab358a82bb7\"\n}"
+            }
+          ]
+        },
+        {
+          "role": "user",
+          "content": [
+            {
+              "text": "Prompt:---------\nUser New Message: I want to view order with **so 0123130281**\n\nUser Token is: \nacc_54644f15-c08f-4bbd-8ab2-cd778f154486\n\nHere is the chat information: \n Chat Id : 06cd9432-a58d-4a22-bdcf-28be38c590ab, Message Id : 6df67249-cccb-48ef-ab0f-cb85a92ba04b\n\nHere is the resume information: \nResume Id : bcd61c63c53844ef99090bdd663d3d24\nResume Stage RequestValidation\n\nHere is the history of the converstion:\nHistory 0. user : I want to view order. Message Time : 1765358078\nHistory 1. user : I want to view order 0123142643. Message Time : 1765358246\nHistory 2. assistant : {\"status\": \"success\", \"code\": 200, \"resumeId\": \"bcd61c63c53844ef99090bdd663d3d24\", \"resumeStage\": \"ParamConfirmation\", \"workflowType\": \"view_order\", \"needConfirmList\": [{\"SO Number\": \"0123142643\"}], \"options\": [{\"name\": \"Confirm\"}, {\"name\": \"Abort\"}], \"needConfirmListCount\": 1, \"message\": \"I have curated a list of orders that you want to check, can you please check the following table and confirm?: (<count>needConfirmListCount</count> orders)<br/><list>needConfirmList</list><br/><options>options</options>\"}. Message Time : 1765358246\nHistory 3. user : Confirm. Message Time : 1765358283\nHistory 4. assistant : {\"status\": \"error\", \"code\": 403003, \"resumeId\": \"bcd61c63c53844ef99090bdd663d3d24\", \"resumeStage\": \"RequestValidation\", \"workflowType\": \"view_order\", \"error\": \"No access right\", \"invalidRequest\": [{\"SO Number\": \"0123142643\"}], \"options\": [{\"name\": \"Remove all Invalid\"}], \"invalidRequestCount\": 1, \"message\": \"You don't have access to the following orders: (<count>invalidRequestCount</count> request)<br/><list>invalidRequest</list><br/>Please update your input to ensure you have access to all the orders. Alternatively, you may choose to view only the orders available to you.<br/><br/>If the issue persists, please contact the admin for assistance.<br/><options>options</options>\"}. Message Time : 1765358283\nHistory 5. user : I also want to check so order 0123130281. Message Time : 1765358333\nHistory 6. assistant : {\n  \"message\": \"Processing your request to view additional order.\",\n  \"token\": \"acc_54644f15-c08f-4bbd-8ab2-cd778f154486\",\n  \"prompt\": \"Prompt:---------\\nUser New Message: I also want to check so order 0123130281\\n\\nUser Token is: \\nacc_54644f15-c08f-4bbd-8ab2-cd778f154486\\n\\nHere is the chat information: \\n Chat Id : 06cd9432-a58d-4a22-bdcf-28be38c590ab, Message Id : cc71e907-dc75-4c68-b5d0-6ab358a82bb7\\n\\nHere is the resume information: \\nResume Id : bcd61c63c53844ef99090bdd663d3d24\\nResume Stage RequestValidation\\n\\nHere is the history of the converstion:\\nHistory 0. user : I want to view order. Message Time : 1765358078\\nHistory 1. user : I want to view order 0123142643. Message Time : 1765358246\\nHistory 2. assistant : {\\\"status\\\": \\\"success\\\", \\\"code\\\": 200, \\\"resumeId\\\": \\\"bcd61c63c53844ef99090bdd663d3d24\\\", \\\"resumeStage\\\": \\\"ParamConfirmation\\\", \\\"workflowType\\\": \\\"view_order\\\", \\\"needConfirmList\\\": [{\\\"SO Number\\\": \\\"0123142643\\\"}], \\\"options\\\": [{\\\"name\\\": \\\"Confirm\\\"}, {\\\"name\\\": \\\"Abort\\\"}], \\\"needConfirmListCount\\\": 1, \\\"message\\\": \\\"I have curated a list of orders that you want to check, can you please check the following table and confirm?: (<count>needConfirmListCount</count> orders)<br/><list>needConfirmList</list><br/><options>options</options>\\\"}. Message Time : 1765358246\\nHistory 3. user : Confirm. Message Time : 1765358283\\nHistory 4. assistant : {\\\"status\\\": \\\"error\\\", \\\"code\\\": 403003, \\\"resumeId\\\": \\\"bcd61c63c53844ef99090bdd663d3d24\\\", \\\"resumeStage\\\": \\\"RequestValidation\\\", \\\"workflowType\\\": \\\"view_order\\\", \\\"error\\\": \\\"No access right\\\", \\\"invalidRequest\\\": [{\\\"SO Number\\\": \\\"0123142643\\\"}], \\\"options\\\": [{\\\"name\\\": \\\"Remove all Invalid\\\"}], \\\"invalidRequestCount\\\": 1, \\\"message\\\": \\\"You don't have access to the following orders: (<count>invalidRequestCount</count> request)<br/><list>invalidRequest</list><br/>Please update your input to ensure you have access to all the orders. Alternatively, you may choose to view only the orders available to you.<br/><br/>If the issue persists, please contact the admin for assistance.<br/><options>options</options>\\\"}. Message Time : 1765358283\\nHistory 5. user : I also want to check so order 0123130281. Message Time : 1765358333\\n\\nUser Prompt End----------\",\n  \"filters\": [\n    \"{\\\"SO Number\\\": \\\"0123142643\\\"}\",\n    \"{\\\"SO Number\\\": \\\"0123130281\\\"}\"\n  ],\n  \"column\": null,\n  \"fileId\": null,\n  \"method\": \"POST\",\n  \"userDecision\": \"change\",\n  \"resumeStage\": \"RequestValidation\",\n  \"currentList\": [\n    { \"SO Number\": \"0123142643\" },\n    { \"SO Number\": \"0123130281\" }\n  ],\n  \"addList\": [\n    { \"SO Number\": \"0123130281\" }\n  ],\n  \"deleteList\": null,\n  \"intension\": \"View Order\",\n  \"resumeId\": \"bcd61c63c53844ef99090bdd663d3d24\",\n  \"confirmAll\": \"false\",\n  \"removeAll\": \"false\",\n  \"chatId\": \"06cd9432-a58d-4a22-bdcf-28be38c590ab\",\n  \"messageId\": \"cc71e907-dc75-4c68-b5d0-6ab358a82bb7\"\n}. Message Time : 1765358333\nHistory 7. user : I want to view order with **so 0123130281**. Message Time : 1765359191\n\nUser Prompt End----------"
+            }
+          ]
+        }
+      ],
+      "system": [
+        {
+          "text": "You are an AI assistant answering questions based on retrieved context from knowledge_hub.\n    \n    You MUST provide the best answer based on the context\n    Date & Time: 2025-12-10T09:33:13.047324     \n    Current Conversation ID: 06cd9432-a58d-4a22-bdcf-28be38c590ab\n     Also you have access to many other tools to serve many other purposes.Please strictly follow the following settings for the AI Assistant:\n- Personality and Role: You are a polite, disciplined, meticulous assistant who specializes in logistics. You are currently working as a frontend assistant to coordinate orders within the supply chain of PUMA - an apparel company. Please extract information from users to activate the intended workflow. \n\n- Core Task: **AI Agent Prompt for Workflow Matching and Parameter Extraction**\n**Every user query must trigger a workflow.** \n\n\n**Objective:**  \nWhen a user inputs a query, the AI Agent must perform the following operations:  \n1. **Match Corresponding Workflow**: Identify the intent based on keywords in the user query and map it to the appropriate workflow, then trigger that workflow. **Every query must trigger a workflow.** If User New Message does not contain enough keyword, please look at the most recent history \"workflowType\" to trigger the same workflow.\n2. **Extract and Structure Parameters**: Extract **ALL** required parameters from the user input according to the rules and pass them as input to the relevant workflow.\n3.  Return workflow result (in json format) to chatbot\n**[CRITICAL REQUIREMENT]**: The AI Agent MUST trigger the appropriate workflow exactly **ONCE** for **EVERY** user query, without exception, please judge first query (new round query) or subquery carefully.\nNote: If the user suddenly switches the triggered workflow, a new round of query begins, and all parameters are initialized. Alternatively, when \"resumeId\" = null, it is considered the first query.\n---\n\n\n### 1. Workflow Matching Rules\nBased on keywords in the user query, match to the corresponding workflow:\n\n- **View Order (Demo)**: Triggered by user queries containing \"view orders\", \"see orders\", \"check orders\", \"show me orders\", \"order status\", \"order information\" and similar keywords. Intention = \"view orders\".\n- **View Update Request (Demo)**: Triggered by user queries containing \"view requests\", \"see requests\", \"check requests\", \"show me requests\", \"request status\", \"request information\" and similar keywords. Intention = \"view update requests\"\n- ** Create Update Request (Demo)**: Triggered by user queries containing \"create requests\", \"create update request\", \"create update information\", \"change request\", \"change\", \"change update request\" and similar keywords. Intention = \"create update requests\"\n- ** Make Decisions (Demo)**: Triggered by user queries containing \"make a decision\", \"make the decisions\", \"make decision request\",\"decision\" and similar keywords. Intention = \"make decision\"\n- ** Edit Update Request (Demo)**: Triggered by user queries containing \"edit update request\", \"edit request\", \"edit\", \"write\" and similar keywords. Intention = \"edit update request\"\n- ** Cancel Update Request (Demo)**: Triggered by user queries containing \"cancel update request\", \"cancel request\", \"cancel\", \"delete update request\", \"delete request\" and similar keywords. Intention = \"cancel update request\"\n- ** View Request History (Demo)**: Triggered by user queries containing \"view request history\", \"check history of request\", \"past history\", \"past record data of requests\" and similar keywords. Intention = \"view request history\"\n---\n\n### 2. Parameter Extraction Rules (Mapped to Workflows)\n#### **Template Rules**\nWhen the user input does not contain any parameters (such as \"SO\", \"GTN PO\") and no file is uploaded:\n\n**Example:**\n- **User Input**: \"Prompt:---------\\nI want to view order\\nUser Prompt End----------\"\n- **LLM maps input parameters to workflow:**\n```json\n{\n  \"token\": \"acc_xxxx\",\n  \"prompt\": \"Prompt:---------\\nI want to view order\\nUser Prompt End----------\",\n  \"filters\": [],\n  \"column\": null,\n  \"fileId\": \"\",\n  \"method\": \"POST\",\n  \"userDecision\": null,\n  \"resumeStage\": null,\n  \"currentList\": [],\n  \"addList\": null,\n  \"deleteList\": null,\n  \"intension\": \"View Order\",\n  \"resumeId\": null,\n  \"confirmAll\": \"false\",\n  \"chatId\":null,\n  \"messageId\":null\n}\n```\n\n#### **COMPLETE REQUIRED PARAMETERS LIST:**\nTThe AI Agent MUST include **ALL** of these parameters in **EVERY** workflow call:\n\n1.  **`token`** (Required): The token starting with \"acc_\"\n2.  **`prompt`** (Required): The full text input from user start from \"Prompt:--------- to  User Prompt End---------- \"    （NOTE: Must be the full text without any omissions or LLM laziness）\n3.  (1)**`filters`** (only Required in View orders workflow, View update request workflow, Make Decision workflow): Array of filter conditions\n    *   Extract **ALL** filter conditions from the current user input\n    *   Format: `[\"{\\\"Key\\\":\\\"Value\\\"}\"]`\n    *   If no filters, set to empty array `[]`\n    *   **Supported filter fields**: \"SO Number\", \"Supplier Code\", \"Sale Sub Code\", \"GTN PO\", \"GTN PO Item\", \"Customer PO\", \"Product Division\", \"Current Factory Code\", \"New Factory Code\", \"OPD\"\n4.  **`column`** (Required)\n    *   Utilize user-specified column names when provided; otherwise, set to `null`\n    *   **Preserve previous column selections when no new preferences are specified**\n    *   **Supported column fields**: \"SO Status\", \"Supplier Confirmation\", \"Order Status\", \"PO Priority\", \"Article Priority\", \"Purchasing Group\", \"Sourcing Organization\", \"Purchase Organization\", \"Lead Time\", \"HS Number\", \"Ship Mode\", \"Currency\", \"Ultimate Customer Name\", \"Ultimate Customer Code\", \"Customer Color\", \"Customer Style Number\", \"Destination Country\", \"Country\", \"Order Unit\", \"New Quantity\", \"Current Quantity\", \"Color\", \"Style Description\", \"Style\", \"Sale Sub Name\", \"Sale Sub Code\", \"New Factory Code\", \"Current Factory Code\", \"Supplier Name\", \"Supplier Code\", \"Brand\", \"Article\", \"Season\", \"Product Division\", \"SO Number\", \"SO Item Number\", \"GTN PO\", \"GTN PO Item\", \"Customer PO\", \"Purchase Requisition\", \"New LCHD\", \"Current LCHD\", \"New CHD\", \"Current CHD\", \"EHD\", \"PHD\", \"OPD\", \"RHD\", \"ON\"\n5.  **`fileId`** (Required)\n      *  If user upload file, extract fileId;\n      *  If user does not upload file, fileId = null\n6.  **`method`** (Required): Always set to `\"POST\"`\n7.  **`userDecision`** (Required):\n    *   Set based on the current user prompt decision:\n        *   For the first query, 'userDecision' is null\n        *   `\"change\"`: User modifies existing conditions (add or delete or change)\n        *   `\"confirm\"`: User confirms operation (e.g., \"yes\", \"yes I confirm\", \"confirm\")\n\n8.  **`currentList`** (Required): Array of current filter conditions:\n  *  First query: currentList = null\n  *  For not first query condition:\n    *   **[MODIFIED]**: Defined as an array of objects. Extract **ALL** conditions from  last output's `currentList` .\n    *   Format: `[{\"Key\": \"Value\"}, {\"Key\": \"Value\"}, ...]`\n    *   **Important: The `currentList` MUST be the same as the last output's `currentList` . DO NOT add or delete anything based solely on the newest query!**\n\n9.  **`addList`** (Required): Array of filters to add\n    *   **[MODIFIED]**: Defined as an array of objects. Extract add operations from the current user input as an array of objects.\n    *   Format: `[{\"Key\": \"Value\"}, ...]`\n    *   **Only extract items explicitly following words like \"add\" into the `addList`; otherwise, do NOT extract.**\n    *   If no add operations, set to `null`\n10. **`deleteList`** (Required): Array of filters to delete\n    *   **[MODIFIED]**: Defined as an array of objects. Extract delete operations from the current user input as an array of objects.\n    *   Format: `[{\"Key\": \"Value\"}, ...]`\n    *   **Only extract items explicitly following words like \"delete\" into the `deleteList`; otherwise, do NOT extract.**\n    *   If no delete operations, set to `null`\n11. **`intension`** (Required): Executed workflow name\n    *   ALWAYS determine from the current user intent\n12. **`resumeId`** (Required):\n    *   Set to `null` for first query, and for other subqueries, resumeId keeps same as last result returned.\n13. **`confirmAll`** (Required):\n    *   Set to `\"true\"` if the user confirm\n14. **`resumeStage`** (Required):\n    *   **Initial query**: `null`\n    *   **Subsequent queries**: **Must exactly match the previous output's `resumeStage`**\n    *   Types of `resumeStage`: \"ParamConfirmation\", \"RequestValidation\"\n15. **'chatId'**(Required):\n     *   Set to `null` for first query, and for other subqueries, chatId extracted from returned prompt query.\n16. **'messageId'**(Required):\n     *   Set to `null` for first query, and for other subqueries, messageId extracted from returned prompt query.\n17. **'decisions'** (only Required in make decisions workflow and edit update request (in string format)):\n     *   Extract from user input query or decision\n     *   Type of 'decisions': \"Approver Decision\", \"Approver Comments\" (these two possible value can exist at the same time)\n     *   If user not input decision, \"decisions\" = null\n18. **`requests`** (only Required in Create update request workflow): Array of change data, include four Keys: \"requests\", \"changeType\",\"newValue\",\"requestorComment\".\n    a. *   Extract **ALL** filter conditions from the current user input request\n    *   If no filters, set to empty array\n    *   **Supported filter fields**: \"SO Number\", \"Supplier Code\", \"Sale Sub Code\", \"GTN PO\", \"GTN PO Item\", \"Customer PO\", \"Product Division\", \"Current Factory Code\", \"New Factory Code\", \"OPD\"                         \n\n    b. **'Change Type'** (only Required in Create update request workflow):\n    *   Extract all change Type in user query\n    *   Three types of change type: \"Internal Transfer\",\"Update LCHD\",\"Propose CHD\"\n\n    c. ** \"New Value'** (in string type) (only Required in Create update request workflow):\n    *  Extract newValue user want to create an update request value from user's query\n    *  e.g:  I want to change the request SO 0141348900, update LCHD to 2025-11-07  (this is create update request workflow)\n        Therefore, newValue = \"2025-11-07\"\n\n     d. ** 'Requestor Comment'(in string type)(only Required in Create update request workflow): \n    *   Extract the requestor's comment from user's query\ne.g If the user input: I want to change the request SO 0141348900, update LCHD to a new value 2025-11-07\n   requests = [{\"SO Number\":\"0141348900\", \"Change Type\": \"Update LCHD\", \"New Value\": \"2025-11-07\", \" Requestor Comment\":null }]\n\n19. **`removeAll`** (Required):\n    *   Set to `\"true\"` if the user explicitly \"remove all\" otherwise, set to `\"false\"`\n---\n\n### 3. [CRITICAL FIX] Memory Retention and Context Transfer with Correct List Merging\n\n#### **Memory Transfer Problem Analysis:**\nThe issue with previous results not transferring to subsequent queries is caused by:\n1.  **Inconsistent parameter formats** between `currentList`, `addList`, and `deleteList`\n2.  **Incorrect list merging logic** that doesn't properly handle arrays\n3.  **Missing context preservation** in output processing\n\n#### **Fixed Memory Retention Rules:**\nThe AI Agent must maintain conversation context by:\n1.  **ALWAYS preserve previous output parameters** for subsequent queries\n2.  **Guaranteed `resumeId` continuity** - ALWAYS carry over `resumeId` when it exists (but simplified to `null` for now)\n3.  **Consistent `currentList` preservation** - ALWAYS use the previous output result `currentList` as the base array\n4.  **Workflow identity maintenance** - when `resumeId` exists, ALWAYS use the same `intension`\n5.  **Column list preservation** - ALWAYS carry over the `column` selection from the previous output\n\n#### **Context Transfer Process with Correct List Merging:**\nFor subsequent queries (when previous context exists):\n1.  **Use stored parameters from the previous output as the BASE context**\n2.  **Update specific fields based on the current user input**:\n    *   Update `prompt` with the current user text\n    *   Update `addList` and `deleteList` from the current user input (as arrays of objects)\n    *   Update `userDecision` based on the current operation type\n    *   Update `confirmAll` based on confirmation keywords\n    *   **Merge `currentList`, `addList`, and `deleteList` correctly**:\n        *   Start with the `previous currentList` (array of objects)\n        *   Remove all objects in the `current deleteList` from the `previous currentList` (based on key-value matching)\n        *   Add all objects in the `current addList` to the result\n        *   Set the result as the `new currentList`\n    *   **Generate updated `filters`** from the `new currentList` by converting each object to a string format: `\"{\\\"Key\\\":\\\"Value\\\"}\"`\n3.  **Preserve all other parameters** from the previous context except the first query (new query round)\n\n#### **List Merging Example:**\n*   Previous `currentList`: `[{\"SO Number\": \"A\"}, {\"SO Number\": \"B\"}, {\"SO Number\": \"C\"}]`\n*   Current `addList`: `[{\"SO Number\": \"D\"}]`\n*   Current `deleteList`: `[{\"SO Number\": \"A\"}]`\n*   New `currentList`: `[{\"SO Number\": \"B\"}, {\"SO Number\": \"C\"}, {\"SO Number\": \"D\"}]`\n*   New `filters`: `[\"{\\\"SO Number\\\": \\\"B\\\"}\", \"{\\\"SO Number\\\": \\\"C\\\"}\", \"{\\\"SO Number\\\": \\\"D\\\"}\"]`\n\n---\n\n### 4. Complete Parameter Structure Examples with Correct List Formats\n\n#### Example 1: First User Query (GUARANTEED EXECUTION)\n**User Input:** `\"Prompt:---------\\nI want to view orders that SO is 10002 and Product Division is Footwear\\nUser Prompt End----------\"`\n\n**Complete Workflow Input:**\n```json\n{\n  \"token\": \"acc_xxxxx\",\n  \"prompt\": \"Prompt:---------\\nI want to view orders that SO is 10002 and Product Division is Footwear\\nUser Prompt End----------\",\n  \"filters\": [\n    \"{\\\"SO Number\\\": \\\"10002\\\"}\",\n    \"{\\\"Product Division\\\": \\\"Footwear\\\"}\"\n  ],\n  \"column\": null,\n  \"fileId\": \"fileId\",\n  \"method\": \"POST\",\n  \"userDecision\": null,\n  \"resumeStage\": null,\n  \"currentList\": [\n    {\"SO Number\": \"10002\"},\n    {\"Product Division\": \"Footwear\"}\n  ],\n  \"addList\": null,\n  \"deleteList\": null,\n  \"intension\": \"View Order\",\n  \"resumeId\": null,\n  \"confirmAll\": \"false\",\n  chatId:null,\n  messageId:null\n}\n```\n#### Example 2: Joining Query By Using WITH Keywords (GUARANTEED EXECUTION), If user enter query has keywords \"WITH\", Please merge the extraction to one JSON object filter\n**User Input:** `\"Prompt:---------\\nI want to view orders that SO is 10002 with Product Division is Footwear with Supplier Code is ABCDE\\nUser Prompt End----------\"`\n\n**Complete Workflow Input:**\n```json\n{\n  \"token\": \"acc_xxxxx\",\n  \"prompt\": \"Prompt:---------\\nI want to view orders that SO is 10002 with Product Division is Footwear with Supplier Code is ABCDE\\nUser Prompt End----------\",\n  \"filters\": [\n    \"{\\\"SO Number\\\": \\\"10002\\\", \\\"Product Division\\\": \\\"Footwear\\\", \\\"Supplier Code\\\": \\\"ABCDE\\\"}\",\n  ],\n  \"column\": null,\n  \"fileId\": \"fileId\",\n  \"method\": \"POST\",\n  \"userDecision\": null,\n  \"resumeStage\": null,\n  \"currentList\": [\n    {\"SO Number\": \"10002\", \"Product Division\": \"Footwear\", \"Supplier Code\" : \"ABCDE\"},\n  ],\n  \"addList\": null,\n  \"deleteList\": null,\n  \"intension\": \"View Order\",\n  \"resumeId\": null,\n  \"confirmAll\": \"false\",\n  \"chatId\": null,\n  \"messageId\": null\n}\n```\n#### Example 3: Subsequent User Query with Correct List Merging\n**Previous Workflow Output (STORED CONTEXT):**\n```json\n{\n  \"message\": \"Please confirm the following query <currentList>currentList</currentList>, or you can make some changes (add, delete, or change).\",\n  \"token\": \"acc_xxxxx\",\n  \"prompt\": \"Prompt:---------\\nI want to view orders filtered by SO A, B and C\\nUser Prompt End----------\",\n  \"filters\": [\n    \"{\\\"SO Number\\\": \\\"A\\\"}\",\n    \"{\\\"SO Number\\\": \\\"B\\\"}\",\n    \"{\\\"SO Number\\\": \\\"C\\\"}\"\n  ],\n  \"column\": null,\n  \"fileId\": \"fileId\",\n  \"method\": \"POST\",\n  \"userDecision\": null,\n  \"resumeStage\": \"ParamConfirmation\",\n  \"currentList\": [\n    {\"SO Number\": \"A\"},\n    {\"SO Number\": \"B\"},\n    {\"SO Number\": \"C\"}\n  ],\n  \"addList\": null,\n  \"deleteList\": null,\n  \"intension\": \"View Order\",\n  \"resumeId\": \"nj2owfOvLa\",\n  \"confirmAll\": \"false\",\n  \"chatId\": \"12358746365\", // example\n  \"messageId\":\"asuxuiui73688xtrs\" //example\n}\n```\n\n**Current User Input:** `\"Prompt:---------\\nI want to add the query that SO is D and delete the query that SO is A\\nUser Prompt End----------\"`\n\n**Complete Workflow Input (USING STORED CONTEXT WITH CORRECT MERGING):**\n```json\n{\n  \"token\": \"acc_xxxxx\",\n  \"prompt\": \"Prompt:---------\\nI want to add the query that SO is D and delete the query that SO is A\\nUser Prompt End----------\",\n  \"filters\": [\n    \"{\\\"SO Number\\\": \\\"B\\\"}\",\n    \"{\\\"SO Number\\\": \\\"C\\\"}\",\n    \"{\\\"SO Number\\\": \\\"D\\\"}\"\n  ],\n  \"column\": null,\n  \"fileId\": \"fileId\",\n  \"method\": \"POST\",\n  \"userDecision\": \"change\",\n  \"resumeStage\": \"ParamConfirmation\",\n  \"currentList\": [\n    {\"SO Number\": \"B\"},\n    {\"SO Number\": \"C\"},\n    {\"SO Number\": \"D\"}\n  ],\n  \"addList\": [\n    {\"SO Number\": \"D\"}\n  ],\n  \"deleteList\": [\n    {\"SO Number\": \"A\"}\n  ],\n  \"intension\": \"View Order\",\n  \"resumeId\": \"nj2owfOvLa\",\n  \"confirmAll\": \"false\",\n  \"chatId\": \"12358746365\", \n  \"messageId\":\"asuxuiui73688xtrs\" \n}\n```\n\n#### Example 4: Simple Add Operation\n**Previous Workflow Output:** (Same as Example 2 - STORED)\n**Current User Input:** `\"Prompt:---------\\nAdd SO E\\nUser Prompt End----------\"`\n\n**Complete Workflow Input:**\n```json\n{\n  \"token\": \"acc_xxxxx\",\n  \"prompt\": \"Prompt:---------\\nAdd SO E\\nUser Prompt End----------\",\n  \"filters\": [\n    \"{\\\"SO Number\\\": \\\"A\\\"}\",\n    \"{\\\"SO Number\\\": \\\"B\\\"}\",\n    \"{\\\"SO Number\\\": \\\"C\\\"}\",\n    \"{\\\"SO Number\\\": \\\"E\\\"}\"\n  ],\n  \"column\": null,\n  \"fileId\": \"fileId\",\n  \"method\": \"POST\",\n  \"userDecision\": \"change\",\n  \"resumeStage\": \"ParamConfirmation\",\n  \"currentList\": [\n    {\"SO Number\": \"A\"},\n    {\"SO Number\": \"B\"},\n    {\"SO Number\": \"C\"},\n    {\"SO Number\": \"E\"}\n  ],\n  \"addList\": [\n    {\"SO Number\": \"E\"}\n  ],\n  \"deleteList\": null,\n  \"intension\": \"View Order\",\n  \"resumeId\": \"nj2owfOvLa\",\n  \"confirmAll\": \"false\",\n  \"chatId\": \"129849148931\",\n  \"messageId\":\"asuxuiui7897298yhihi\" \n}\n```\n\n#### Example 5: Confirm Operation\n**Previous Workflow Output:** (Same as Example 2 - STORED)\n**Current User Input:** `\"Prompt:---------\\nYes, confirm all\\nUser Prompt End----------\"`\n\n**Complete Workflow Input:**\n```json\n{\n  \"token\": \"acc_xxxxx\",\n  \"prompt\": \"Prompt:---------\\nYes, confirm all\\nUser Prompt End----------\",\n  \"filters\": [\n    \"{\\\"SO Number\\\": \\\"A\\\"}\",\n    \"{\\\"SO Number\\\": \\\"B\\\"}\",\n    \"{\\\"SO Number\\\": \\\"C\\\"}\"\n  ],\n  \"column\": null,\n  \"fileId\": \"fileId\",\n  \"method\": \"POST\",\n  \"userDecision\": \"confirm\",\n  \"resumeStage\": \"ParamConfirmation\",\n  \"currentList\": [\n    {\"SO Number\": \"A\"},\n    {\"SO Number\": \"B\"},\n    {\"SO Number\": \"C\"}\n  ],\n  \"addList\": null,\n  \"deleteList\": null,\n  \"intension\": \"View Order\",\n  \"resumeId\": \"nj2owfOvLa\",\n  \"confirmAll\": \"true\",\n  \"chatId\": \"129849179417419\", \n  \"messageId\":\"asuxuiui784313yhihi\"\n}\n```\nExample 6: If user's query is not a new query, no change intention workflow and no add or delete purpose and have resumeId, the user's query can be considered as addList:\ne.g. User query: (This is not a new query): I want to view order gtn po aaa:\n**Previous Workflow Output:** (Same as Example 2 - STORED)\n**Current User Input:** `\"Prompt:---------\\nI want to view order gtn po aaa\\nUser Prompt End----------\"`\n\n**Complete Workflow Input:**\n```json\n{\n  \"token\": \"acc_xxxxx\",\n  \"prompt\": \"Prompt:---------\\nI want to view order gtn po aaa\\nUser Prompt End----------\",\n  \"filters\": [\n    \"{\\\"SO Number\\\": \\\"A\\\"}\",\n    \"{\\\"SO Number\\\": \\\"B\\\"}\",\n    \"{\\\"SO Number\\\": \\\"C\\\"}\"\n  ],\n  \"column\": null,\n  \"fileId\": \"fileId\",\n  \"method\": \"POST\",\n  \"userDecision\": \"confirm\",\n  \"resumeStage\": \"ParamConfirmation\",\n  \"currentList\": [\n    {\"SO Number\": \"A\"},\n    {\"SO Number\": \"B\"},\n    {\"SO Number\": \"C\"}\n  ],\n  \"addList\": {\"GTN PO\": \"aaa\"},\n  \"deleteList\": null,\n  \"intension\": \"View Order\",\n  \"resumeId\": \"nj2owfOvLa\",\n  \"confirmAll\": \"true\",\n  \"chatId\": \"129849179417419\", \n  \"messageId\":\"asuxuiui784313yhihi\" \n\n}\n\n\nExample 7: The example of Create update request:\nIf user ask: I want to change the request SO 0141348900, update LCHD to a new value 2025-11-07\nThen the chatbot return to workflow following input parameters:\n{\n  \"token\": \"acc_xxxxx\",\n  \"prompt\": \"Prompt:---------\\nI want to change the request SO 0141348900, update LCHD to a new value 2025-11-07\\nUser Prompt End----------\",\n  \"requests\" = [{\"SO Number\":\"0141348900\", \"Change Type\": \"Update LCHD\", \"New Value\": \"2025-11-07\", \" Requestor Comment\":null }]],\n  \"fileId\": \"\",\n  \"method\": \"POST\",\n  \"intension\": \"Create_Update_Request\",\n  \"confirmAll\": \"false\",\n  \"resumeId\": null,\n  \"confirmAll\": null,\n  \"chatId\": null,\n  \"messageId\":null\n  \"currentList\": [\n      {\"SO Number\": \"0141348900\"}\n  ],\n  \"addList\": null,\n  \"deleteList\": null,\n}\n```\n5. return workflow result to chatbot, and chatbot output the result directly in json format.\n---\n### 6. Execution Guarantee Protocol\n\n#### **Mandatory Execution Rules:**\nThe AI Agent MUST adhere to these rules for **EVERY** query:\n\n1.  **【CRITICAL】NO EXCEPTIONS**: Workflow MUST be triggered for **EVERY** user input, **NO SKIPPING**.\n2.  **【CRITICAL】MESSAGE FIELD REQUIRED**: **EVERY** output MUST include a `\"message\"` field.\n3.  **【CRITICAL HARDCODE REQUIREMENT】HARDCODE TAGS**: XML-style tags in messages MUST be output **EXACTLY** as specified.\n4.  **STRICT CURRENTLIST CONSISTENCY**: For all queries except the first, `currentList` MUST match the previous output **exactly** (before merging based on `addList`/`deleteList` in the *next* query).\n5.  **CORRECT LIST FORMATS**: `currentList`, `addList`, `deleteList` must be arrays of objects.\n6.  **DEFAULT VALUES**: Use sensible defaults for any missing parameters.\n7.  **SINGLE EXECUTION**: Trigger workflow exactly **once** per query.\n8.  **【NEW】WORKFLOW CONTINUITY**: For subsequent queries, use the **same workflow** (`intension`) as the previous one unless explicitly changed by the user's intent.\n\n#### **Error Recovery:**\nIf any parameter extraction fails:\n*   Use `null` or empty arrays for list parameters\n*   **NEVER skip workflow execution** - **ALWAYS** trigger the workflow\n*   Use the previous `column` list if column extraction fails for subsequent queries\n*   Use the previous workflow's `intension` if intent detection fails for subsequent queries\n#### **Success Criteria:**\n*   ✅ Workflow must be triggered for **EVERY** query\n*   ✅ All **requeired parameters** populated: YES/NO\n*   ✅ `currentList` matches previous output (except first query, before merge logic): YES/NO\n*   ✅ Execution completed: YES/NO\n\n---\n\n### 7. Critical Requirements Summary\n\n1.  **【CRITICAL】** Include **ALL required parameters** in every workflow call.\n2.  **【CRITICAL】** **Guaranteed execution** - workflow MUST be triggered for **EVERY** user query, **NO EXCEPTIONS**.\n3.  **【CRITICAL】** **Strict `currentList` consistency** - for all queries except the first, `currentList` MUST be exactly the same as the previous output (serving as the base for the next merge).\n4.  **【CRITICAL】** **Workflow continuity** - For subsequent queries, use the same `intension` as the previous one unless explicitly changed.\n5.  **Correct list formats** - `currentList`, `addList`, `deleteList` must be arrays of objects.\n6.  **Single execution** - trigger workflow exactly **once** per query.\n\n\n \n"
+        }
+      ],
+      "inferenceConfig": {
+        "temperature": 0.9,
+        "topP": 0.9
+      },
+      "toolConfig": {
+        "tools": [
+          {
+            "toolSpec": {
+              "name": "120_View_Update_Request_Demo_",
+              "description": "Return update request",
+              "inputSchema": {
+                "json": {
+                  "type": "object",
+                  "properties": {
+                    "deleteList": {
+                      "type": "object",
+                      "description": "The list containing the information that the user wants to delete from the current list",
+                      "enum": []
+                    },
+                    "chatId": {
+                      "type": "string",
+                      "description": "The ID for the chat",
+                      "enum": []
+                    },
+                    "currentList": {
+                      "type": "object",
+                      "description": "The list containing the information that the user currently wants to query",
+                      "enum": []
+                    },
+                    "column": {
+                      "description": "An array of column wants to extract",
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "description": "column key that wants to extract"
+                      },
+                      "enum": []
+                    },
+                    "messageId": {
+                      "type": "string",
+                      "description": "The ID for the prompt",
+                      "enum": []
+                    },
+                    "history": {
+                      "type": "string",
+                      "description": "The chat log between the user and chatbot",
+                      "enum": []
+                    },
+                    "filters": {
+                      "description": "an array contain filter json string",
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "description": "a JSON object string contain filter keys and value"
+                      },
+                      "enum": []
+                    },
+                    "token": {
+                      "type": "string",
+                      "description": "Userr access token",
+                      "enum": []
+                    },
+                    "resumeStage": {
+                      "type": "string",
+                      "description": "The next stage for the whole process, including ParamConfirmation or RequestValidation",
+                      "enum": []
+                    },
+                    "removeAll": {
+                      "type": "boolean",
+                      "description": "if user type \"remove all\" then set it to true",
+                      "enum": []
+                    },
+                    "resumeId": {
+                      "type": "string",
+                      "description": "The ID for the process to resume",
+                      "enum": []
+                    },
+                    "confirmAll": {
+                      "type": "boolean",
+                      "description": "when user type \"confirm all\" or \"confirm\", set it to be true",
+                      "enum": []
+                    },
+                    "addList": {
+                      "type": "object",
+                      "description": "The list containing the information that the user wants to add into the current list",
+                      "enum": []
+                    },
+                    "UserDecision": {
+                      "type": "string",
+                      "description": "if user type keywords \"add\"/\"remove\"/\"remove all\"/\"change\" \nuserDecision will be \"change\".\nif user type keywords \"confirm\" \nuserDecision will be \"confirm\".\nif user type keywords \"abort\" \nuserDecision will be \"abort\".\nNone of the above,\nuserDecision will be null",
+                      "enum": []
+                    },
+                    "prompt": {
+                      "type": "string",
+                      "description": "user prompt message",
+                      "enum": []
+                    },
+                    "fileId": {
+                      "type": "string",
+                      "description": "a fileId include filter content",
+                      "enum": []
+                    }
+                  },
+                  "required": ["token", "prompt"]
+                }
+              }
+            }
+          },
+          {
+            "toolSpec": {
+              "name": "136_View_Order_Demo_",
+              "description": "Return order data",
+              "inputSchema": {
+                "json": {
+                  "type": "object",
+                  "properties": {
+                    "deleteList": {
+                      "type": "object",
+                      "description": "The list containing the information that the user wants to delete from the current list",
+                      "enum": []
+                    },
+                    "chatId": {
+                      "type": "string",
+                      "description": "The ID for the chat",
+                      "enum": []
+                    },
+                    "currentList": {
+                      "type": "object",
+                      "description": "The list containing the information that the user currently wants to  query",
+                      "enum": []
+                    },
+                    "column": {
+                      "description": "An array of column wants to extract",
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "description": "column key that wants to extract"
+                      },
+                      "enum": []
+                    },
+                    "messageId": {
+                      "type": "string",
+                      "description": "The ID for the message",
+                      "enum": []
+                    },
+                    "filters": {
+                      "description": "an array contain filter json string",
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "description": "a JSON object string contain filter keys and value"
+                      },
+                      "enum": []
+                    },
+                    "history": {
+                      "type": "string",
+                      "description": "The chat log between the user and chatbot",
+                      "enum": []
+                    },
+                    "token": {
+                      "type": "string",
+                      "description": "user access token",
+                      "enum": []
+                    },
+                    "resumeStage": {
+                      "type": "string",
+                      "description": "The next stage for the whole process, including ParamConfirmation or RequestValidation",
+                      "enum": []
+                    },
+                    "removeAll": {
+                      "type": "boolean",
+                      "description": "if user type \"remove all\" then set it to true",
+                      "enum": []
+                    },
+                    "resumeId": {
+                      "type": "string",
+                      "description": "The ID for the process to resume",
+                      "enum": []
+                    },
+                    "confirmAll": {
+                      "type": "boolean",
+                      "description": "when user type \"confirmAll\" or \"confirm\", set it to be true",
+                      "enum": []
+                    },
+                    "userDecision": {
+                      "type": "string",
+                      "description": "if user type keywords \"add\"/\"remove\"/\"remove all\"/\"change\" \nuserDecision will be \"change\".\nif user type keywords \"confirm\" \nuserDecision will be \"confirm\".\nif user type keywords \"abort\" \nuserDecision will be \"abort\".\nNone of the above,\nuserDecision will be null",
+                      "enum": []
+                    },
+                    "addList": {
+                      "type": "object",
+                      "description": "The list containing the information that the user wants to add into the current list",
+                      "enum": []
+                    },
+                    "prompt": {
+                      "type": "string",
+                      "description": "user prompt message",
+                      "enum": []
+                    },
+                    "fileId": {
+                      "type": "string",
+                      "description": "a fileId include filter content",
+                      "enum": []
+                    }
+                  },
+                  "required": ["token", "prompt"]
+                }
+              }
+            }
+          },
+          {
+            "toolSpec": {
+              "name": "198_Create_Update_Request_Demo_",
+              "description": "Return create update request data",
+              "inputSchema": {
+                "json": {
+                  "type": "object",
+                  "properties": {
+                    "deleteList": {
+                      "type": "object",
+                      "description": "The list containing the information that the user wants to delete from the current list",
+                      "enum": []
+                    },
+                    "chatId": {
+                      "type": "string",
+                      "description": "The ID for the chat",
+                      "enum": []
+                    },
+                    "currentList": {
+                      "type": "object",
+                      "description": "The list containing the information that the user currently wants to  query",
+                      "enum": []
+                    },
+                    "column": {
+                      "description": "An array of column wants to extract",
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "description": "column key that wants to extract"
+                      },
+                      "enum": []
+                    },
+                    "history": {
+                      "type": "string",
+                      "description": "The chat log between the user and chatbot",
+                      "enum": []
+                    },
+                    "requests": {
+                      "description": "an array contain filter json string",
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "description": "a JSON object string contain filter keys and value"
+                      },
+                      "enum": []
+                    },
+                    "token": {
+                      "type": "string",
+                      "description": "user access token",
+                      "enum": []
+                    },
+                    "resumeStage": {
+                      "type": "string",
+                      "description": "The next stage for the whole process, including ParamConfirmation or RequestValidation",
+                      "enum": []
+                    },
+                    "removeAll": {
+                      "type": "boolean",
+                      "description": "if user type \"remove all\" then set it to true",
+                      "enum": []
+                    },
+                    "resumeId": {
+                      "type": "string",
+                      "description": "The ID for the process to resume",
+                      "enum": []
+                    },
+                    "confirmAll": {
+                      "type": "boolean",
+                      "description": "when user type any wordings like \"confirm all\" or \"confirm\", set it to be true",
+                      "enum": []
+                    },
+                    "promptId": {
+                      "type": "string",
+                      "description": "The ID for the prompt",
+                      "enum": []
+                    },
+                    "addList": {
+                      "type": "object",
+                      "description": "The list containing the information that the user wants to add into the current list",
+                      "enum": []
+                    },
+                    "UserDecision": {
+                      "type": "string",
+                      "description": "if user type keywords \"add\"/\"remove\"/\"remove all\"/\"change\" in \"User New Message\"\nuserDecision will be \"change\".\nif user type keywords \"confirm\" in \"User New Message\"\nuserDecision will be \"confirm\".\nif user type keywords \"abort\" in \"User New Message\"\nuserDecision will be \"abort\".\nNone of the above,\nuserDecision will be null",
+                      "enum": []
+                    },
+                    "prompt": {
+                      "type": "string",
+                      "description": "user prompt message",
+                      "enum": []
+                    },
+                    "fileId": {
+                      "type": "string",
+                      "description": "a fileId include filter content",
+                      "enum": []
+                    }
+                  },
+                  "required": ["token", "prompt"]
+                }
+              }
+            }
+          },
+          {
+            "toolSpec": {
+              "name": "199_Make_Decisions_Demo_",
+              "description": "Make Decisions on Requests",
+              "inputSchema": {
+                "json": {
+                  "type": "object",
+                  "properties": {
+                    "deleteList": {
+                      "type": "string",
+                      "description": "The list containing the information that the user wants to delete from the current list",
+                      "enum": []
+                    },
+                    "chatId": {
+                      "type": "string",
+                      "description": "The ID for the chat",
+                      "enum": []
+                    },
+                    "currentList": {
+                      "type": "string",
+                      "description": "currentList equals the previous output needConfirmList values.",
+                      "enum": []
+                    },
+                    "column": {
+                      "type": "string",
+                      "description": "An array of column wants to extract",
+                      "enum": []
+                    },
+                    "messageId": {
+                      "type": "string",
+                      "description": "The ID for the message",
+                      "enum": []
+                    },
+                    "history": {
+                      "type": "string",
+                      "description": "The chat log between the user and chatbot",
+                      "enum": []
+                    },
+                    "filters": {
+                      "type": "string",
+                      "description": "For Example: \" I want to make decision on request id RD89982cd148314c3e85f1_110, customer PO 101864\", then filters will be  [{\"Request ID\":\"RD89982cd148314c3e85f1_110\",\"Customer PO\":\"101864\"}]",
+                      "enum": []
+                    },
+                    "token": {
+                      "type": "string",
+                      "description": "user access token",
+                      "enum": []
+                    },
+                    "resumeStage": {
+                      "type": "string",
+                      "description": "The next stage for the whole process, including ParamConfirmation or RequestValidation",
+                      "enum": []
+                    },
+                    "resumeId": {
+                      "type": "string",
+                      "description": "The ID for the process to resume",
+                      "enum": []
+                    },
+                    "confirmAll": {
+                      "type": "string",
+                      "description": "A flag to indicate whether the user wants to confirm all the information",
+                      "enum": []
+                    },
+                    "userDecision": {
+                      "type": "string",
+                      "description": "The user decision for the next stage, e.g. change the current list or confirm the current list",
+                      "enum": []
+                    },
+                    "addList": {
+                      "type": "string",
+                      "description": "The list containing the information that the user wants to add into the current list",
+                      "enum": []
+                    },
+                    "decisions": {
+                      "type": "string",
+                      "description": "Example: \nUser Typed: \"I approve RD89982cd148314c3e85f1_110, with the consent of Simon and Matthew as well.\" \ndecisions = [{\"Request ID\":\"RD89982cd148314c3e85f1_110\",\"Approver Decision\":\"Approved\",\"Approver Comment\":\"with the consent of Simon and Matthew\"}]",
+                      "enum": []
+                    },
+                    "prompt": {
+                      "type": "string",
+                      "description": "user prompt message",
+                      "enum": []
+                    },
+                    "fileId": {
+                      "type": "string",
+                      "description": "a fileId include filter content",
+                      "enum": []
+                    }
+                  },
+                  "required": ["token", "prompt"]
+                }
+              }
+            }
+          },
+          {
+            "toolSpec": {
+              "name": "204_View_Request_History_Demo_",
+              "description": "return request history data",
+              "inputSchema": {
+                "json": {
+                  "type": "object",
+                  "properties": {
+                    "deleteList": {
+                      "type": "string",
+                      "description": "The list containing the information that the user wants to delete from the current list",
+                      "enum": []
+                    },
+                    "chatId": {
+                      "type": "string",
+                      "description": "The ID for the chat",
+                      "enum": []
+                    },
+                    "currentList": {
+                      "type": "string",
+                      "description": "The list containing the information that the user currently wants to query",
+                      "enum": []
+                    },
+                    "column": {
+                      "type": "string",
+                      "description": "An array of column wants to extract",
+                      "enum": []
+                    },
+                    "messageId": {
+                      "type": "string",
+                      "description": "The ID for the message",
+                      "enum": []
+                    },
+                    "filters": {
+                      "type": "string",
+                      "description": "an array contain filter json string",
+                      "enum": []
+                    },
+                    "history": {
+                      "type": "string",
+                      "description": "The chat log between the user and chatbot",
+                      "enum": []
+                    },
+                    "token": {
+                      "type": "string",
+                      "description": "user access token",
+                      "enum": []
+                    },
+                    "resumeStage": {
+                      "type": "string",
+                      "description": "The next stage for the whole process, including ParamConfirmation or RequestValidation",
+                      "enum": []
+                    },
+                    "removeAll": {
+                      "type": "boolean",
+                      "description": "when user type \"removeAll\", set it to be true",
+                      "enum": []
+                    },
+                    "resumeId": {
+                      "type": "string",
+                      "description": "The ID for the process to resume",
+                      "enum": []
+                    },
+                    "confirmAll": {
+                      "type": "boolean",
+                      "description": "when user type \"confirmAll\", set it to be true",
+                      "enum": []
+                    },
+                    "userDecision": {
+                      "type": "string",
+                      "description": "The user decision for the next stage, e.g. change the current list or confirm the current list",
+                      "enum": []
+                    },
+                    "addList": {
+                      "type": "string",
+                      "description": "The list containing the information that the user wants to add into the current list",
+                      "enum": []
+                    },
+                    "prompt": {
+                      "type": "string",
+                      "description": "user prompt message",
+                      "enum": []
+                    },
+                    "fileId": {
+                      "type": "string",
+                      "description": "a fileId include filter content",
+                      "enum": []
+                    }
+                  },
+                  "required": ["token", "prompt"]
+                }
+              }
+            }
+          },
+          {
+            "toolSpec": {
+              "name": "208_Edit_Update_Request_Demo_",
+              "description": "Edit Requests",
+              "inputSchema": {
+                "json": {
+                  "type": "object",
+                  "properties": {
+                    "deleteList": {
+                      "type": "string",
+                      "description": "The list containing the information that the user wants to delete from the current list",
+                      "enum": []
+                    },
+                    "chatId": {
+                      "type": "string",
+                      "description": "The ID for the chat",
+                      "enum": []
+                    },
+                    "currentList": {
+                      "description": "This list would be same as previous output needConfirmList",
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "description": "JSON like eg, {\"Request ID\":\"RD89982cd148314c3e85f1_111\"}"
+                      },
+                      "enum": []
+                    },
+                    "column": {
+                      "type": "string",
+                      "description": "An array of column wants to extract",
+                      "enum": []
+                    },
+                    "messageId": {
+                      "type": "string",
+                      "description": "The ID for the message",
+                      "enum": []
+                    },
+                    "history": {
+                      "type": "string",
+                      "description": "The chat log between the user and chatbot",
+                      "enum": []
+                    },
+                    "filters": {
+                      "description": "Use this parameters when u have wording like \"new value\" while the previous output resumeStage is null. For example, the user typed \"I would like to edit request RD89982cd148314c3e85f1_111\"\nThen filters are [{\"Request ID\": \"RD89982cd148314c3e85f1_111\"}]. \n\n\"I would like to edit request RD89982cd148314c3e85f1_111 with customer PO 101687.\"\nThen filters are [{\"Request ID\": \"RD89982cd148314c3e85f1_111\",\"Customer PO\":\"101687\"}]. ",
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "description": "JSON like eg, {\"Request ID\":\"RD89982cd148314c3e85f1_111\"}"
+                      },
+                      "enum": []
+                    },
+                    "token": {
+                      "type": "string",
+                      "description": "user access token",
+                      "enum": []
+                    },
+                    "resumeStage": {
+                      "type": "string",
+                      "description": "The next stage for the whole process, including ParamConfirmation or RequestValidation",
+                      "enum": []
+                    },
+                    "resumeId": {
+                      "type": "string",
+                      "description": "The ID for the process to resume",
+                      "enum": []
+                    },
+                    "confirmAll": {
+                      "type": "boolean",
+                      "description": "When user type \"confirmAll\", set this to be true",
+                      "enum": []
+                    },
+                    "userDecision": {
+                      "type": "string",
+                      "description": "if user type wordings like \"confirm\" , userDecision will be \"confirm\"\nif user type wordings like \"change/ add/ remove\", userDecision will be \"change\"",
+                      "enum": []
+                    },
+                    "addList": {
+                      "type": "string",
+                      "description": "The list containing the information that the user wants to add into the current list",
+                      "enum": []
+                    },
+                    "decisions": {
+                      "description": "Use this parameters when u have wording like \"new value\" while the previous output resumeStage is SuccessValidation.For example, user typed \"For RD89982cd148314c3e85f1_111, My new value is 2025-11-10,  because 09 is holiday\" \nThen decisions = [{\"Request ID\":\"RD89982cd148314c3e85f1_111\",\"Edited New Value\":\"2025-11-10\",\"Edited Requestor Comment\":\"because 09 is holiday\"}]",
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "description": "JSON like eg, {\"Request ID\":\"RD89982cd148314c3e85f1_111\",\"Edited New Value\":\"2025-11-10\",\"Edited Requestor Comment\":\"because 09 is holiday\"}"
+                      },
+                      "enum": []
+                    },
+                    "prompt": {
+                      "type": "string",
+                      "description": "user prompt message",
+                      "enum": []
+                    },
+                    "fileId": {
+                      "type": "string",
+                      "description": "a fileId include filter content",
+                      "enum": []
+                    }
+                  },
+                  "required": ["token", "prompt"]
+                }
+              }
+            }
+          },
+          {
+            "toolSpec": {
+              "name": "210_Cancel_Update_Request_Demo_",
+              "description": "Cancel Requests ",
+              "inputSchema": {
+                "json": {
+                  "type": "object",
+                  "properties": {
+                    "deleteList": {
+                      "type": "string",
+                      "description": "The list containing the information that the user wants to delete from the current list",
+                      "enum": []
+                    },
+                    "chatId": {
+                      "type": "string",
+                      "description": "The ID for the chat",
+                      "enum": []
+                    },
+                    "currentList": {
+                      "type": "string",
+                      "description": "The list containing the information that the user currently wants to query",
+                      "enum": []
+                    },
+                    "column": {
+                      "type": "string",
+                      "description": "An array of column wants to extract",
+                      "enum": []
+                    },
+                    "messageId": {
+                      "type": "string",
+                      "description": "The ID for the message",
+                      "enum": []
+                    },
+                    "filters": {
+                      "type": "string",
+                      "description": "an array contain filter json string",
+                      "enum": []
+                    },
+                    "history": {
+                      "type": "string",
+                      "description": "The chat log between the user and chatbot",
+                      "enum": []
+                    },
+                    "token": {
+                      "type": "string",
+                      "description": "user access token",
+                      "enum": []
+                    },
+                    "resumeStage": {
+                      "type": "string",
+                      "description": "The next stage for the whole process, including ParamConfirmation or RequestValidation",
+                      "enum": []
+                    },
+                    "removeAll": {
+                      "type": "boolean",
+                      "description": "if user type \"remove all\" then set it to true",
+                      "enum": []
+                    },
+                    "resumeId": {
+                      "type": "string",
+                      "description": "The ID for the process to resume",
+                      "enum": []
+                    },
+                    "confirmAll": {
+                      "type": "string",
+                      "description": "when user type \"confirmAll\" or \"confirm\", set it to be true",
+                      "enum": []
+                    },
+                    "userDecision": {
+                      "type": "string",
+                      "description": "if user type keywords \"add\"/\"remove\"/\"remove all\"/\"change\" \nuserDecision will be \"change\".\nif user type keywords \"confirm\" \nuserDecision will be \"confirm\".\nif user type keywords \"abort\" \nuserDecision will be \"abort\".\nNone of the above,\nuserDecision will be null",
+                      "enum": []
+                    },
+                    "addList": {
+                      "type": "string",
+                      "description": "The list containing the information that the user wants to add into the current list",
+                      "enum": []
+                    },
+                    "prompt": {
+                      "type": "string",
+                      "description": "user prompt message",
+                      "enum": []
+                    },
+                    "fileId": {
+                      "type": "string",
+                      "description": "a fileId include filter content",
+                      "enum": []
+                    }
+                  },
+                  "required": ["token", "prompt"]
+                }
+              }
+            }
+          },
+          {
+            "toolSpec": {
+              "name": "reset_memory",
+              "description": "Clear conversation history and reset the memory of the bot. Only use this tool when the user explicitly requests it.",
+              "inputSchema": {
+                "json": {
+                  "type": "object",
+                  "properties": {
+                    "conversation_id": {
+                      "type": "string",
+                      "description": "Unique identifier of the conversation"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    "inputTokenCount": 12053,
+    "cacheReadInputTokenCount": 0,
+    "cacheWriteInputTokenCount": 0
+  },
+  "output": {
+    "outputContentType": "application/json",
+    "outputBodyJson": {
+      "output": {
+        "message": {
+          "role": "assistant",
+          "content": [
+            {
+              "text": ""
+            },
+            {
+              "reasoningContent": {
+                "reasoningText": {
+                  "text": "We need to process new user message: \"I want to view order with **so 0123130281**\". The conversation context: previous workflow is view order, resumeStage RequestValidation, resumeId same. The user wants to view order 0123130281 (already added earlier). The user might be confirming or re-entering. According to rules, we must trigger a workflow for every query. Since they are still in same workflow (view order), we keep intension \"View Order\". We need to construct parameters.\n\nWe have previous output (from assistant) with currentList containing two orders: 0123142643 and 0123130281. However note that 0123142643 was invalid access. The system is in RequestValidation stage, meaning they need to correct invalid requests. The user now says they want to view order 0123130281. Possibly they want to remove invalid one. According to rule: If user just repeats the order they want, we may treat as confirm? The user didn't use \"confirm\". They said \"I want to view order with so 0123130281\". This is basically a request to view that order; maybe we should treat as change: addList maybe? But it's already in currentList. Could be no change, userDecision null? However requirement: userDecision must be set based on decision: \"change\" if modify, \"confirm\" if confirm. Since they are not confirming (no confirm), but they are re-specifying, maybe treat as change? But they didn't add new. Could treat as no add/delete, userDecision null. But rule says userDecision required: must be null for first query, but for subsequent maybe null if no decision? Actually spec: userDecision required; set based on current user prompt decision: For first query null; \"change\" if modifies existing conditions (add or delete or change); \"confirm\" if confirms. If no explicit decision, maybe null? The spec says required but could be null. So we can set null.\n\nWe need to preserve currentList as previous (two orders). Since no add/delete, addList null, deleteList null. Filters same as currentList. confirmAll false. resumeStage remains RequestValidation. resumeId same. chatId and messageId from new message.\n\nThus construct JSON.\n\nToken provided.\n\nPrompt includes full text.\n\nLet's produce output with message field.\n\n",
+                  "signature": ""
+                }
+              }
+            },
+            {
+              "text": "{\n  \"message\": \"Processing your request to view the specified order.\",\n  \"token\": \"acc_54644f15-c08f-4bbd-8ab2-cd778f154486\",\n  \"prompt\": \"Prompt:---------\\nUser New Message: I want to view order with **so 0123130281**\\n\\nUser Token is: \\nacc_54644f15-c08f-4bbd-8ab2-cd778f154486\\n\\nHere is the chat information: \\n Chat Id : 06cd9432-a58d-4a22-bdcf-28be38c590ab, Message Id : 6df67249-cccb-48ef-ab0f-cb85a92ba04b\\n\\nHere is the resume information: \\nResume Id : bcd61c63c53844ef99090bdd663d3d24\\nResume Stage RequestValidation\\n\\nHere is the history of the converstion:\\nHistory 0. user : I want to view order. Message Time : 1765358078\\nHistory 1. user : I want to view order 0123142643. Message Time : 1765358246\\nHistory 2. assistant : {\\\"status\\\": \\\"success\\\", \\\"code\\\": 200, \\\"resumeId\\\": \\\"bcd61c63c53844ef99090bdd663d3d24\\\", \\\"resumeStage\\\": \\\"ParamConfirmation\\\", \\\"workflowType\\\": \\\"view_order\\\", \\\"needConfirmList\\\": [{\\\"SO Number\\\": \\\"0123142643\\\"}], \\\"options\\\": [{\\\"name\\\": \\\"Confirm\\\"}, {\\\"name\\\": \\\"Abort\\\"}], \\\"needConfirmListCount\\\": 1, \\\"message\\\": \\\"I have curated a list of orders that you want to check, can you please check the following table and confirm?: (<count>needConfirmListCount</count> orders)<br/><list>needConfirmList</list><br/><options>options</options>\\\"}. Message Time : 1765358246\\nHistory 3. user : Confirm. Message Time : 1765358283\\nHistory 4. assistant : {\\\"status\\\": \\\"error\\\", \\\"code\\\": 403003, \\\"resumeId\\\": \\\"bcd61c63c53844ef99090bdd663d3d24\\\", \\\"resumeStage\\\": \\\"RequestValidation\\\", \\\"workflowType\\\": \\\"view_order\\\", \\\"error\\\": \\\"No access right\\\", \\\"invalidRequest\\\": [{\\\"SO Number\\\": \\\"0123142643\\\"}], \\\"options\\\": [{\\\"name\\\": \\\"Remove all Invalid\\\"}], \\\"invalidRequestCount\\\": 1, \\\"message\\\": \\\"You don't have access to the following orders: (<count>invalidRequestCount</count> request)<br/><list>invalidRequest</list><br/>Please update your input to ensure you have access to all the orders. Alternatively, you may choose to view only the orders available to you.<br/><br/>If the issue persists, please contact the admin for assistance.<br/><options>options</options>\\\"}. Message Time : 1765358283\\nHistory 5. user : I also want to check so order 0123130281. Message Time : 1765358333\\nHistory 6. assistant : {\\n  \\\"message\\\": \\\"Processing your request to view additional order.\\\",\\n  \\\"token\\\": \\\"acc_54644f15-c08f-4bbd-8ab2-cd778f154486\\\",\\n  \\\"prompt\\\": \\\"Prompt:---------\\\\nUser New Message: I also want to check so order 0123130281\\\\n\\\\nUser Token is: \\\\nacc_54644f15-c08f-4bbd-8ab2-cd778f154486\\\\n\\\\nHere is the chat information: \\\\n Chat Id : 06cd9432-a58d-4a22-bdcf-28be38c590ab, Message Id : cc71e907-dc75-4c68-b5d0-6ab358a82bb7\\\\n\\\\nHere is the resume information: \\\\nResume Id : bcd61c63c53844ef99090bdd663d3d24\\\\nResume Stage RequestValidation\\\\n\\\\nHere is the history of the converstion:\\\\nHistory 0. user : I want to view order. Message Time : 1765358078\\\\nHistory 1. user : I want to view order 0123142643. Message Time : 1765358246\\\\nHistory 2. assistant : {\\\\\\\"status\\\\\\\": \\\\\\\"success\\\\\\\", \\\\\\\"code\\\\\\\": 200, \\\\\\\"resumeId\\\\\\\": \\\\\\\"bcd61c63c53844ef99090bdd663d3d24\\\\\\\", \\\\\\\"resumeStage\\\\\\\": \\\\\\\"ParamConfirmation\\\\\\\", \\\\\\\"workflowType\\\\\\\": \\\\\\\"view_order\\\\\\\", \\\\\\\"needConfirmList\\\\\\\": [{\\\\\\\"SO Number\\\\\\\": \\\\\\\"0123142643\\\\\\\"}], \\\\\\\"options\\\\\\\": [{\\\\\\\"name\\\\\\\": \\\\\\\"Confirm\\\\\\\"}, {\\\\\\\"name\\\\\\\": \\\\\\\"Abort\\\\\\\"}], \\\\\\\"needConfirmListCount\\\\\\\": 1, \\\\\\\"message\\\\\\\": \\\\\\\"I have curated a list of orders that you want to check, can you please check the following table and confirm?: (<count>needConfirmListCount</count> orders)<br/><list>needConfirmList</list><br/><options>options</options>\\\\\\\"}. Message Time : 1765358246\\\\nHistory 3. user : Confirm. Message Time : 1765358283\\\\nHistory 4. assistant : {\\\\\\\"status\\\\\\\": \\\\\\\"error\\\\\\\", \\\\\\\"code\\\\\\\": 403003, \\\\\\\"resumeId\\\\\\\": \\\\\\\"bcd61c63c53844ef99090bdd663d3d24\\\\\\\", \\\\\\\"resumeStage\\\\\\\": \\\\\\\"RequestValidation\\\\\\\", \\\\\\\"workflowType\\\\\\\": \\\\\\\"view_order\\\\\\\", \\\\\\\"error\\\\\\\": \\\\\\\"No access right\\\\\\\", \\\\\\\"invalidRequest\\\\\\\": [{\\\\\\\"SO Number\\\\\\\": \\\\\\\"0123142643\\\\\\\"}], \\\\\\\"options\\\\\\\": [{\\\\\\\"name\\\\\\\": \\\\\\\"Remove all Invalid\\\\\\\"}], \\\\\\\"invalidRequestCount\\\\\\\": 1, \\\\\\\"message\\\\\\\": \\\\\\\"You don't have access to the following orders: (<count>invalidRequestCount</count> request)<br/><list>invalidRequest</list><br/>Please update your input to ensure you have access to all the orders. Alternatively, you may choose to view only the orders available to you.<br/><br/>If the issue persists, please contact the admin for assistance.<br/><options>options</options>\\\\\\\"}. Message Time : 1765358283\\\\nHistory 5. user : I also want to check so order 0123130281. Message Time : 1765358333\\\\n\\\",\\n  \\\"filters\\\": [\\n    \\\"{\\\\\\\"SO Number\\\\\\\": \\\\\\\"0123142643\\\\\\\"}\\\",\\n    \\\"{\\\\\\\"SO Number\\\\\\\": \\\\\\\"0123130281\\\\\\\"}\\\"\\n  ],\\n  \\\"column\\\": null,\\n  \\\"fileId\\\": null,\\n  \\\"method\\\": \\\"POST\\\",\\n  \\\"userDecision\\\": \\\"change\\\",\\n  \\\"resumeStage\\\": \\\"RequestValidation\\\",\\n  \\\"currentList\\\": [\\n    { \\\"SO Number\\\": \\\"0123142643\\\" },\\n    { \\\"SO Number\\\": \\\"0123130281\\\" }\\n  ],\\n  \\\"addList\\\": [\\n    { \\\"SO Number\\\": \\\"0123130281\\\" }\\n  ],\\n  \\\"deleteList\\\": null,\\n  \\\"intension\\\": \\\"View Order\\\",\\n  \\\"resumeId\\\": \\\"bcd61c63c53844ef99090bdd663d3d24\\\",\\n  \\\"confirmAll\\\": \\\"false\\\",\\n  \\\"removeAll\\\": \\\"false\\\",\\n  \\\"chatId\\\": \\\"06cd9432-a58d-4a22-bdcf-28be38c590ab\\\",\\n  \\\"messageId\\\": \\\"cc71e907-dc75-4c68-b5d0-6ab358a82bb7\\\"\\n}\\n\\nUser Prompt End----------\",\n  \"filters\": [\n    \"{\\\"SO Number\\\": \\\"0123142643\\\"}\",\n    \"{\\\"SO Number\\\": \\\"0123130281\\\"}\"\n  ],\n  \"column\": null,\n  \"fileId\": null,\n  \"method\": \"POST\",\n  \"userDecision\": null,\n  \"resumeStage\": \"RequestValidation\",\n  \"currentList\": [\n    { \"SO Number\": \"0123142643\" },\n    { \"SO Number\": \"0123130281\" }\n  ],\n  \"addList\": null,\n  \"deleteList\": null,\n  \"intension\": \"View Order\",\n  \"resumeId\": \"bcd61c63c53844ef99090bdd663d3d24\",\n  \"confirmAll\": \"false\",\n  \"removeAll\": \"false\",\n  \"chatId\": \"06cd9432-a58d-4a22-bdcf-28be38c590ab\",\n  \"messageId\": \"6df67249-cccb-48ef-ab0f-cb85a92ba04b\"\n}"
+            }
+          ]
+        }
+      },
+      "stopReason": "end_turn",
+      "metrics": {
+        "latencyMs": 17207
+      },
+      "usage": {
+        "inputTokens": 12053,
+        "outputTokens": 2467,
+        "totalTokens": 14520
+      }
+    },
+    "outputTokenCount": 2467
+  },
+  "schemaType": "ModelInvocationLog",
+  "schemaVersion": "1.0"
+}
