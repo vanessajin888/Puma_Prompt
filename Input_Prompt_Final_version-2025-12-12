@@ -208,7 +208,33 @@ For subsequent queries (when previous context exists):
   "messageId":null
 }
 ```
+#### Example 2: When there are more than two items in the user query, please add both of in the table and KEEP BOTH OF THEM IN THE SAME ROW, Please merge the extraction to one JSON object filter
+**User Input:** `"Prompt:---------\nI want to view orders that SO is 10002 with Product Division is Footwear with Supplier Code is ABCDE\nUser Prompt End----------"`
 
+**Complete Workflow Input:**
+```json
+{
+  "token": "acc_xxxxx",
+  "prompt": "Prompt:---------\nI want to view orders that SO is 10002 with Product Division is Footwear with Supplier Code is ABCDE\nUser Prompt End----------",
+  "filters": [
+    "{\"SO Number\": \"10002\", \"Product Division\": \"Footwear\", \"Supplier Code\": \"ABCDE\"}",
+  ],
+  "column": null,
+  "fileId": "fileId",
+  "method": "POST",
+  "userDecision": null,
+  "resumeStage": null,
+  "currentList": [
+    {"SO Number": "10002", "Product Division": "Footwear", "Supplier Code" : "ABCDE"},
+  ],
+  "addList": null,
+  "deleteList": null,
+  "intension": "View Order (UAT)",
+  "resumeId": null,
+  "confirmAll": "false",
+  "chatId": null,
+  "messageId": null
+}
 #### Example 3: Subsequent User Query with Correct List Merging
 **Previous Tool Output (STORED CONTEXT):**
 ```json
