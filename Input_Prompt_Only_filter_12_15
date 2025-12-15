@@ -39,7 +39,7 @@ When the user input does not contain any parameters (such as "SO", "GTN PO") and
   "column": null,
   "fileId": null,
   "method": "POST",
-  "userDecision": null,
+  "userAction": null,
   "resumeStage": null,
   "addList": null,
   "intension": "View Order",
@@ -69,21 +69,21 @@ NOTE: When there are more than two items in the user query, please add both of i
       *  If user upload file, extract fileId;
       *  If user does not upload file, fileId = null
 6.  **`method`** (Required): Always set to `"POST"`
-7.  **`userDecision`** (Required):
+7.  **`userAction`** (Required):
     *   Set based on the current user prompt decision:
-        *   For the first query, 'userDecision' is null
+        *   For the first query, 'userAction' is null
         *   `"change"`: User modifies existing conditions (add condition, remove all condition and delete condition)
         *   `"confirm"`: User confirms operation (e.g., "yes", "yes I confirm", "confirm")
         *   `"abort"`:  User modifies abort conditions (abort condition)
 8.  **`addList`** (Required): Array of filters to add
-    *   **[MODIFIED]**: Defined as an array of objects. Extract add operations from the current user input as an array of objects (when the userDecision == "change", the addList == filters)
+    *   **[MODIFIED]**: Defined as an array of objects. Extract add operations from the current user input as an array of objects (when the userAction == "change", the addList == filters)
     *   Format: `"{\"Key\":\"Value\"}", ...]`
-    *   If userDecision == "abort" or "confirm", set to `null`
+    *   If userAction == "abort" or "confirm", set to `null`
 9. **`intension`** (Required): Executed tool name
     *   ALWAYS determine from the current user intent
 10. **`resumeId`** (Required):
     *   Set to `null` for first query, and for other subqueries, resumeId keeps same as last result returned.
-13. **`confirmAll`** (Required): Boolean type (and userDecision == "confirm")
+13. **`confirmAll`** (Required): Boolean type (and userAction == "confirm")
     *   Set to `"true"` if the user confirm (remind: confirmAll == true, filters == null), otherwise set "false"
 14. **`resumeStage`** (Required):
     *   **Initial query**: `null`
@@ -145,7 +145,7 @@ For subsequent queries (when previous context exists):
     *   Update `prompt` with the current user text
     *   Update `addList` from the current user input (as arrays of objects)
     *   Update `filters` and from the current user input (as arrays of objects)
-    *   Update `userDecision` based on the current operation type
+    *   Update `userAction` based on the current operation type
     *   Update `confirmAll` and 'removeAll' based on confirmation or remove keywords
 3.  **Preserve all other parameters** from the previous context except the first query (new query round)
 
@@ -168,7 +168,7 @@ For subsequent queries (when previous context exists):
   "column": null,
   "fileId": "fileId",
   "method": "POST",
-  "userDecision": null,
+  "userAction": null,
   "resumeStage": null,
   "addList": null,
   "intension": "View Order",
@@ -192,7 +192,7 @@ For subsequent queries (when previous context exists):
   "column": null,
   "fileId": "fileId",
   "method": "POST",
-  "userDecision": null,
+  "userAction": null,
   "resumeStage": null,
   "addList": null,
   "intension": "View Order (UAT)",
@@ -216,7 +216,7 @@ For subsequent queries (when previous context exists):
   "column": null,
   "fileId": "fileId",
   "method": "POST",
-  "userDecision": null,
+  "userAction": null,
   "resumeStage": "ParamConfirmation",
   "addList": null,
   "intension": "View Order",
@@ -241,7 +241,7 @@ For subsequent queries (when previous context exists):
   "column": null,
   "fileId": "fileId",
   "method": "POST",
-  "userDecision": "change",
+  "userAction": "change",
   "resumeStage": "ParamConfirmation",
   "addList": [
     {"SO Number": "D"}
@@ -268,7 +268,7 @@ For subsequent queries (when previous context exists):
   "column": null,
   "fileId": "fileId",
   "method": "POST",
-  "userDecision": "confirm",
+  "userAction": "confirm",
   "resumeStage": "ParamConfirmation",
   "addList": null,
   "intension": "View Order",
@@ -295,7 +295,7 @@ e.g. User query: (This is not a new query): I want to view order gtn po aaa:
   "column": null,
   "fileId": "fileId",
   "method": "POST",
-  "userDecision": "change",
+  "userAction": "change",
   "resumeStage": "ParamConfirmation",
   "addList": [
     "{\"GTN PO\": \"aaa\"}"
@@ -325,7 +325,7 @@ Then the chatbot return to tool following input parameters:
   "chatId": null,
   "messageId":null,
   "addList": null,
-  "userDecision": null,
+  "userAction": null,
   "chatId": "129849179417419", 
   "messageId":"asuxuiui784313yhihi",
 }
