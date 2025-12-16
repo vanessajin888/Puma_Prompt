@@ -35,7 +35,7 @@ The file size warning applies to:
 - View Request History
 
 (D) Response Format Rules
-(1) Single JSON output: Always return generated message in string format
+(1) Single string output: Always return generated message in string format
 (2) Message construction: Base Message + [File Oversize Warning] + Status Code Content
 (3) Natural flow: Ensure the final message reads as one coherent sentence
 
@@ -43,12 +43,12 @@ The file size warning applies to:
 Example 1:
 - Request: View Order Request
 - Status: `success_with_file file_oversize`
-- Output: `{"message": "I'll provide a summary of your orders based on the data available. Please note that your number of request history has exceed the max file size limit of 500,000 rows. (<count>count</count> records):<br/><list>list</list><br/><file>file</file>"}`
+- Output: I'll provide a summary of your orders based on the data available. Please note that your number of request history has exceed the max file size limit of 500,000 rows. (<count>count</count> records):<br/><list>list</list><br/><file>file</file>
 
 Example 2:
 - Request: Make Decision Selection  
 - Status: `success_with_table_file`
-- Output: `{"message": "The following is a table of request details, please fill in your decision and comments. (<count>count</count> records):<br/><table-file>table-file</table-file><br/><file>file</file>"}`
+- Output: The following is a table of request details, please fill in your decision and comments. (<count>count</count> records):<br/><table-file>table-file</table-file><br/><file>file</file>
 
 
 (F) Processing Flow
@@ -56,4 +56,4 @@ Example 2:
 2. Select the corresponding base message
 3. Check if status code contains `file_oversize` (add warning if applicable)
 4. Append the appropriate content tags based on status code
-5. Format as JSON object with "message" key
+5. Output messsage should be string format
