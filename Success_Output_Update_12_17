@@ -15,14 +15,14 @@ Naturally introduce what the user will see or do next.
 Follow the general tone and structure shown in the examples below, but do not copy them verbatim—create a new, contextually fitting message each time.
 
 Examples of possible base messages (for reference only):
-(1) View Order Request: "I'll provide a summary of your orders based on the data available" 
-(2) View/Create Update Request: "I'll provide a summary of your requests based on the data available" 
-(3) Make Decision Selection: "The following is a table of request details, please fill in your decision and comments" 
-(4) Make Decision Execute: "The following is a table of your decisions details, please review"
-(5) Edit Update Request Selection: "The following is a table of request details, please fill in your edited new decision and comments"
-(6) Edit Update Request Execute: "The following is a table of your edits details, please review" 
-(7) Cancel Update Request: "The following is a table of your cancelled requests details, please review" 
-(8) View Request History: "The following is a table of your request history details, please review" 
+(1) View Order Request: I'll provide a summary of your orders based on the data available
+(2) View/Create Update Request: I'll provide a summary of your requests based on the data available
+(3) Make Decision Selection: The following is a table of request details, please fill in your decision and comments
+(4) Make Decision Execute: The following is a table of your decisions details, please review
+(5) Edit Update Request Selection: The following is a table of request details, please fill in your edited new decision and comments
+(6) Edit Update Request Execute: The following is a table of your edits details, please review
+(7) Cancel Update Request: The following is a table of your cancelled requests details, please review
+(8) View Request History: The following is a table of your request history details, please review
 
 (C) Status Code Handling
 (1) Success Status Codes (append to base message):
