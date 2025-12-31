@@ -1,0 +1,792 @@
+{
+    "timestamp": "2025-12-31T02:48:59Z",
+    "accountId": "251988004827",
+    "region": "us-west-2",
+    "requestId": "0880a21a-b789-435f-8c81-d633d8ccadcd",
+    "operation": "Converse",
+    "modelId": "qwen.qwen3-235b-a22b-2507-v1:0",
+    "identity": {
+        "arn": "arn:aws:iam::251988004827:user/imbrace-app-user"
+    },
+    "input": {
+        "inputContentType": "application/json",
+        "inputBodyJson": {
+            "messages": [
+                {
+                    "role": "user",
+                    "content": [
+                        {
+                            "text": "Prompt:---------\nUser New Message: **i wish to create request in this file**\n\nUser Token is: \nacc_b86f5943-d520-4018-80fe-1117c8608f86\n\nHere is the chat information: \n Chat Id : 963071e4-2754-4920-bad0-8aa074ce167b, Message Id : d0fbab64-064f-4b19-90dd-990d00d65a0e\n\nHere is the information of documents: \n\n\n--- File: create_request_sale_sub_negative_case_1 ---\nFile Id : bi_373918c8-7bcf-4b0c-9ab1-cc00f36b8b48\nFile URL : https://dev-imbrace-data.s3.ap-east-1.amazonaws.com/board/org_imbrace/file_Z9U20iqEzrQ8geWCzZbjdAeZnq.xlsx\n--- End of create_request_sale_sub_negative_case_1 ---\n\nHere is the history of the converstion:\nHistory 0. user : **i wish to create request in this file**. Message Time : 1767149334\n\nUser Prompt End----------"
+                        }
+                    ]
+                }
+            ],
+            "system": [
+                {
+                    "text": "You are an AI assistant answering questions based on retrieved context from knowledge_hub.\n    \n    You MUST provide the best answer based on the context\n    Date & Time: 2025-12-31T02:48:59.134871     \n    Current Conversation ID: 963071e4-2754-4920-bad0-8aa074ce167b\n     Also you have access to many other tools to serve many other purposes.Please strictly follow the following settings for the AI Assistant:\n- Personality and Role: You are a polite, disciplined, meticulous assistant who specializes in logistics. You are currently working as a frontend assistant to coordinate orders within the supply chain of PUMA - an apparel company. Please extract information from users to activate the intended workflow. \n\n- Core Task: **AI Agent Prompt for Tool Matching and Parameter Extraction**\n**Every user query must trigger a tool.** \n\n**Objective:**  \nWhen a user inputs a query, the AI Agent must perform the following operations:  \n1. **Match Corresponding Tool**: Identify the intent based on keywords in the user query and map it to the appropriate tool, then trigger that tool. **Every query must trigger a tool.** If User New Message does not contain enough keyword, please look at the most recent history \"toolType\" to trigger the same tool.\n2.  Return tool result (in json format) to chatbot\n**[CRITICAL REQUIREMENT]**: The AI Agent MUST trigger the appropriate tool exactly **ONCE** for **EVERY** user query, without exception, please judge first query (new round query) or subquery carefully.\nNote: If the user suddenly switches the triggered tool, a new round of query begins, and all parameters are initialized. Alternatively, when \"resumeId\" = null, it is considered the first query.\n---\n\n### 1. Tool Matching Rules\nBased on keywords in the user query, match to the corresponding tool:\n- **View Order (Demo)**: Triggered by user queries containing \"view orders\", \"see orders\", \"check orders\", \"show me orders\", \"order status\", \"order information\" and similar keywords. Intention = \"view orders\".\n- **View Update Request (Demo)**: Triggered by user queries containing \"view requests\", \"see requests\", \"check requests\", \"show me requests\", \"request status\", \"request information\" and similar keywords. Intention = \"view update requests\"\n- ** Create Update Request (Demo)**: Triggered by user queries containing \"create requests\", \"create update request\", \"create update information\", \"change request\", \"change\", \"change update request\" and similar keywords. Intention = \"create update requests\"\n- ** Make Decisions (Demo)**: Trigger when user queries contain \"approval\" (if the user query includes \"approval\", the decision tool must be triggered, with \"approval\" having the highest priority), \"make a decision\", \"make the decisions\", \"make decision request\", \"decision\", or similar keywords. Intention = \"make a decision\".\n- ** Edit Update Request (Demo)**: Triggered by user queries containing \"edit update request\", \"edit request\", \"edit\", \"write\" and similar keywords. Intention = \"edit update request\"\n- ** Cancel Update Request (Demo)**: Triggered by user queries containing \"cancel update request\", \"cancel request\", \"cancel\", \"delete update request\", \"delete request\" and similar keywords. Intention = \"cancel update request\"\n- ** View Request History (Demo)**: Triggered by user queries containing \"view request history\", \"check history of request\", \"past history\", \"past record data of requests\" and similar keywords. Intention = \"view request history\"\n- **Greeting Workflow**: Triggered by user queries totally don't related to above other 7 tools \nNOTE : if the user query includes \"approval\" or \"approve\", the make decision tool must be triggered, with \"approval\" having the highest priority than other words \n"
+                }
+            ],
+            "inferenceConfig": {
+                "temperature": 0.5,
+                "topP": 0.5
+            },
+            "toolConfig": {
+                "tools": [
+                    {
+                        "toolSpec": {
+                            "name": "120_View_Update_Request_Demo_",
+                            "description": "Triggered by user queries containing \"view requests\", \"see requests\", \"check requests\", \"show me requests\", \"request status\", \"request information\" and similar keywords. Intention = \"view update requests\", and return 13 types input parmeters ",
+                            "inputSchema": {
+                                "json": {
+                                    "type": "object",
+                                    "properties": {
+                                        "userAction": {
+                                            "type": "string",
+                                            "description": "if user type keywords \"add\"/\"remove\"/\"remove all\"/\"change\" \nuserAction will be \"change\", and confirmAll will be false.\nif user type keywords \"confirm\" \nuserAction will be \"confirm\", and confirmAll will be true.\nif user type keywords \"abort\" \nuserAction will be \"abort\".\nNone of the above,\nuserAction will be null",
+                                            "enum": []
+                                        },
+                                        "chatId": {
+                                            "type": "string",
+                                            "description": "The ID for the chat\nchatId must extract in the user prompts, the format should be: Chat Id : \"The content to be extract\"",
+                                            "enum": []
+                                        },
+                                        "column": {
+                                            "description": "An array of column wants to extract\ncolumn:\n(1) Utilize user-specified column names when provided; otherwise, set to `null`\n(2) Preserve previous column selections for lastest history when no new preferences are specified\n(3) Supported column fields: \"SO Status\", \"Supplier Confirmation\", \"Order Status\", \"PO Priority\", \"Article Priority\", \"Purchasing Group\", \"Sourcing Organization\", \"Purchase Organization\", \"Lead Time\", \"HS Number\", \"Ship Mode\", \"Currency\", \"Ultimate Customer Name\", \"Ultimate Customer Code\", \"Customer Color\", \"Customer Style Number\", \"Destination Country\", \"Country\", \"Order Unit\", \"New Quantity\", \"Current Quantity\", \"Color\", \"Style Description\", \"Style\", \"Sale Sub Name\", \"Sale Sub Code\", \"New Factory Code\", \"Current Factory Code\", \"Supplier Name\", \"Supplier Code\", \"Brand\", \"Article\", \"Season\", \"Product Division\", \"SO Number\", \"SO Item Number\", \"GTN PO\", \"GTN PO Item\", \"Customer PO\", \"Purchase Requisition\", \"New LCHD\", \"Current LCHD\", \"New CHD\", \"Current CHD\", \"EHD\", \"PHD\", \"OPD\", \"RHD\", \"ON\"",
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string",
+                                                "description": "column key that wants to extract"
+                                            },
+                                            "enum": []
+                                        },
+                                        "messageId": {
+                                            "type": "string",
+                                            "description": "The ID for the message\nmessageId must extract in the user prompts, the format should be: Message Id Id : \"The content to be extract\"",
+                                            "enum": []
+                                        },
+                                        "filters": {
+                                            "description": "an array contain filter json string\nfilters: Array of filter conditions from user query (user new message)\n(1)Extract all filter conditions from the current user input (array type)\n    Format: `[\"{\\\"Key\\\":\\\"Value\\\"}\"]`\n    If no filters, set to empty array `[]`; If comfirmAll == true, filters = null\n(2) Supported filter fields: \"SO Number\", \"Supplier Code\", \"Sale Sub Code\", \"GTN PO\", \"GTN PO Item\", \"Customer PO\", \"Product Division\", \"Current Factory Code\", \"New Factory Code\", \"OPD\", \"Factory Code\",\"IsRequestResolved\",\"Request Status\", \"Change Type\", \"New Value\"\n(3)Notice: 1. the format of \"OPD\" value: \"YYYY-MM-DD\", 2. the value of \"IsRequestResolved\" key is \"Resolved\" or \"UnResolved\")\n3. the value of \"Request Status\" is \"Needs Follow-up\" or \"Pending\" or \"Approved\" or \"Rejected\" or \"Cancelled\" or \"In Progress\"\n(4) NOTE: When there are more than two items in the user query, please add both of in the table and KEEP BOTH OF THEM IN THE SAME ROW\nFor example: if user input \"I want to view requests that SO is 10002 with Product Division is Footwear with Supplier Code is ABCDE\", then \n \"filters\": [\n    \"{\\\"SO Number\\\": \\\"10002\\\", \\\"Product Division\\\": \\\"Footwear\\\", \\\"Supplier Code\\\": \\\"ABCDE\\\"}\",\n  ]\n\nFor example: If user query: I wanna view my pending requests to propose CHD to Apr 29, 2025\n\nThe filters should be \n\"filters\": [\n \"{\\\"Change Type\\\": \\\"Propose CHD\\\", \\\"New Value\\\": \\\"2025-04-29\\\", \\\"Request Status\\\": \\\"Pending\\\"}\"\n  ]",
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string",
+                                                "description": "a JSON object string contain filter keys and value"
+                                            },
+                                            "enum": []
+                                        },
+                                        "token": {
+                                            "type": "string",
+                                            "description": "user access token,The token starting with \"acc_\"",
+                                            "enum": []
+                                        },
+                                        "resumeStage": {
+                                            "type": "string",
+                                            "description": "The next stage for the whole process, including ParamConfirmation or RequestValidation\n(1) Initial query: `null`\n(2)Subsequent queries: Must exactly match the previous output's `resumeStage`\nNOTE: If current intension is different from last output's intenson, then set resumeStage to null",
+                                            "enum": []
+                                        },
+                                        "removeAll": {
+                                            "type": "boolean",
+                                            "description": "if user type \"remove all\" then set it to true;  otherwise, set to false\nRemind: If removeAll = true, then useAction must be \"change\" ",
+                                            "enum": []
+                                        },
+                                        "confirmAll": {
+                                            "type": "boolean",
+                                            "description": "when user type \"confirmAll\" or \"confirm\", set it to be true; otherwise set it to be false\nRemind: when confirmAll = true, then filters = null and userAction = \"confirm\"",
+                                            "enum": []
+                                        },
+                                        "resumeId": {
+                                            "type": "string",
+                                            "description": "The ID for the process to resume\nSet to `null` for first query, and for other subqueries, resumeId keeps same as lastest prompt history result.\nNOTE: If current intension is different from last output's intenson, then set resumeId to null",
+                                            "enum": []
+                                        },
+                                        "addList": {
+                                            "description": "Defined as an array of objects. Extract add operations from the current user input as an array of objects (when the userAction == \"change\", the addList == filters)\n    Format: [{\\\"Key\\\":\\\"Value\\\"}\", ...]\n    If userAction == \"abort\" or \"confirm\" or removeAll = true, set to `null`",
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string",
+                                                "description": ""
+                                            },
+                                            "enum": []
+                                        },
+                                        "prompt": {
+                                            "type": "string",
+                                            "description": "user prompt message\nThe full text input from user start from \"Prompt:--------- to  User Prompt End---------- \"    （NOTE: Must be the full text without any omissions or LLM laziness）\n\nfor example:\n\"prompt\": \"Prompt:---------\\nUser New Message:\"some message\"\\n\\nUser Token is:\\n\"token\"\\n\\nHere is the chat information:\\n\\n Chat Id : \"chat id\", Message Id : \"message id\"\\n\\nHere is the history of the conversation:\\n\\nHistory 0. user : \"some history message\"\\nHistory 1. assistant : \"some response from ai agent\"\\nHistory 2. ...etc.\\n\\nUser Prompt End----------\"",
+                                            "enum": []
+                                        },
+                                        "fileId": {
+                                            "type": "string",
+                                            "description": "a fileId include filter content: If user upload file, extract fileId; If user does not upload file, fileId = null",
+                                            "enum": []
+                                        }
+                                    },
+                                    "required": [
+                                        "token",
+                                        "prompt"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    {
+                        "toolSpec": {
+                            "name": "136_View_Order_Demo_",
+                            "description": "Triggered by user queries containing \"view orders\", \"see orders\", \"check orders\", \"show me orders\", \"order status\", \"order information\" and similar keywords. Intention = \"view orders\", and return 13 types input parmeters ",
+                            "inputSchema": {
+                                "json": {
+                                    "type": "object",
+                                    "properties": {
+                                        "userAction": {
+                                            "type": "string",
+                                            "description": "if user type keywords \"add\"/\"remove\"/\"remove all\"/\"change\" \nuserAction will be \"change\", and confirmAll will be false.\nif user type keywords \"confirm\" \nuserAction will be \"confirm\", and confirmAll will be true.\nif user type keywords \"abort\" \nuserAction will be \"abort\".\nNone of the above,\nuserAction will be null",
+                                            "enum": []
+                                        },
+                                        "chatId": {
+                                            "type": "string",
+                                            "description": "The ID for the chat\nchatId must extract in the user prompts, the format should be: Chat Id : \"The content to be extract\"",
+                                            "enum": []
+                                        },
+                                        "column": {
+                                            "description": "An array of column wants to extract\ncolumn:\n(1) Utilize user-specified column names when provided; otherwise, set to `null`\n(2) Preserve previous column selections from latest history record when no new preferences are specified\n(3) Supported column fields: \"SO Status\", \"Supplier Confirmation\", \"Order Status\", \"PO Priority\", \"Article Priority\", \"Purchasing Group\", \"Sourcing Organization\", \"Purchase Organization\", \"Lead Time\", \"HS Number\", \"Ship Mode\", \"Currency\", \"Ultimate Customer Name\", \"Ultimate Customer Code\", \"Customer Color\", \"Customer Style Number\", \"Destination Country\", \"Country\", \"Order Unit\", \"New Quantity\", \"Current Quantity\", \"Color\", \"Style Description\", \"Style\", \"Sale Sub Name\", \"Sale Sub Code\", \"New Factory Code\", \"Current Factory Code\", \"Supplier Name\", \"Supplier Code\", \"Brand\", \"Article\", \"Season\", \"Product Division\", \"SO Number\", \"SO Item Number\", \"GTN PO\", \"GTN PO Item\", \"Customer PO\", \"Purchase Requisition\", \"New LCHD\", \"Current LCHD\", \"New CHD\", \"Current CHD\", \"EHD\", \"PHD\", \"OPD\", \"RHD\", \"ON\"",
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string",
+                                                "description": "column key that wants to extract"
+                                            },
+                                            "enum": []
+                                        },
+                                        "messageId": {
+                                            "type": "string",
+                                            "description": "The ID for the message\nmessageId must extract in the user prompts, the format should be: Message Id Id : \"The content to be extract\"",
+                                            "enum": []
+                                        },
+                                        "filters": {
+                                            "description": "an array contain filter json string\nfilters: Array of filter conditions extracted from user query\n(1) Extract all filter conditions from the current user input (array type)\n    Format: `[\"{\\\"Key\\\":\\\"Value\\\"}\"]`\n    If no filters, set to empty array `[]`; If confirmAll == true, filters = null\n(2) Supported filter fields: \"SO Number\", \"Supplier Code\", \"Sale Sub Code\", \"GTN PO\", \"GTN PO Item\", \"Customer PO\", \"Product Division\", \"Current Factory Code\", \"New Factory Code\", \"OPD\", \"Factory Code\", \"Season\", \"Country\"\n(3) Notice: The format of \"OPD\" value must be: \"YYYY-MM-DD\"\n(4) NOTE: When there are multiple filter items in the user query, include them all in the JSON and KEEP THEM IN THE SAME JSON OBJECT within the array\n(5) NOTE: For the \"Season\" field, the chatbot must recognize and correctly normalize various input formats to the data board standard format (e.g., 202711, 202521):\n    - Spring season variations (e.g., for Spring 2027):\n        \"SS27\", \"SS2027\", \"Spring 27\", \"Spring 2027\", \"202711\"  \n        → Must be normalized to \"YYYY11\" format (e.g., \"202711\" for Spring 2027)\n    - Autumn season variations (e.g., for Autumn 2027):\n        \"AH27\", \"AH2027\", \"Autumn 27\", \"Autumn 2027\", \"202721\"  \n        → Must be normalized to \"YYYY21\" format (e.g., \"202721\" for Autumn 2027)\n    - The chatbot must handle:\n         Blank spaces (e.g., \"SS 2027\" → \"202711\")\n         Upper/lowercase variations (e.g., \"ss27\" → \"202711\")\n         All season values in the final JSON filter must use the data board standard format (e.g., \"Season\": \"202711\")\n\nExamples:\n1. User input: \"I want to view orders that SO is 10002 with Product Division is Footwear with Supplier Code is ABCDE\"\n   Output: \n   \"filters\": [\n     \"{\\\"SO Number\\\": \\\"10002\\\", \\\"Product Division\\\": \\\"Footwear\\\", \\\"Supplier Code\\\": \\\"ABCDE\\\"}\"\n   ]\n\n2. User input: \"I want to view order with OPD\"\n   Output:\n   \"filters\":[{\n     \"OPD\":\"\"\n   }]\n\n3. User input: \"Show orders for season SS27 and country US\"\n   Output:\n   \"filters\": [\n     \"{\\\"Season\\\": \\\"202711\\\", \\\"Country\\\": \\\"US\\\"}\"\n   ]\n\n4. User input: \"Filter by autumn 2025 and supplier code V123\"\n   Output:\n   \"filters\": [\n     \"{\\\"Season\\\": \\\"202521\\\", \\\"Supplier Code\\\": \\\"V123\\\"}\"\n   ]",
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string",
+                                                "description": "a JSON object string contain filter keys and value"
+                                            },
+                                            "enum": []
+                                        },
+                                        "token": {
+                                            "type": "string",
+                                            "description": "user access token,The token starting with \"acc_\"",
+                                            "enum": []
+                                        },
+                                        "resumeStage": {
+                                            "type": "string",
+                                            "description": "The next stage for the whole process, including ParamConfirmation or RequestValidation\n(1) Initial query: `null`\n(2)Subsequent queries: Must exactly match the previous output's `resumeStage`\nNOTE: If current intension is different from last output's intenson, then set resumeStage to null",
+                                            "enum": []
+                                        },
+                                        "removeAll": {
+                                            "type": "boolean",
+                                            "description": "if user type \"remove all\" then set it to true;  otherwise, set to false\nRemind: If removeAll = true, then useAction must be \"change\" ",
+                                            "enum": []
+                                        },
+                                        "confirmAll": {
+                                            "type": "boolean",
+                                            "description": "when user type \"confirmAll\" or \"confirm\", set it to be true; otherwise set it to be false\nRemind: when confirmAll = true, then filters = null and userAction = \"confirm\"",
+                                            "enum": []
+                                        },
+                                        "resumeId": {
+                                            "type": "string",
+                                            "description": "The ID for the process to resume\nSet to `null` for first query, and for other subqueries, resumeId keeps same as lastest prompt history result.\nNOTE: If current intension is different from last output's intenson, then set resumeId to null",
+                                            "enum": []
+                                        },
+                                        "addList": {
+                                            "description": "Defined as an array of objects. Extract add operations from the current user input as an array of objects (when the userAction == \"change\", the addList == filters)\n    Format: [{\\\"Key\\\":\\\"Value\\\"}\", ...]\n    If userAction == \"abort\" or \"confirm\" or removeAll = true, set to `null`",
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string",
+                                                "description": "a JSON object string contain filter keys and value"
+                                            },
+                                            "enum": []
+                                        },
+                                        "prompt": {
+                                            "type": "string",
+                                            "description": "user prompt message\nThe full text input from user start from \"Prompt:--------- to  User Prompt End---------- \"    （NOTE: Must be the full text without any omissions or LLM laziness）",
+                                            "enum": []
+                                        },
+                                        "fileId": {
+                                            "type": "string",
+                                            "description": "a fileId include filter content: If user upload file, extract fileId; If user does not upload file, fileId = null",
+                                            "enum": []
+                                        }
+                                    },
+                                    "required": [
+                                        "token",
+                                        "prompt"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    {
+                        "toolSpec": {
+                            "name": "198_Create_Update_Request_Demo_",
+                            "description": "Triggered by user queries containing \"create requests\", \"create update request\", \"create update information\", \"change request\", \"change\", \"change update request\" and similar keywords. Intention = \"create update requests\",, and return 13 types input parmeters \n",
+                            "inputSchema": {
+                                "json": {
+                                    "type": "object",
+                                    "properties": {
+                                        "userAction": {
+                                            "type": "string",
+                                            "description": "if user type keywords \"add\"/\"remove\"/\"remove all\"/\"change\" \nuserAction will be \"change\", and confirmAll will be false.\nif user type keywords \"confirm\" \nuserAction will be \"confirm\", and confirmAll will be true.\nif user type keywords \"abort\" \nuserAction will be \"abort\".\nNone of the above,\nuserAction will be null",
+                                            "enum": []
+                                        },
+                                        "chatId": {
+                                            "type": "string",
+                                            "description": "The ID for the chat\nchatId must extract in the user prompts, the format should be: Chat Id : \"The content to be extract\"",
+                                            "enum": []
+                                        },
+                                        "column": {
+                                            "description": "An array of column wants to extract\ncolumn:\n(1) Utilize user-specified column names when provided; otherwise, set to `null`\n(2) Preserve previous column selections from latest history record when no new preferences are specified\n(3) Supported column fields: \"Batch ID\",  \"Request ID\", \"Product Division\",\"Supplier Code\", \"Sale Sub Code\",\"GTN PO\",\"GTN PO Item\",\"Customer PO\",\"SO Number\", \"SO Item Number\", \"Change Type\",\"New Value\", \"Approver\", \"Request Status\",\"Requestor Comment\", \"Auto Approve\",\"Is Valid Input\", \"Latest Decided By\", \"Latest Approver Role\",\"Latest Approver Comment\",\"Requestor\",\"Observer\"",
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string",
+                                                "description": "column key that wants to extract"
+                                            },
+                                            "enum": []
+                                        },
+                                        "messageId": {
+                                            "type": "string",
+                                            "description": "The ID for the message\nmessageId must extract in the user prompts, the format should be: Message Id Id : \"The content to be extract\"",
+                                            "enum": []
+                                        },
+                                        "requests": {
+                                            "description": "requests: Extract all filter conditions from the current user input request; If no filters, set to empty array\ne.g If the user input: I want to change the request SO 0141348900, update LCHD to a new value 2025-11-07\n   requests = [\"{\"SO Number\":\"0141348900\", \"Change Type\": \"Update LCHD\", \"New Value\": \"2025-11-07\", \"Requestor Comment\":null }\"]",
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string",
+                                                "description": "a JSON object string contain filter keys and value, and the possible keys:  \"Change Type\" ( Three types of change type value: \"Internal Transfer\",\"Update LCHD\",\"Propose CHD\"),     \"New Value\",     \"GTN PO\",     \"GTN PO Item\",     \"Customer PO\",     \"SO Number\",     \"SO Item Number\",     \"Requestor Comment\" "
+                                            },
+                                            "enum": []
+                                        },
+                                        "token": {
+                                            "type": "string",
+                                            "description": "user access token,The token starting with \"acc_\"",
+                                            "enum": []
+                                        },
+                                        "resumeStage": {
+                                            "type": "string",
+                                            "description": "The next stage for the whole process, including ParamConfirmation or RequestValidation\n(1) Initial query: `null`\n(2)Subsequent queries: Must exactly match the previous output's `resumeStage`\nNOTE: If current intension is different from last output's intenson, then set resumeStage to null",
+                                            "enum": []
+                                        },
+                                        "removeAll": {
+                                            "type": "boolean",
+                                            "description": "if user type \"remove all\" then set it to true;  otherwise, set to false\nRemind: If removeAll = true, then useAction must be \"change\" ",
+                                            "enum": []
+                                        },
+                                        "confirmAll": {
+                                            "type": "boolean",
+                                            "description": "when user type \"confirmAll\" or \"confirm\", set it to be true; otherwise set it to be false\nRemind: when confirmAll = true, then requests = null and userAction = \"confirm\"",
+                                            "enum": []
+                                        },
+                                        "resumeId": {
+                                            "type": "string",
+                                            "description": "The ID for the process to resume\nSet to `null` for first query, and for other subqueries, resumeId keeps same as lastest prompt history result.\nNOTE: If current intension is different from last output's intenson, then set resumeId to null",
+                                            "enum": []
+                                        },
+                                        "addList": {
+                                            "description": "Defined as an array of objects. Extract add operations from the current user input as an array of objects (when the userAction == \"change\", the addList == requests)\n    Format: [{\\\"Key\\\":\\\"Value\\\"}\", ...]\n    If userAction == \"abort\" or \"confirm\" or removeAll = true, set to `null`",
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string",
+                                                "description": ""
+                                            },
+                                            "enum": []
+                                        },
+                                        "prompt": {
+                                            "type": "string",
+                                            "description": "user prompt message\nThe full text input from user start from \"Prompt:--------- to  User Prompt End---------- \"    （NOTE: Must be the full text without any omissions or LLM laziness）\n\nfor example:\n\"prompt\": \"Prompt:---------\\nUser New Message:\"some message\"\\n\\nUser Token is:\\n\"token\"\\n\\nHere is the chat information:\\n\\n Chat Id : \"chat id\", Message Id : \"message id\"\\n\\nHere is the history of the conversation:\\n\\nHistory 0. user : \"some history message\"\\nHistory 1. assistant : \"some response from ai agent\"\\nHistory 2. ...etc.\\n\\nUser Prompt End----------\"",
+                                            "enum": []
+                                        },
+                                        "fileId": {
+                                            "type": "string",
+                                            "description": "a fileId include filter content: If user upload file, extract fileId; If user does not upload file, fileId = null",
+                                            "enum": []
+                                        }
+                                    },
+                                    "required": [
+                                        "token",
+                                        "prompt"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    {
+                        "toolSpec": {
+                            "name": "199_Make_Decisions_Demo_",
+                            "description": "Trigger when user queries contain \"approval\" (if the user query includes \"approval\", the decision tool must be triggered, with \"approval\" having the highest priority), \"make a decision\", \"make the decisions\", \"make decision request\", \"decision\", or similar keywords. The user's intention is \"make a decision\", and 14 types of input parameters need to be returned.",
+                            "inputSchema": {
+                                "json": {
+                                    "type": "object",
+                                    "properties": {
+                                        "userAction": {
+                                            "type": "string",
+                                            "description": "if user type keywords \"add\"/\"remove\"/\"remove all\"/\"change\" \nuserAction will be \"change\", and confirmAll will be false.\nif user type keywords \"confirm\" \nuserAction will be \"confirm\", and confirmAll will be true.\nif user type keywords \"abort\" \nuserAction will be \"abort\".\nNone of the above,\nuserAction will be null",
+                                            "enum": []
+                                        },
+                                        "chatId": {
+                                            "type": "string",
+                                            "description": "The ID for the chat\nchatId must extract in the user prompts, the format should be: Chat Id : \"The content to be extract\"",
+                                            "enum": []
+                                        },
+                                        "column": {
+                                            "description": "An array of column wants to extract\ncolumn:\n(1) Utilize user-specified column names when provided; otherwise, set to `null`\n(2) Preserve previous column selections from latest history record when no new preferences are specified\n(3) Supported column fields: \"SO Status\", \"Supplier Confirmation\", \"Order Status\", \"PO Priority\", \"Article Priority\", \"Purchasing Group\", \"Sourcing Organization\", \"Purchase Organization\", \"Lead Time\", \"HS Number\", \"Ship Mode\", \"Currency\", \"Ultimate Customer Name\", \"Ultimate Customer Code\", \"Customer Color\", \"Customer Style Number\", \"Destination Country\", \"Country\", \"Order Unit\", \"New Quantity\", \"Current Quantity\", \"Color\", \"Style Description\", \"Style\", \"Sale Sub Name\", \"Sale Sub Code\", \"New Factory Code\", \"Current Factory Code\", \"Supplier Name\", \"Supplier Code\", \"Brand\", \"Article\", \"Season\", \"Product Division\", \"SO Number\", \"SO Item Number\", \"GTN PO\", \"GTN PO Item\", \"Customer PO\", \"Purchase Requisition\", \"New LCHD\", \"Current LCHD\", \"New CHD\", \"Current CHD\", \"EHD\", \"PHD\", \"OPD\", \"RHD\", \"ON\"",
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string",
+                                                "description": "column key that wants to extract"
+                                            },
+                                            "enum": []
+                                        },
+                                        "messageId": {
+                                            "type": "string",
+                                            "description": "The ID for the message\nmessageId must extract in the user prompts, the format should be: Message Id Id : \"The content to be extract\"",
+                                            "enum": []
+                                        },
+                                        "filters": {
+                                            "description": "an array contain filter json string\nfilters: Array of filter conditions from user query\n(1)Extract all filter conditions from the current user input (array type)\n    Format: `[\"{\\\"Key\\\":\\\"Value\\\"}\"]`\n    If no filters, set to empty array `[]`; If comfirmAll == true, filters = null\n(2) Supported filter fields: \"SO Number\",\"Customer PO\", \"GTN PO\", \"GTN PO Item\", \"Batch ID\", \"Request ID\",\"Related Request\" (NOTE: \"Related Request\" include \"true\" or \"false\" value)\n(3) NOTE: When there are more than two items in the user query, please add both of in the table and KEEP BOTH OF THEM IN THE SAME ROW\nFor example: \n \"filters\": [\n    \"{\\\"SO Number\\\": \\\"10002\\\", \\\"Batch ID\\\": \\\"670970147098014\\\"}\"\n  ]",
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string",
+                                                "description": "JSON"
+                                            },
+                                            "enum": []
+                                        },
+                                        "token": {
+                                            "type": "string",
+                                            "description": "user access token,The token starting with \"acc_\"",
+                                            "enum": []
+                                        },
+                                        "resumeStage": {
+                                            "type": "string",
+                                            "description": "The next stage for the whole process, including ParamConfirmation or RequestValidation\n(1) Initial query: `null`\n(2)Subsequent queries: Must exactly match the previous output's `resumeStage`\nNOTE: If current intension is different from last output's intenson, then set resumeStage to null",
+                                            "enum": []
+                                        },
+                                        "removeAll": {
+                                            "type": "boolean",
+                                            "description": "if user type \"remove all\" then set it to true;  otherwise, set to false\nRemind: If removeAll = true, then useAction must be \"change\" ",
+                                            "enum": []
+                                        },
+                                        "confirmAll": {
+                                            "type": "boolean",
+                                            "description": "when user type \"confirmAll\" or \"confirm\", set it to be true; otherwise set it to be false\nRemind: when confirmAll = true, then filters = null and userAction = \"confirm\"",
+                                            "enum": []
+                                        },
+                                        "resumeId": {
+                                            "type": "string",
+                                            "description": "The ID for the process to resume\nSet to `null` for first query, and for other subqueries, resumeId keeps same as lastest prompt history result.\nNOTE: If current intension is different from last output's intenson, then set resumeId to null",
+                                            "enum": []
+                                        },
+                                        "addList": {
+                                            "description": "Defined as an array of objects. Extract add operations from the current user input as an array of objects (when the userAction == \"change\", the addList == filters)\n    Format: [{\\\"Key\\\":\\\"Value\\\"}\", ...]\n    If userAction == \"abort\" or \"confirm\" or removeAll = true, set to `null`",
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string",
+                                                "description": "a JSON object string contain filter keys and value"
+                                            },
+                                            "enum": []
+                                        },
+                                        "decisions": {
+                                            "description": "Extract from user input query or decision:\nIn the make decision tool: decisions format (must include \"Request ID\", \"Approve Decision\", \"Approve Comment\")\nFor example:  decisions = [\"{\"Request ID\":\"014131432\", \"Approve Decision\": \"Approved\", \"Approve Comment\": \"comment\"(extract form user input query)}\"]\nIf user not input decision, \"decisions\" = null\n\nExample: \nUser Typed: \"I approve RD89982cd148314c3e85f1_110, with the consent of Simon and Matthew as well.\" \ndecisions = [\"{\"Request ID\":\"RD89982cd148314c3e85f1_110\",\"Approver Decision\":\"Approved\",\"Approver Comment\":\"with the consent of Simon and Matthew\"}\"]",
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string",
+                                                "description": "include \"Request ID\", \"Approve Decision\", \"Approve Comment\""
+                                            },
+                                            "enum": []
+                                        },
+                                        "prompt": {
+                                            "type": "string",
+                                            "description": "user prompt message\nThe full text input from user start from \"Prompt:--------- to  User Prompt End---------- \"    （NOTE: Must be the full text without any omissions or LLM laziness）\n\nfor example:\n\"prompt\": \"Prompt:---------\\nUser New Message:\"some message\"\\n\\nUser Token is:\\n\"token\"\\n\\nHere is the chat information:\\n\\n Chat Id : \"chat id\", Message Id : \"message id\"\\n\\nHere is the history of the conversation:\\n\\nHistory 0. user : \"some history message\"\\nHistory 1. assistant : \"some response from ai agent\"\\nHistory 2. ...etc.\\n\\nUser Prompt End----------\"",
+                                            "enum": []
+                                        },
+                                        "fileId": {
+                                            "type": "string",
+                                            "description": "a fileId include filter content: If user upload file, extract fileId; If user does not upload file, fileId = null",
+                                            "enum": []
+                                        }
+                                    },
+                                    "required": [
+                                        "token",
+                                        "prompt"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    {
+                        "toolSpec": {
+                            "name": "204_View_Request_History_Demo_",
+                            "description": "Triggered by user queries containing \"view request history\", \"check history of request\", \"past history\", \"past record data of requests\" and similar keywords. Intention = \"view request history\", and return 13 types input parmeters",
+                            "inputSchema": {
+                                "json": {
+                                    "type": "object",
+                                    "properties": {
+                                        "userAction": {
+                                            "type": "string",
+                                            "description": "if user type keywords \"add\"/\"remove\"/\"remove all\"/\"change\" \nuserAction will be \"change\", and confirmAll will be false.\nif user type keywords \"confirm\" \nuserAction will be \"confirm\", and confirmAll will be true.\nif user type keywords \"abort\" \nuserAction will be \"abort\".\nNone of the above,\nuserAction will be null",
+                                            "enum": []
+                                        },
+                                        "chatId": {
+                                            "type": "string",
+                                            "description": "The ID for the chat\nchatId must extract in the user prompts, the format should be: Chat Id : \"The content to be extract\"",
+                                            "enum": []
+                                        },
+                                        "column": {
+                                            "description": "An array of column wants to extract\ncolumn:\n(1) Utilize user-specified column names when provided; otherwise, set to `null`\n(2) Preserve previous column selections from latest history record when no new preferences are specified\n(3) Supported column fields: \"Edit ID\",\"Batch ID\",\"Request ID\",\"Previous New Value\",\"Edited New Value\", \"Previous Requestor Comment\", \"Edited Requestor Comment\", \"Edit Type\",\"Edited By\", \"Edited At\"",
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string",
+                                                "description": "column key that wants to extract"
+                                            },
+                                            "enum": []
+                                        },
+                                        "messageId": {
+                                            "type": "string",
+                                            "description": "The ID for the message\nmessageId must extract in the user prompts, the format should be: Message Id Id : \"The content to be extract\"",
+                                            "enum": []
+                                        },
+                                        "filters": {
+                                            "description": "an array contain filter json string\nfilters: Array of filter conditions from user query\n(1)Extract all filter conditions from the current user input (array type)\n    Format: `[\"{\\\"Key\\\":\\\"Value\\\"}\"]`\n    If no filters, set to empty array `[]`; If comfirmAll == true, filters = null\n(2) Supported filter fields: \"SO Number\",\"GTN PO\", \"GTN PO Item\", \"Customer PO\", \"batch_id\", \"request_id\"\n(3) NOTE: When there are more than two items in the user query, please add both of in the table and KEEP BOTH OF THEM IN THE SAME ROW\nFor example: if user input \"I want to view history with SO is 10002 with Product Division is Footwear with Supplier Code is ABCDE\", then \n \"filters\": [\n    \"{\\\"SO Number\\\": \\\"10002\\\", \\\"Product Division\\\": \\\"Footwear\\\"}\"\n  ]",
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string",
+                                                "description": "a JSON object string contain filter keys and value"
+                                            },
+                                            "enum": []
+                                        },
+                                        "token": {
+                                            "type": "string",
+                                            "description": "user access token,The token starting with \"acc_\"",
+                                            "enum": []
+                                        },
+                                        "resumeStage": {
+                                            "type": "string",
+                                            "description": "The next stage for the whole process, including ParamConfirmation or RequestValidation\n(1) Initial query: `null`\n(2)Subsequent queries: Must exactly match the previous output's `resumeStage`\nNOTE: If current intension is different from last output's intenson, then set resumeStage to null",
+                                            "enum": []
+                                        },
+                                        "removeAll": {
+                                            "type": "boolean",
+                                            "description": "if user type \"remove all\" then set it to true;  otherwise, set to false\nRemind: If removeAll = true, then useAction must be \"change\" ",
+                                            "enum": []
+                                        },
+                                        "confirmAll": {
+                                            "type": "boolean",
+                                            "description": "when user type \"confirmAll\" or \"confirm\", set it to be true; otherwise set it to be false\nRemind: when confirmAll = true, then filters = null and userAction = \"confirm\"",
+                                            "enum": []
+                                        },
+                                        "resumeId": {
+                                            "type": "string",
+                                            "description": "The ID for the process to resume\nSet to `null` for first query, and for other subqueries, resumeId keeps same as lastest prompt history result.\nNOTE: If current intension is different from last output's intenson, then set resumeId to null",
+                                            "enum": []
+                                        },
+                                        "addList": {
+                                            "description": "Defined as an array of objects. Extract add operations from the current user input as an array of objects (when the userAction == \"change\", the addList == filters)\n    Format: [{\\\"Key\\\":\\\"Value\\\"}\", ...]\n    If userAction == \"abort\" or \"confirm\" or removeAll = true, set to `null`",
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string",
+                                                "description": "a JSON object string contain filter keys and value"
+                                            },
+                                            "enum": []
+                                        },
+                                        "prompt": {
+                                            "type": "string",
+                                            "description": "user prompt message\nThe full text input from user start from \"Prompt:--------- to  User Prompt End---------- \"    （NOTE: Must be the full text without any omissions or LLM laziness）\n\nfor example:\n\"prompt\": \"Prompt:---------\\nUser New Message:\"some message\"\\n\\nUser Token is:\\n\"token\"\\n\\nHere is the chat information:\\n\\n Chat Id : \"chat id\", Message Id : \"message id\"\\n\\nHere is the history of the conversation:\\n\\nHistory 0. user : \"some history message\"\\nHistory 1. assistant : \"some response from ai agent\"\\nHistory 2. ...etc.\\n\\nUser Prompt End----------\"",
+                                            "enum": []
+                                        },
+                                        "fileId": {
+                                            "type": "string",
+                                            "description": "a fileId include filter content: If user upload file, extract fileId; If user does not upload file, fileId = null",
+                                            "enum": []
+                                        }
+                                    },
+                                    "required": [
+                                        "token",
+                                        "prompt"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    {
+                        "toolSpec": {
+                            "name": "208_Edit_Update_Request_Demo_",
+                            "description": "Triggered by user queries containing \"edit update request\", \"edit request\", \"edit\", \"write\" and similar keywords. Intention = \"edit update request\",and return 14 types input parmeters ",
+                            "inputSchema": {
+                                "json": {
+                                    "type": "object",
+                                    "properties": {
+                                        "userAction": {
+                                            "type": "string",
+                                            "description": "if user type keywords \"add\"/\"remove\"/\"remove all\"/\"change\" \nuserAction will be \"change\", and confirmAll will be false.\nif user type keywords \"confirm\" \nuserAction will be \"confirm\", and confirmAll will be true.\nif user type keywords \"abort\" \nuserAction will be \"abort\".\nNone of the above,\nuserAction will be null",
+                                            "enum": []
+                                        },
+                                        "chatId": {
+                                            "type": "string",
+                                            "description": "The ID for the chat\nchatId must extract in the user prompts, the format should be: Chat Id : \"The content to be extract\"",
+                                            "enum": []
+                                        },
+                                        "column": {
+                                            "description": "An array of column wants to extract\ncolumn:\n(1) Utilize user-specified column names when provided; otherwise, set to `null`\n(2) Preserve previous column selections from latest history record when no new preferences are specified\n(3) Supported column fields: \"Batch ID\", \"Request ID\", \"GTN PO\", \"GTN PO Item\", \"Customer PO\", \"SO Number\", \"Edited New Value\",\"Edited Requestor Comment\",\"Change Type\",\"Previous New Value\",\"Previous Requestor Comment\"",
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string",
+                                                "description": "column key that wants to extract"
+                                            },
+                                            "enum": []
+                                        },
+                                        "messageId": {
+                                            "type": "string",
+                                            "description": "The ID for the message\nmessageId must extract in the user prompts, the format should be: Message Id Id : \"The content to be extract\"",
+                                            "enum": []
+                                        },
+                                        "filters": {
+                                            "description": "an array contain filter json string\nfilters: Array of filter conditions from user query\n(1)Extract all filter conditions from the current user input (array type)\n    Format: `[\"{\\\"Key\\\":\\\"Value\\\"}\"]`\n    If no filters, set to empty array `[]`; If comfirmAll == true, filters = null\n(2) Supported filter fields: \"GTN PO\", \"GTN PO Item\", \"Customer PO\", \"SO Number\", \"Request ID\",  \"Edited New Value\",  \"Edited Requestor Comment\"\n(3) NOTE: When there are more than two items in the user query, please add both of in the table and KEEP BOTH OF THEM IN THE SAME ROW, \nFor example: \n\"filters\": [\n    \"{\\\"SO Number\\\": \\\"10002\\\", \\\"Request ID\\\": \\\"RD89982cd148314c3e85f1_111\\\"}\"\n  ]",
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string",
+                                                "description": "a JSON object string contain filter keys and value, like eg, {\"Request ID\":\"RD89982cd148314c3e85f1_111\"}"
+                                            },
+                                            "enum": []
+                                        },
+                                        "token": {
+                                            "type": "string",
+                                            "description": "user access token,The token starting with \"acc_\"",
+                                            "enum": []
+                                        },
+                                        "resumeStage": {
+                                            "type": "string",
+                                            "description": "The next stage for the whole process, including ParamConfirmation or RequestValidation\n(1) Initial query: `null`\n(2)Subsequent queries: Must exactly match the previous output's `resumeStage`, including ParamConfirmation or RequestValidation",
+                                            "enum": []
+                                        },
+                                        "removeAll": {
+                                            "type": "boolean",
+                                            "description": "if user type \"remove all\" then set it to true;  otherwise, set to false\nRemind: If removeAll = true, then useAction must be \"change\" ",
+                                            "enum": []
+                                        },
+                                        "resumeId": {
+                                            "type": "string",
+                                            "description": "The ID for the process to resume\nSet to `null` for first query, and for other subqueries, resumeId keeps same as lastest prompt history result.",
+                                            "enum": []
+                                        },
+                                        "confirmAll": {
+                                            "type": "boolean",
+                                            "description": "when user type \"confirmAll\" or \"confirm\", set it to be true; otherwise set it to be false\nRemind: when confirmAll = true, then filters = null and userAction = \"confirm\"",
+                                            "enum": []
+                                        },
+                                        "addList": {
+                                            "description": "Defined as an array of objects. Extract add operations from the current user input as an array of objects (when the userAction == \"change\", the addList == filters)\n    Format: [{\\\"Key\\\":\\\"Value\\\"}\", ...]\n    If userAction == \"abort\" or \"confirm\" or removeAll = true, set to `null`",
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string",
+                                                "description": "a JSON object string contain filter keys and value"
+                                            },
+                                            "enum": []
+                                        },
+                                        "decisions": {
+                                            "description": "Extract from user input query or decision:\nIn the edit update request tool: decisions format (must include \"Request ID\", \"Edited New Value\", \"Edited Requestor Comment\")\nFor example:  decisions = [\"{\"Request ID\":\"RD89982cd148314c3e85f1_111\",\"Edited New Value\":\"2025-11-10\",\"Edited Requestor Comment\":\"because 09 is holiday\"}\"]\nIf user not input decision, \"decisions\" = null",
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string",
+                                                "description": "JSON like eg, {\"Request ID\":\"RD89982cd148314c3e85f1_111\",\"Edited New Value\":\"2025-11-10\"(the value in \"YYYY-MM-DD\" format),\"Edited Requestor Comment\":\"because 09 is holiday\"}"
+                                            },
+                                            "enum": []
+                                        },
+                                        "prompt": {
+                                            "type": "string",
+                                            "description": "user prompt message\nThe full text input from user start from \"Prompt:--------- to  User Prompt End---------- \"    （NOTE: Must be the full text without any omissions or LLM laziness）\n\nfor example:\n\"prompt\": \"Prompt:---------\\nUser New Message:\"some message\"\\n\\nUser Token is:\\n\"token\"\\n\\nHere is the chat information:\\n\\n Chat Id : \"chat id\", Message Id : \"message id\"\\n\\nHere is the history of the conversation:\\n\\nHistory 0. user : \"some history message\"\\nHistory 1. assistant : \"some response from ai agent\"\\nHistory 2. ...etc.\\n\\nUser Prompt End----------\"",
+                                            "enum": []
+                                        },
+                                        "fileId": {
+                                            "type": "string",
+                                            "description": "a fileId include filter content: If user upload file, extract fileId; If user does not upload file, fileId = null",
+                                            "enum": []
+                                        }
+                                    },
+                                    "required": [
+                                        "token",
+                                        "prompt"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    {
+                        "toolSpec": {
+                            "name": "210_Cancel_Update_Request_Demo_",
+                            "description": "Triggered by user queries containing \"cancel update request\", \"cancel request\", \"cancel\", \"delete update request\", \"delete request\" and similar keywords. Intention = \"cancel update request\",and return 13 types input parmeters ",
+                            "inputSchema": {
+                                "json": {
+                                    "type": "object",
+                                    "properties": {
+                                        "userAction": {
+                                            "type": "string",
+                                            "description": "if user type keywords \"add\"/\"remove\"/\"remove all\"/\"change\" \nuserAction will be \"change\", and confirmAll will be false.\nif user type keywords \"confirm\" \nuserAction will be \"confirm\", and confirmAll will be true.\nif user type keywords \"abort\" \nuserAction will be \"abort\".\nNone of the above,\nuserAction will be null",
+                                            "enum": []
+                                        },
+                                        "chatId": {
+                                            "type": "string",
+                                            "description": "The ID for the chat\nchatId must extract in the user prompts, the format should be: Chat Id : \"The content to be extract\"",
+                                            "enum": []
+                                        },
+                                        "column": {
+                                            "description": "An array of column wants to extract\ncolumn:\n(1) Utilize user-specified column names when provided; otherwise, set to `null`\n(2) Preserve previous column selections from latest history record when no new preferences are specified\n(3) Supported column fields:\"Request ID\"",
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string",
+                                                "description": "column key that wants to extract"
+                                            },
+                                            "enum": []
+                                        },
+                                        "messageId": {
+                                            "type": "string",
+                                            "description": "The ID for the message\nmessageId must extract in the user prompts, the format should be: Message Id Id : \"The content to be extract\"",
+                                            "enum": []
+                                        },
+                                        "filters": {
+                                            "description": "an array contain filter json string\nfilters: Array of filter conditions from user query\n(1)Extract all filter conditions from the current user input (array type)\n    Format: `[\"{\\\"Key\\\":\\\"Value\\\"}\"]`\n    If no filters, set to empty array `[]`; If comfirmAll == true, filters = null\n(2) Supported filter fields: \"GTN PO\",\"GTN PO Item\",\"Customer PO\",\"SO Number\",\"Request ID\", \"Batch ID\"\n(3) NOTE: When there are more than two items in the user query, please add both of in the table and KEEP BOTH OF THEM IN THE SAME ROW\nFor example:\n \"filters\": [\n    \"{\\\"SO Number\\\": \\\"10002\\\", \\\"Request ID\\\": \\\"r80917409140915\\\"}\"\n  ]",
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string",
+                                                "description": "a JSON object string contain filter keys and value"
+                                            },
+                                            "enum": []
+                                        },
+                                        "token": {
+                                            "type": "string",
+                                            "description": "user access token,The token starting with \"acc_\"",
+                                            "enum": []
+                                        },
+                                        "resumeStage": {
+                                            "type": "string",
+                                            "description": "The next stage for the whole process, including ParamConfirmation or RequestValidation\n(1) Initial query: `null`\n(2)Subsequent queries: Must exactly match the previous output's `resumeStage`\nNOTE: If current intension is different from last output's intenson, then set resumeStage to null",
+                                            "enum": []
+                                        },
+                                        "removeAll": {
+                                            "type": "boolean",
+                                            "description": "if user type \"remove all\" then set it to true;  otherwise, set to false\nRemind: If removeAll = true, then useAction must be \"change\" ",
+                                            "enum": []
+                                        },
+                                        "confirmAll": {
+                                            "type": "boolean",
+                                            "description": "when user type \"confirmAll\" or \"confirm\", set it to be true; otherwise set it to be false\nRemind: when confirmAll = true, then filters = null and userAction = \"confirm\"",
+                                            "enum": []
+                                        },
+                                        "resumeId": {
+                                            "type": "string",
+                                            "description": "The ID for the process to resume\nSet to `null` for first query, and for other subqueries, resumeId keeps same as lastest prompt history result.\nNOTE: If current intension is different from last output's intenson, then set resumeId to null",
+                                            "enum": []
+                                        },
+                                        "addList": {
+                                            "type": "string",
+                                            "description": "Defined as an array of objects. Extract add operations from the current user input as an array of objects (when the userAction == \"change\", the addList == filters)\n    Format: [{\\\"Key\\\":\\\"Value\\\"}\", ...]\n    If userAction == \"abort\" or \"confirm\" or removeAll = true, set to `null`",
+                                            "enum": []
+                                        },
+                                        "prompt": {
+                                            "type": "string",
+                                            "description": "user prompt message\nThe full text input from user start from \"Prompt:--------- to  User Prompt End---------- \"    （NOTE: Must be the full text without any omissions or LLM laziness）\n\nfor example:\n\"prompt\": \"Prompt:---------\\nUser New Message:\"some message\"\\n\\nUser Token is:\\n\"token\"\\n\\nHere is the chat information:\\n\\n Chat Id : \"chat id\", Message Id : \"message id\"\\n\\nHere is the history of the conversation:\\n\\nHistory 0. user : \"some history message\"\\nHistory 1. assistant : \"some response from ai agent\"\\nHistory 2. ...etc.\\n\\nUser Prompt End----------\"",
+                                            "enum": []
+                                        },
+                                        "fileId": {
+                                            "type": "string",
+                                            "description": "a fileId include filter content: If user upload file, extract fileId; If user does not upload file, fileId = null",
+                                            "enum": []
+                                        }
+                                    },
+                                    "required": [
+                                        "token",
+                                        "prompt"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    {
+                        "toolSpec": {
+                            "name": "216_Greeting_Workflow",
+                            "description": "Return Greeting Messages",
+                            "inputSchema": {
+                                "json": {
+                                    "type": "object",
+                                    "properties": {
+                                        "token": {
+                                            "type": "string",
+                                            "description": "",
+                                            "enum": []
+                                        }
+                                    },
+                                    "required": [
+                                        "token"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    {
+                        "toolSpec": {
+                            "name": "reset_memory",
+                            "description": "Clear conversation history and reset the memory of the bot. Only use this tool when the user explicitly requests it.",
+                            "inputSchema": {
+                                "json": {
+                                    "type": "object",
+                                    "properties": {
+                                        "conversation_id": {
+                                            "type": "string",
+                                            "description": "Unique identifier of the conversation"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        "inputTokenCount": 12574
+    },
+    "output": {
+        "outputContentType": "application/json",
+        "outputBodyJson": {
+            "output": {
+                "message": {
+                    "role": "assistant",
+                    "content": [
+                        {
+                            "toolUse": {
+                                "toolUseId": "tooluse_2A_pOgmeRC6wfejacw-cBA",
+                                "name": "198_Create_Update_Request_Demo_",
+                                "input": {
+                                    "token": "acc_b86f5943-d520-4018-80fe-1117c8608f86",
+                                    "prompt": "Prompt:---------\nUser New Message: **i wish to create request in this file**\n\nUser Token is: \nacc_b86f5943-d520-4018-80fe-1117c8608f86\n\nHere is the chat information: \n Chat Id : 963071e4-2754-4920-bad0-8aa074ce167b, Message Id : d0fbab64-064f-4b19-90dd-990d00d65a0e\n\nHere is the information of documents: \n\n\n--- File: create_request_sale_sub_negative_case_1 ---\nFile Id : bi_373918c8-7bcf-4b0c-9ab1-cc00f36b8b48\nFile URL : https://dev-imbrace-data.s3.ap-east-1.amazonaws.com/board/org_imbrace/file_Z9U20iqEzrQ8geWCzZbjdAeZnq.xlsx\n--- End of create_request_sale_sub_negative_case_1 ---\n\nHere is the history of the converstion:\nHistory 0. user : **i wish to create request in this file**. Message Time : 1767149334\n\nUser Prompt End----------",
+                                    "chatId": "963071e4-2754-4920-bad0-8aa074ce167b",
+                                    "messageId": "d0fbab64-064f-4b19-90dd-990d00d65a0e",
+                                    "fileId": "bi_373918c8-7bcf-4b0c-9ab1-cc00f36b8b48",
+                                    "confirmAll": false,
+                                    "removeAll": false,
+                                    "requests": []
+                                }
+                            }
+                        }
+                    ]
+                }
+            },
+            "stopReason": "tool_use",
+            "metrics": {
+                "latencyMs": 8350
+            },
+            "usage": {
+                "inputTokens": 12574,
+                "outputTokens": 549,
+                "totalTokens": 13123
+            }
+        },
+        "outputTokenCount": 549
+    },
+    "schemaType": "ModelInvocationLog",
+    "schemaVersion": "1.0"
+}
+
+{"timestamp":"2025-12-31T02:48:59Z","accountId":"251988004827","region":"us-west-2","requestId":"0880a21a-b789-435f-8c81-d633d8ccadcd","operation":"Converse","modelId":"qwen.qwen3-235b-a22b-2507-v1:0","identity":{"arn":"arn:aws:iam::251988004827:user/imbrace-app-user"},"input":{"inputContentType":"application/json","inputBodyJson":{"messages":[{"role":"user","content":[{"text":"Prompt:---------\nUser New Message: **i wish to create request in this file**\n\nUser Token is: \nacc_b86f5943-d520-4018-80fe-1117c8608f86\n\nHere is the chat information: \n Chat Id : 963071e4-2754-4920-bad0-8aa074ce167b, Message Id : d0fbab64-064f-4b19-90dd-990d00d65a0e\n\nHere is the information of documents: \n\n\n--- File: create_request_sale_sub_negative_case_1 ---\nFile Id : bi_373918c8-7bcf-4b0c-9ab1-cc00f36b8b48\nFile URL : https://dev-imbrace-data.s3.ap-east-1.amazonaws.com/board/org_imbrace/file_Z9U20iqEzrQ8geWCzZbjdAeZnq.xlsx\n--- End of create_request_sale_sub_negative_case_1 ---\n\nHere is the history of the converstion:\nHistory 0. user : **i wish to create request in this file**. Message Time : 1767149334\n\nUser Prompt End----------"}]}],"system":[{"text":"You are an AI assistant answering questions based on retrieved context from knowledge_hub.\n \n You MUST provide the best answer based on the context\n Date & Time: 2025-12-31T02:48:59.134871 \n Current Conversation ID: 963071e4-2754-4920-bad0-8aa074ce167b\n Also you have access to many other tools to serve many other purposes.Please strictly follow the following settings for the AI Assistant:\n- Personality and Role: You are a polite, disciplined, meticulous assistant who specializes in logistics. You are currently working as a frontend assistant to coordinate orders within the supply chain of PUMA - an apparel company. Please extract information from users to activate the intended workflow. \n\n- Core Task: **AI Agent Prompt for Tool Matching and Parameter Extraction**\n**Every user query must trigger a tool.** \n\n**Objective:** \nWhen a user inputs a query, the AI Agent must perform the following operations: \n1. **Match Corresponding Tool**: Identify the intent based on keywords in the user query and map it to the appropriate tool, then trigger that tool. **Every query must trigger a tool.** If User New Message does not contain enough keyword, please look at the most recent history \"toolType\" to trigger the same tool.\n2. Return tool result (in json format) to chatbot\n**[CRITICAL REQUIREMENT]**: The AI Agent MUST trigger the appropriate tool exactly **ONCE** for **EVERY** user query, without exception, please judge first query (new round query) or subquery carefully.\nNote: If the user suddenly switches the triggered tool, a new round of query begins, and all parameters are initialized. Alternatively, when \"resumeId\" = null, it is considered the first query.\n---\n\n### 1. Tool Matching Rules\nBased on keywords in the user query, match to the corresponding tool:\n- **View Order (Demo)**: Triggered by user queries containing \"view orders\", \"see orders\", \"check orders\", \"show me orders\", \"order status\", \"order information\" and similar keywords. Intention = \"view orders\".\n- **View Update Request (Demo)**: Triggered by user queries containing \"view requests\", \"see requests\", \"check requests\", \"show me requests\", \"request status\", \"request information\" and similar keywords. Intention = \"view update requests\"\n- ** Create Update Request (Demo)**: Triggered by user queries containing \"create requests\", \"create update request\", \"create update information\", \"change request\", \"change\", \"change update request\" and similar keywords. Intention = \"create update requests\"\n- ** Make Decisions (Demo)**: Trigger when user queries contain \"approval\" (if the user query includes \"approval\", the decision tool must be triggered, with \"approval\" having the highest priority), \"make a decision\", \"make the decisions\", \"make decision request\", \"decision\", or similar keywords. Intention = \"make a decision\".\n- ** Edit Update Request (Demo)**: Triggered by user queries containing \"edit update request\", \"edit request\", \"edit\", \"write\" and similar keywords. Intention = \"edit update request\"\n- ** Cancel Update Request (Demo)**: Triggered by user queries containing \"cancel update request\", \"cancel request\", \"cancel\", \"delete update request\", \"delete request\" and similar keywords. Intention = \"cancel update request\"\n- ** View Request History (Demo)**: Triggered by user queries containing \"view request history\", \"check history of request\", \"past history\", \"past record data of requests\" and similar keywords. Intention = \"view request history\"\n- **Greeting Workflow**: Triggered by user queries totally don't related to above other 7 tools \nNOTE : if the user query includes \"approval\" or \"approve\", the make decision tool must be triggered, with \"approval\" having the highest priority than other words \n"}],"inferenceConfig":{"temperature":0.5,"topP":0.5},"toolConfig":{"tools":[{"toolSpec":{"name":"120_View_Update_Request_Demo_","description":"Triggered by user queries containing \"view requests\", \"see requests\", \"check requests\", \"show me requests\", \"request status\", \"request information\" and similar keywords. Intention = \"view update requests\", and return 13 types input parmeters ","inputSchema":{"json":{"type":"object","properties":{"userAction":{"type":"string","description":"if user type keywords \"add\"/\"remove\"/\"remove all\"/\"change\" \nuserAction will be \"change\", and confirmAll will be false.\nif user type keywords \"confirm\" \nuserAction will be \"confirm\", and confirmAll will be true.\nif user type keywords \"abort\" \nuserAction will be \"abort\".\nNone of the above,\nuserAction will be null","enum":[]},"chatId":{"type":"string","description":"The ID for the chat\nchatId must extract in the user prompts, the format should be: Chat Id : \"The content to be extract\"","enum":[]},"column":{"description":"An array of column wants to extract\ncolumn:\n(1) Utilize user-specified column names when provided; otherwise, set to `null`\n(2) Preserve previous column selections for lastest history when no new preferences are specified\n(3) Supported column fields: \"SO Status\", \"Supplier Confirmation\", \"Order Status\", \"PO Priority\", \"Article Priority\", \"Purchasing Group\", \"Sourcing Organization\", \"Purchase Organization\", \"Lead Time\", \"HS Number\", \"Ship Mode\", \"Currency\", \"Ultimate Customer Name\", \"Ultimate Customer Code\", \"Customer Color\", \"Customer Style Number\", \"Destination Country\", \"Country\", \"Order Unit\", \"New Quantity\", \"Current Quantity\", \"Color\", \"Style Description\", \"Style\", \"Sale Sub Name\", \"Sale Sub Code\", \"New Factory Code\", \"Current Factory Code\", \"Supplier Name\", \"Supplier Code\", \"Brand\", \"Article\", \"Season\", \"Product Division\", \"SO Number\", \"SO Item Number\", \"GTN PO\", \"GTN PO Item\", \"Customer PO\", \"Purchase Requisition\", \"New LCHD\", \"Current LCHD\", \"New CHD\", \"Current CHD\", \"EHD\", \"PHD\", \"OPD\", \"RHD\", \"ON\"","type":"array","items":{"type":"string","description":"column key that wants to extract"},"enum":[]},"messageId":{"type":"string","description":"The ID for the message\nmessageId must extract in the user prompts, the format should be: Message Id Id : \"The content to be extract\"","enum":[]},"filters":{"description":"an array contain filter json string\nfilters: Array of filter conditions from user query (user new message)\n(1)Extract all filter conditions from the current user input (array type)\n Format: `[\"{\\\"Key\\\":\\\"Value\\\"}\"]`\n If no filters, set to empty array `[]`; If comfirmAll == true, filters = null\n(2) Supported filter fields: \"SO Number\", \"Supplier Code\", \"Sale Sub Code\", \"GTN PO\", \"GTN PO Item\", \"Customer PO\", \"Product Division\", \"Current Factory Code\", \"New Factory Code\", \"OPD\", \"Factory Code\",\"IsRequestResolved\",\"Request Status\", \"Change Type\", \"New Value\"\n(3)Notice: 1. the format of \"OPD\" value: \"YYYY-MM-DD\", 2. the value of \"IsRequestResolved\" key is \"Resolved\" or \"UnResolved\")\n3. the value of \"Request Status\" is \"Needs Follow-up\" or \"Pending\" or \"Approved\" or \"Rejected\" or \"Cancelled\" or \"In Progress\"\n(4) NOTE: When there are more than two items in the user query, please add both of in the table and KEEP BOTH OF THEM IN THE SAME ROW\nFor example: if user input \"I want to view requests that SO is 10002 with Product Division is Footwear with Supplier Code is ABCDE\", then \n \"filters\": [\n \"{\\\"SO Number\\\": \\\"10002\\\", \\\"Product Division\\\": \\\"Footwear\\\", \\\"Supplier Code\\\": \\\"ABCDE\\\"}\",\n ]\n\nFor example: If user query: I wanna view my pending requests to propose CHD to Apr 29, 2025\n\nThe filters should be \n\"filters\": [\n \"{\\\"Change Type\\\": \\\"Propose CHD\\\", \\\"New Value\\\": \\\"2025-04-29\\\", \\\"Request Status\\\": \\\"Pending\\\"}\"\n ]","type":"array","items":{"type":"string","description":"a JSON object string contain filter keys and value"},"enum":[]},"token":{"type":"string","description":"user access token,The token starting with \"acc_\"","enum":[]},"resumeStage":{"type":"string","description":"The next stage for the whole process, including ParamConfirmation or RequestValidation\n(1) Initial query: `null`\n(2)Subsequent queries: Must exactly match the previous output's `resumeStage`\nNOTE: If current intension is different from last output's intenson, then set resumeStage to null","enum":[]},"removeAll":{"type":"boolean","description":"if user type \"remove all\" then set it to true; otherwise, set to false\nRemind: If removeAll = true, then useAction must be \"change\" ","enum":[]},"confirmAll":{"type":"boolean","description":"when user type \"confirmAll\" or \"confirm\", set it to be true; otherwise set it to be false\nRemind: when confirmAll = true, then filters = null and userAction = \"confirm\"","enum":[]},"resumeId":{"type":"string","description":"The ID for the process to resume\nSet to `null` for first query, and for other subqueries, resumeId keeps same as lastest prompt history result.\nNOTE: If current intension is different from last output's intenson, then set resumeId to null","enum":[]},"addList":{"description":"Defined as an array of objects. Extract add operations from the current user input as an array of objects (when the userAction == \"change\", the addList == filters)\n Format: [{\\\"Key\\\":\\\"Value\\\"}\", ...]\n If userAction == \"abort\" or \"confirm\" or removeAll = true, set to `null`","type":"array","items":{"type":"string","description":""},"enum":[]},"prompt":{"type":"string","description":"user prompt message\nThe full text input from user start from \"Prompt:--------- to User Prompt End---------- \" （NOTE: Must be the full text without any omissions or LLM laziness）\n\nfor example:\n\"prompt\": \"Prompt:---------\\nUser New Message:\"some message\"\\n\\nUser Token is:\\n\"token\"\\n\\nHere is the chat information:\\n\\n Chat Id : \"chat id\", Message Id : \"message id\"\\n\\nHere is the history of the conversation:\\n\\nHistory 0. user : \"some history message\"\\nHistory 1. assistant : \"some response from ai agent\"\\nHistory 2. ...etc.\\n\\nUser Prompt End----------\"","enum":[]},"fileId":{"type":"string","description":"a fileId include filter content: If user upload file, extract fileId; If user does not upload file, fileId = null","enum":[]}},"required":["token","prompt"]}}}},{"toolSpec":{"name":"136_View_Order_Demo_","description":"Triggered by user queries containing \"view orders\", \"see orders\", \"check orders\", \"show me orders\", \"order status\", \"order information\" and similar keywords. Intention = \"view orders\", and return 13 types input parmeters ","inputSchema":{"json":{"type":"object","properties":{"userAction":{"type":"string","description":"if user type keywords \"add\"/\"remove\"/\"remove all\"/\"change\" \nuserAction will be \"change\", and confirmAll will be false.\nif user type keywords \"confirm\" \nuserAction will be \"confirm\", and confirmAll will be true.\nif user type keywords \"abort\" \nuserAction will be \"abort\".\nNone of the above,\nuserAction will be null","enum":[]},"chatId":{"type":"string","description":"The ID for the chat\nchatId must extract in the user prompts, the format should be: Chat Id : \"The content to be extract\"","enum":[]},"column":{"description":"An array of column wants to extract\ncolumn:\n(1) Utilize user-specified column names when provided; otherwise, set to `null`\n(2) Preserve previous column selections from latest history record when no new preferences are specified\n(3) Supported column fields: \"SO Status\", \"Supplier Confirmation\", \"Order Status\", \"PO Priority\", \"Article Priority\", \"Purchasing Group\", \"Sourcing Organization\", \"Purchase Organization\", \"Lead Time\", \"HS Number\", \"Ship Mode\", \"Currency\", \"Ultimate Customer Name\", \"Ultimate Customer Code\", \"Customer Color\", \"Customer Style Number\", \"Destination Country\", \"Country\", \"Order Unit\", \"New Quantity\", \"Current Quantity\", \"Color\", \"Style Description\", \"Style\", \"Sale Sub Name\", \"Sale Sub Code\", \"New Factory Code\", \"Current Factory Code\", \"Supplier Name\", \"Supplier Code\", \"Brand\", \"Article\", \"Season\", \"Product Division\", \"SO Number\", \"SO Item Number\", \"GTN PO\", \"GTN PO Item\", \"Customer PO\", \"Purchase Requisition\", \"New LCHD\", \"Current LCHD\", \"New CHD\", \"Current CHD\", \"EHD\", \"PHD\", \"OPD\", \"RHD\", \"ON\"","type":"array","items":{"type":"string","description":"column key that wants to extract"},"enum":[]},"messageId":{"type":"string","description":"The ID for the message\nmessageId must extract in the user prompts, the format should be: Message Id Id : \"The content to be extract\"","enum":[]},"filters":{"description":"an array contain filter json string\nfilters: Array of filter conditions extracted from user query\n(1) Extract all filter conditions from the current user input (array type)\n Format: `[\"{\\\"Key\\\":\\\"Value\\\"}\"]`\n If no filters, set to empty array `[]`; If confirmAll == true, filters = null\n(2) Supported filter fields: \"SO Number\", \"Supplier Code\", \"Sale Sub Code\", \"GTN PO\", \"GTN PO Item\", \"Customer PO\", \"Product Division\", \"Current Factory Code\", \"New Factory Code\", \"OPD\", \"Factory Code\", \"Season\", \"Country\"\n(3) Notice: The format of \"OPD\" value must be: \"YYYY-MM-DD\"\n(4) NOTE: When there are multiple filter items in the user query, include them all in the JSON and KEEP THEM IN THE SAME JSON OBJECT within the array\n(5) NOTE: For the \"Season\" field, the chatbot must recognize and correctly normalize various input formats to the data board standard format (e.g., 202711, 202521):\n - Spring season variations (e.g., for Spring 2027):\n \"SS27\", \"SS2027\", \"Spring 27\", \"Spring 2027\", \"202711\" \n → Must be normalized to \"YYYY11\" format (e.g., \"202711\" for Spring 2027)\n - Autumn season variations (e.g., for Autumn 2027):\n \"AH27\", \"AH2027\", \"Autumn 27\", \"Autumn 2027\", \"202721\" \n → Must be normalized to \"YYYY21\" format (e.g., \"202721\" for Autumn 2027)\n - The chatbot must handle:\n Blank spaces (e.g., \"SS 2027\" → \"202711\")\n Upper/lowercase variations (e.g., \"ss27\" → \"202711\")\n All season values in the final JSON filter must use the data board standard format (e.g., \"Season\": \"202711\")\n\nExamples:\n1. User input: \"I want to view orders that SO is 10002 with Product Division is Footwear with Supplier Code is ABCDE\"\n Output: \n \"filters\": [\n \"{\\\"SO Number\\\": \\\"10002\\\", \\\"Product Division\\\": \\\"Footwear\\\", \\\"Supplier Code\\\": \\\"ABCDE\\\"}\"\n ]\n\n2. User input: \"I want to view order with OPD\"\n Output:\n \"filters\":[{\n \"OPD\":\"\"\n }]\n\n3. User input: \"Show orders for season SS27 and country US\"\n Output:\n \"filters\": [\n \"{\\\"Season\\\": \\\"202711\\\", \\\"Country\\\": \\\"US\\\"}\"\n ]\n\n4. User input: \"Filter by autumn 2025 and supplier code V123\"\n Output:\n \"filters\": [\n \"{\\\"Season\\\": \\\"202521\\\", \\\"Supplier Code\\\": \\\"V123\\\"}\"\n ]","type":"array","items":{"type":"string","description":"a JSON object string contain filter keys and value"},"enum":[]},"token":{"type":"string","description":"user access token,The token starting with \"acc_\"","enum":[]},"resumeStage":{"type":"string","description":"The next stage for the whole process, including ParamConfirmation or RequestValidation\n(1) Initial query: `null`\n(2)Subsequent queries: Must exactly match the previous output's `resumeStage`\nNOTE: If current intension is different from last output's intenson, then set resumeStage to null","enum":[]},"removeAll":{"type":"boolean","description":"if user type \"remove all\" then set it to true; otherwise, set to false\nRemind: If removeAll = true, then useAction must be \"change\" ","enum":[]},"confirmAll":{"type":"boolean","description":"when user type \"confirmAll\" or \"confirm\", set it to be true; otherwise set it to be false\nRemind: when confirmAll = true, then filters = null and userAction = \"confirm\"","enum":[]},"resumeId":{"type":"string","description":"The ID for the process to resume\nSet to `null` for first query, and for other subqueries, resumeId keeps same as lastest prompt history result.\nNOTE: If current intension is different from last output's intenson, then set resumeId to null","enum":[]},"addList":{"description":"Defined as an array of objects. Extract add operations from the current user input as an array of objects (when the userAction == \"change\", the addList == filters)\n Format: [{\\\"Key\\\":\\\"Value\\\"}\", ...]\n If userAction == \"abort\" or \"confirm\" or removeAll = true, set to `null`","type":"array","items":{"type":"string","description":"a JSON object string contain filter keys and value"},"enum":[]},"prompt":{"type":"string","description":"user prompt message\nThe full text input from user start from \"Prompt:--------- to User Prompt End---------- \" （NOTE: Must be the full text without any omissions or LLM laziness）","enum":[]},"fileId":{"type":"string","description":"a fileId include filter content: If user upload file, extract fileId; If user does not upload file, fileId = null","enum":[]}},"required":["token","prompt"]}}}},{"toolSpec":{"name":"198_Create_Update_Request_Demo_","description":"Triggered by user queries containing \"create requests\", \"create update request\", \"create update information\", \"change request\", \"change\", \"change update request\" and similar keywords. Intention = \"create update requests\",, and return 13 types input parmeters \n","inputSchema":{"json":{"type":"object","properties":{"userAction":{"type":"string","description":"if user type keywords \"add\"/\"remove\"/\"remove all\"/\"change\" \nuserAction will be \"change\", and confirmAll will be false.\nif user type keywords \"confirm\" \nuserAction will be \"confirm\", and confirmAll will be true.\nif user type keywords \"abort\" \nuserAction will be \"abort\".\nNone of the above,\nuserAction will be null","enum":[]},"chatId":{"type":"string","description":"The ID for the chat\nchatId must extract in the user prompts, the format should be: Chat Id : \"The content to be extract\"","enum":[]},"column":{"description":"An array of column wants to extract\ncolumn:\n(1) Utilize user-specified column names when provided; otherwise, set to `null`\n(2) Preserve previous column selections from latest history record when no new preferences are specified\n(3) Supported column fields: \"Batch ID\", \"Request ID\", \"Product Division\",\"Supplier Code\", \"Sale Sub Code\",\"GTN PO\",\"GTN PO Item\",\"Customer PO\",\"SO Number\", \"SO Item Number\", \"Change Type\",\"New Value\", \"Approver\", \"Request Status\",\"Requestor Comment\", \"Auto Approve\",\"Is Valid Input\", \"Latest Decided By\", \"Latest Approver Role\",\"Latest Approver Comment\",\"Requestor\",\"Observer\"","type":"array","items":{"type":"string","description":"column key that wants to extract"},"enum":[]},"messageId":{"type":"string","description":"The ID for the message\nmessageId must extract in the user prompts, the format should be: Message Id Id : \"The content to be extract\"","enum":[]},"requests":{"description":"requests: Extract all filter conditions from the current user input request; If no filters, set to empty array\ne.g If the user input: I want to change the request SO 0141348900, update LCHD to a new value 2025-11-07\n requests = [\"{\"SO Number\":\"0141348900\", \"Change Type\": \"Update LCHD\", \"New Value\": \"2025-11-07\", \"Requestor Comment\":null }\"]","type":"array","items":{"type":"string","description":"a JSON object string contain filter keys and value, and the possible keys: \"Change Type\" ( Three types of change type value: \"Internal Transfer\",\"Update LCHD\",\"Propose CHD\"), \"New Value\", \"GTN PO\", \"GTN PO Item\", \"Customer PO\", \"SO Number\", \"SO Item Number\", \"Requestor Comment\" "},"enum":[]},"token":{"type":"string","description":"user access token,The token starting with \"acc_\"","enum":[]},"resumeStage":{"type":"string","description":"The next stage for the whole process, including ParamConfirmation or RequestValidation\n(1) Initial query: `null`\n(2)Subsequent queries: Must exactly match the previous output's `resumeStage`\nNOTE: If current intension is different from last output's intenson, then set resumeStage to null","enum":[]},"removeAll":{"type":"boolean","description":"if user type \"remove all\" then set it to true; otherwise, set to false\nRemind: If removeAll = true, then useAction must be \"change\" ","enum":[]},"confirmAll":{"type":"boolean","description":"when user type \"confirmAll\" or \"confirm\", set it to be true; otherwise set it to be false\nRemind: when confirmAll = true, then requests = null and userAction = \"confirm\"","enum":[]},"resumeId":{"type":"string","description":"The ID for the process to resume\nSet to `null` for first query, and for other subqueries, resumeId keeps same as lastest prompt history result.\nNOTE: If current intension is different from last output's intenson, then set resumeId to null","enum":[]},"addList":{"description":"Defined as an array of objects. Extract add operations from the current user input as an array of objects (when the userAction == \"change\", the addList == requests)\n Format: [{\\\"Key\\\":\\\"Value\\\"}\", ...]\n If userAction == \"abort\" or \"confirm\" or removeAll = true, set to `null`","type":"array","items":{"type":"string","description":""},"enum":[]},"prompt":{"type":"string","description":"user prompt message\nThe full text input from user start from \"Prompt:--------- to User Prompt End---------- \" （NOTE: Must be the full text without any omissions or LLM laziness）\n\nfor example:\n\"prompt\": \"Prompt:---------\\nUser New Message:\"some message\"\\n\\nUser Token is:\\n\"token\"\\n\\nHere is the chat information:\\n\\n Chat Id : \"chat id\", Message Id : \"message id\"\\n\\nHere is the history of the conversation:\\n\\nHistory 0. user : \"some history message\"\\nHistory 1. assistant : \"some response from ai agent\"\\nHistory 2. ...etc.\\n\\nUser Prompt End----------\"","enum":[]},"fileId":{"type":"string","description":"a fileId include filter content: If user upload file, extract fileId; If user does not upload file, fileId = null","enum":[]}},"required":["token","prompt"]}}}},{"toolSpec":{"name":"199_Make_Decisions_Demo_","description":"Trigger when user queries contain \"approval\" (if the user query includes \"approval\", the decision tool must be triggered, with \"approval\" having the highest priority), \"make a decision\", \"make the decisions\", \"make decision request\", \"decision\", or similar keywords. The user's intention is \"make a decision\", and 14 types of input parameters need to be returned.","inputSchema":{"json":{"type":"object","properties":{"userAction":{"type":"string","description":"if user type keywords \"add\"/\"remove\"/\"remove all\"/\"change\" \nuserAction will be \"change\", and confirmAll will be false.\nif user type keywords \"confirm\" \nuserAction will be \"confirm\", and confirmAll will be true.\nif user type keywords \"abort\" \nuserAction will be \"abort\".\nNone of the above,\nuserAction will be null","enum":[]},"chatId":{"type":"string","description":"The ID for the chat\nchatId must extract in the user prompts, the format should be: Chat Id : \"The content to be extract\"","enum":[]},"column":{"description":"An array of column wants to extract\ncolumn:\n(1) Utilize user-specified column names when provided; otherwise, set to `null`\n(2) Preserve previous column selections from latest history record when no new preferences are specified\n(3) Supported column fields: \"SO Status\", \"Supplier Confirmation\", \"Order Status\", \"PO Priority\", \"Article Priority\", \"Purchasing Group\", \"Sourcing Organization\", \"Purchase Organization\", \"Lead Time\", \"HS Number\", \"Ship Mode\", \"Currency\", \"Ultimate Customer Name\", \"Ultimate Customer Code\", \"Customer Color\", \"Customer Style Number\", \"Destination Country\", \"Country\", \"Order Unit\", \"New Quantity\", \"Current Quantity\", \"Color\", \"Style Description\", \"Style\", \"Sale Sub Name\", \"Sale Sub Code\", \"New Factory Code\", \"Current Factory Code\", \"Supplier Name\", \"Supplier Code\", \"Brand\", \"Article\", \"Season\", \"Product Division\", \"SO Number\", \"SO Item Number\", \"GTN PO\", \"GTN PO Item\", \"Customer PO\", \"Purchase Requisition\", \"New LCHD\", \"Current LCHD\", \"New CHD\", \"Current CHD\", \"EHD\", \"PHD\", \"OPD\", \"RHD\", \"ON\"","type":"array","items":{"type":"string","description":"column key that wants to extract"},"enum":[]},"messageId":{"type":"string","description":"The ID for the message\nmessageId must extract in the user prompts, the format should be: Message Id Id : \"The content to be extract\"","enum":[]},"filters":{"description":"an array contain filter json string\nfilters: Array of filter conditions from user query\n(1)Extract all filter conditions from the current user input (array type)\n Format: `[\"{\\\"Key\\\":\\\"Value\\\"}\"]`\n If no filters, set to empty array `[]`; If comfirmAll == true, filters = null\n(2) Supported filter fields: \"SO Number\",\"Customer PO\", \"GTN PO\", \"GTN PO Item\", \"Batch ID\", \"Request ID\",\"Related Request\" (NOTE: \"Related Request\" include \"true\" or \"false\" value)\n(3) NOTE: When there are more than two items in the user query, please add both of in the table and KEEP BOTH OF THEM IN THE SAME ROW\nFor example: \n \"filters\": [\n \"{\\\"SO Number\\\": \\\"10002\\\", \\\"Batch ID\\\": \\\"670970147098014\\\"}\"\n ]","type":"array","items":{"type":"string","description":"JSON"},"enum":[]},"token":{"type":"string","description":"user access token,The token starting with \"acc_\"","enum":[]},"resumeStage":{"type":"string","description":"The next stage for the whole process, including ParamConfirmation or RequestValidation\n(1) Initial query: `null`\n(2)Subsequent queries: Must exactly match the previous output's `resumeStage`\nNOTE: If current intension is different from last output's intenson, then set resumeStage to null","enum":[]},"removeAll":{"type":"boolean","description":"if user type \"remove all\" then set it to true; otherwise, set to false\nRemind: If removeAll = true, then useAction must be \"change\" ","enum":[]},"confirmAll":{"type":"boolean","description":"when user type \"confirmAll\" or \"confirm\", set it to be true; otherwise set it to be false\nRemind: when confirmAll = true, then filters = null and userAction = \"confirm\"","enum":[]},"resumeId":{"type":"string","description":"The ID for the process to resume\nSet to `null` for first query, and for other subqueries, resumeId keeps same as lastest prompt history result.\nNOTE: If current intension is different from last output's intenson, then set resumeId to null","enum":[]},"addList":{"description":"Defined as an array of objects. Extract add operations from the current user input as an array of objects (when the userAction == \"change\", the addList == filters)\n Format: [{\\\"Key\\\":\\\"Value\\\"}\", ...]\n If userAction == \"abort\" or \"confirm\" or removeAll = true, set to `null`","type":"array","items":{"type":"string","description":"a JSON object string contain filter keys and value"},"enum":[]},"decisions":{"description":"Extract from user input query or decision:\nIn the make decision tool: decisions format (must include \"Request ID\", \"Approve Decision\", \"Approve Comment\")\nFor example: decisions = [\"{\"Request ID\":\"014131432\", \"Approve Decision\": \"Approved\", \"Approve Comment\": \"comment\"(extract form user input query)}\"]\nIf user not input decision, \"decisions\" = null\n\nExample: \nUser Typed: \"I approve RD89982cd148314c3e85f1_110, with the consent of Simon and Matthew as well.\" \ndecisions = [\"{\"Request ID\":\"RD89982cd148314c3e85f1_110\",\"Approver Decision\":\"Approved\",\"Approver Comment\":\"with the consent of Simon and Matthew\"}\"]","type":"array","items":{"type":"string","description":"include \"Request ID\", \"Approve Decision\", \"Approve Comment\""},"enum":[]},"prompt":{"type":"string","description":"user prompt message\nThe full text input from user start from \"Prompt:--------- to User Prompt End---------- \" （NOTE: Must be the full text without any omissions or LLM laziness）\n\nfor example:\n\"prompt\": \"Prompt:---------\\nUser New Message:\"some message\"\\n\\nUser Token is:\\n\"token\"\\n\\nHere is the chat information:\\n\\n Chat Id : \"chat id\", Message Id : \"message id\"\\n\\nHere is the history of the conversation:\\n\\nHistory 0. user : \"some history message\"\\nHistory 1. assistant : \"some response from ai agent\"\\nHistory 2. ...etc.\\n\\nUser Prompt End----------\"","enum":[]},"fileId":{"type":"string","description":"a fileId include filter content: If user upload file, extract fileId; If user does not upload file, fileId = null","enum":[]}},"required":["token","prompt"]}}}},{"toolSpec":{"name":"204_View_Request_History_Demo_","description":"Triggered by user queries containing \"view request history\", \"check history of request\", \"past history\", \"past record data of requests\" and similar keywords. Intention = \"view request history\", and return 13 types input parmeters","inputSchema":{"json":{"type":"object","properties":{"userAction":{"type":"string","description":"if user type keywords \"add\"/\"remove\"/\"remove all\"/\"change\" \nuserAction will be \"change\", and confirmAll will be false.\nif user type keywords \"confirm\" \nuserAction will be \"confirm\", and confirmAll will be true.\nif user type keywords \"abort\" \nuserAction will be \"abort\".\nNone of the above,\nuserAction will be null","enum":[]},"chatId":{"type":"string","description":"The ID for the chat\nchatId must extract in the user prompts, the format should be: Chat Id : \"The content to be extract\"","enum":[]},"column":{"description":"An array of column wants to extract\ncolumn:\n(1) Utilize user-specified column names when provided; otherwise, set to `null`\n(2) Preserve previous column selections from latest history record when no new preferences are specified\n(3) Supported column fields: \"Edit ID\",\"Batch ID\",\"Request ID\",\"Previous New Value\",\"Edited New Value\", \"Previous Requestor Comment\", \"Edited Requestor Comment\", \"Edit Type\",\"Edited By\", \"Edited At\"","type":"array","items":{"type":"string","description":"column key that wants to extract"},"enum":[]},"messageId":{"type":"string","description":"The ID for the message\nmessageId must extract in the user prompts, the format should be: Message Id Id : \"The content to be extract\"","enum":[]},"filters":{"description":"an array contain filter json string\nfilters: Array of filter conditions from user query\n(1)Extract all filter conditions from the current user input (array type)\n Format: `[\"{\\\"Key\\\":\\\"Value\\\"}\"]`\n If no filters, set to empty array `[]`; If comfirmAll == true, filters = null\n(2) Supported filter fields: \"SO Number\",\"GTN PO\", \"GTN PO Item\", \"Customer PO\", \"batch_id\", \"request_id\"\n(3) NOTE: When there are more than two items in the user query, please add both of in the table and KEEP BOTH OF THEM IN THE SAME ROW\nFor example: if user input \"I want to view history with SO is 10002 with Product Division is Footwear with Supplier Code is ABCDE\", then \n \"filters\": [\n \"{\\\"SO Number\\\": \\\"10002\\\", \\\"Product Division\\\": \\\"Footwear\\\"}\"\n ]","type":"array","items":{"type":"string","description":"a JSON object string contain filter keys and value"},"enum":[]},"token":{"type":"string","description":"user access token,The token starting with \"acc_\"","enum":[]},"resumeStage":{"type":"string","description":"The next stage for the whole process, including ParamConfirmation or RequestValidation\n(1) Initial query: `null`\n(2)Subsequent queries: Must exactly match the previous output's `resumeStage`\nNOTE: If current intension is different from last output's intenson, then set resumeStage to null","enum":[]},"removeAll":{"type":"boolean","description":"if user type \"remove all\" then set it to true; otherwise, set to false\nRemind: If removeAll = true, then useAction must be \"change\" ","enum":[]},"confirmAll":{"type":"boolean","description":"when user type \"confirmAll\" or \"confirm\", set it to be true; otherwise set it to be false\nRemind: when confirmAll = true, then filters = null and userAction = \"confirm\"","enum":[]},"resumeId":{"type":"string","description":"The ID for the process to resume\nSet to `null` for first query, and for other subqueries, resumeId keeps same as lastest prompt history result.\nNOTE: If current intension is different from last output's intenson, then set resumeId to null","enum":[]},"addList":{"description":"Defined as an array of objects. Extract add operations from the current user input as an array of objects (when the userAction == \"change\", the addList == filters)\n Format: [{\\\"Key\\\":\\\"Value\\\"}\", ...]\n If userAction == \"abort\" or \"confirm\" or removeAll = true, set to `null`","type":"array","items":{"type":"string","description":"a JSON object string contain filter keys and value"},"enum":[]},"prompt":{"type":"string","description":"user prompt message\nThe full text input from user start from \"Prompt:--------- to User Prompt End---------- \" （NOTE: Must be the full text without any omissions or LLM laziness）\n\nfor example:\n\"prompt\": \"Prompt:---------\\nUser New Message:\"some message\"\\n\\nUser Token is:\\n\"token\"\\n\\nHere is the chat information:\\n\\n Chat Id : \"chat id\", Message Id : \"message id\"\\n\\nHere is the history of the conversation:\\n\\nHistory 0. user : \"some history message\"\\nHistory 1. assistant : \"some response from ai agent\"\\nHistory 2. ...etc.\\n\\nUser Prompt End----------\"","enum":[]},"fileId":{"type":"string","description":"a fileId include filter content: If user upload file, extract fileId; If user does not upload file, fileId = null","enum":[]}},"required":["token","prompt"]}}}},{"toolSpec":{"name":"208_Edit_Update_Request_Demo_","description":"Triggered by user queries containing \"edit update request\", \"edit request\", \"edit\", \"write\" and similar keywords. Intention = \"edit update request\",and return 14 types input parmeters ","inputSchema":{"json":{"type":"object","properties":{"userAction":{"type":"string","description":"if user type keywords \"add\"/\"remove\"/\"remove all\"/\"change\" \nuserAction will be \"change\", and confirmAll will be false.\nif user type keywords \"confirm\" \nuserAction will be \"confirm\", and confirmAll will be true.\nif user type keywords \"abort\" \nuserAction will be \"abort\".\nNone of the above,\nuserAction will be null","enum":[]},"chatId":{"type":"string","description":"The ID for the chat\nchatId must extract in the user prompts, the format should be: Chat Id : \"The content to be extract\"","enum":[]},"column":{"description":"An array of column wants to extract\ncolumn:\n(1) Utilize user-specified column names when provided; otherwise, set to `null`\n(2) Preserve previous column selections from latest history record when no new preferences are specified\n(3) Supported column fields: \"Batch ID\", \"Request ID\", \"GTN PO\", \"GTN PO Item\", \"Customer PO\", \"SO Number\", \"Edited New Value\",\"Edited Requestor Comment\",\"Change Type\",\"Previous New Value\",\"Previous Requestor Comment\"","type":"array","items":{"type":"string","description":"column key that wants to extract"},"enum":[]},"messageId":{"type":"string","description":"The ID for the message\nmessageId must extract in the user prompts, the format should be: Message Id Id : \"The content to be extract\"","enum":[]},"filters":{"description":"an array contain filter json string\nfilters: Array of filter conditions from user query\n(1)Extract all filter conditions from the current user input (array type)\n Format: `[\"{\\\"Key\\\":\\\"Value\\\"}\"]`\n If no filters, set to empty array `[]`; If comfirmAll == true, filters = null\n(2) Supported filter fields: \"GTN PO\", \"GTN PO Item\", \"Customer PO\", \"SO Number\", \"Request ID\", \"Edited New Value\", \"Edited Requestor Comment\"\n(3) NOTE: When there are more than two items in the user query, please add both of in the table and KEEP BOTH OF THEM IN THE SAME ROW, \nFor example: \n\"filters\": [\n \"{\\\"SO Number\\\": \\\"10002\\\", \\\"Request ID\\\": \\\"RD89982cd148314c3e85f1_111\\\"}\"\n ]","type":"array","items":{"type":"string","description":"a JSON object string contain filter keys and value, like eg, {\"Request ID\":\"RD89982cd148314c3e85f1_111\"}"},"enum":[]},"token":{"type":"string","description":"user access token,The token starting with \"acc_\"","enum":[]},"resumeStage":{"type":"string","description":"The next stage for the whole process, including ParamConfirmation or RequestValidation\n(1) Initial query: `null`\n(2)Subsequent queries: Must exactly match the previous output's `resumeStage`, including ParamConfirmation or RequestValidation","enum":[]},"removeAll":{"type":"boolean","description":"if user type \"remove all\" then set it to true; otherwise, set to false\nRemind: If removeAll = true, then useAction must be \"change\" ","enum":[]},"resumeId":{"type":"string","description":"The ID for the process to resume\nSet to `null` for first query, and for other subqueries, resumeId keeps same as lastest prompt history result.","enum":[]},"confirmAll":{"type":"boolean","description":"when user type \"confirmAll\" or \"confirm\", set it to be true; otherwise set it to be false\nRemind: when confirmAll = true, then filters = null and userAction = \"confirm\"","enum":[]},"addList":{"description":"Defined as an array of objects. Extract add operations from the current user input as an array of objects (when the userAction == \"change\", the addList == filters)\n Format: [{\\\"Key\\\":\\\"Value\\\"}\", ...]\n If userAction == \"abort\" or \"confirm\" or removeAll = true, set to `null`","type":"array","items":{"type":"string","description":"a JSON object string contain filter keys and value"},"enum":[]},"decisions":{"description":"Extract from user input query or decision:\nIn the edit update request tool: decisions format (must include \"Request ID\", \"Edited New Value\", \"Edited Requestor Comment\")\nFor example: decisions = [\"{\"Request ID\":\"RD89982cd148314c3e85f1_111\",\"Edited New Value\":\"2025-11-10\",\"Edited Requestor Comment\":\"because 09 is holiday\"}\"]\nIf user not input decision, \"decisions\" = null","type":"array","items":{"type":"string","description":"JSON like eg, {\"Request ID\":\"RD89982cd148314c3e85f1_111\",\"Edited New Value\":\"2025-11-10\"(the value in \"YYYY-MM-DD\" format),\"Edited Requestor Comment\":\"because 09 is holiday\"}"},"enum":[]},"prompt":{"type":"string","description":"user prompt message\nThe full text input from user start from \"Prompt:--------- to User Prompt End---------- \" （NOTE: Must be the full text without any omissions or LLM laziness）\n\nfor example:\n\"prompt\": \"Prompt:---------\\nUser New Message:\"some message\"\\n\\nUser Token is:\\n\"token\"\\n\\nHere is the chat information:\\n\\n Chat Id : \"chat id\", Message Id : \"message id\"\\n\\nHere is the history of the conversation:\\n\\nHistory 0. user : \"some history message\"\\nHistory 1. assistant : \"some response from ai agent\"\\nHistory 2. ...etc.\\n\\nUser Prompt End----------\"","enum":[]},"fileId":{"type":"string","description":"a fileId include filter content: If user upload file, extract fileId; If user does not upload file, fileId = null","enum":[]}},"required":["token","prompt"]}}}},{"toolSpec":{"name":"210_Cancel_Update_Request_Demo_","description":"Triggered by user queries containing \"cancel update request\", \"cancel request\", \"cancel\", \"delete update request\", \"delete request\" and similar keywords. Intention = \"cancel update request\",and return 13 types input parmeters ","inputSchema":{"json":{"type":"object","properties":{"userAction":{"type":"string","description":"if user type keywords \"add\"/\"remove\"/\"remove all\"/\"change\" \nuserAction will be \"change\", and confirmAll will be false.\nif user type keywords \"confirm\" \nuserAction will be \"confirm\", and confirmAll will be true.\nif user type keywords \"abort\" \nuserAction will be \"abort\".\nNone of the above,\nuserAction will be null","enum":[]},"chatId":{"type":"string","description":"The ID for the chat\nchatId must extract in the user prompts, the format should be: Chat Id : \"The content to be extract\"","enum":[]},"column":{"description":"An array of column wants to extract\ncolumn:\n(1) Utilize user-specified column names when provided; otherwise, set to `null`\n(2) Preserve previous column selections from latest history record when no new preferences are specified\n(3) Supported column fields:\"Request ID\"","type":"array","items":{"type":"string","description":"column key that wants to extract"},"enum":[]},"messageId":{"type":"string","description":"The ID for the message\nmessageId must extract in the user prompts, the format should be: Message Id Id : \"The content to be extract\"","enum":[]},"filters":{"description":"an array contain filter json string\nfilters: Array of filter conditions from user query\n(1)Extract all filter conditions from the current user input (array type)\n Format: `[\"{\\\"Key\\\":\\\"Value\\\"}\"]`\n If no filters, set to empty array `[]`; If comfirmAll == true, filters = null\n(2) Supported filter fields: \"GTN PO\",\"GTN PO Item\",\"Customer PO\",\"SO Number\",\"Request ID\", \"Batch ID\"\n(3) NOTE: When there are more than two items in the user query, please add both of in the table and KEEP BOTH OF THEM IN THE SAME ROW\nFor example:\n \"filters\": [\n \"{\\\"SO Number\\\": \\\"10002\\\", \\\"Request ID\\\": \\\"r80917409140915\\\"}\"\n ]","type":"array","items":{"type":"string","description":"a JSON object string contain filter keys and value"},"enum":[]},"token":{"type":"string","description":"user access token,The token starting with \"acc_\"","enum":[]},"resumeStage":{"type":"string","description":"The next stage for the whole process, including ParamConfirmation or RequestValidation\n(1) Initial query: `null`\n(2)Subsequent queries: Must exactly match the previous output's `resumeStage`\nNOTE: If current intension is different from last output's intenson, then set resumeStage to null","enum":[]},"removeAll":{"type":"boolean","description":"if user type \"remove all\" then set it to true; otherwise, set to false\nRemind: If removeAll = true, then useAction must be \"change\" ","enum":[]},"confirmAll":{"type":"boolean","description":"when user type \"confirmAll\" or \"confirm\", set it to be true; otherwise set it to be false\nRemind: when confirmAll = true, then filters = null and userAction = \"confirm\"","enum":[]},"resumeId":{"type":"string","description":"The ID for the process to resume\nSet to `null` for first query, and for other subqueries, resumeId keeps same as lastest prompt history result.\nNOTE: If current intension is different from last output's intenson, then set resumeId to null","enum":[]},"addList":{"type":"string","description":"Defined as an array of objects. Extract add operations from the current user input as an array of objects (when the userAction == \"change\", the addList == filters)\n Format: [{\\\"Key\\\":\\\"Value\\\"}\", ...]\n If userAction == \"abort\" or \"confirm\" or removeAll = true, set to `null`","enum":[]},"prompt":{"type":"string","description":"user prompt message\nThe full text input from user start from \"Prompt:--------- to User Prompt End---------- \" （NOTE: Must be the full text without any omissions or LLM laziness）\n\nfor example:\n\"prompt\": \"Prompt:---------\\nUser New Message:\"some message\"\\n\\nUser Token is:\\n\"token\"\\n\\nHere is the chat information:\\n\\n Chat Id : \"chat id\", Message Id : \"message id\"\\n\\nHere is the history of the conversation:\\n\\nHistory 0. user : \"some history message\"\\nHistory 1. assistant : \"some response from ai agent\"\\nHistory 2. ...etc.\\n\\nUser Prompt End----------\"","enum":[]},"fileId":{"type":"string","description":"a fileId include filter content: If user upload file, extract fileId; If user does not upload file, fileId = null","enum":[]}},"required":["token","prompt"]}}}},{"toolSpec":{"name":"216_Greeting_Workflow","description":"Return Greeting Messages","inputSchema":{"json":{"type":"object","properties":{"token":{"type":"string","description":"","enum":[]}},"required":["token"]}}}},{"toolSpec":{"name":"reset_memory","description":"Clear conversation history and reset the memory of the bot. Only use this tool when the user explicitly requests it.","inputSchema":{"json":{"type":"object","properties":{"conversation_id":{"type":"string","description":"Unique identifier of the conversation"}}}}}}]}},"inputTokenCount":12574},"output":{"outputContentType":"application/json","outputBodyJson":{"output":{"message":{"role":"assistant","content":[{"toolUse":{"toolUseId":"tooluse_2A_pOgmeRC6wfejacw-cBA","name":"198_Create_Update_Request_Demo_","input":{"token":"acc_b86f5943-d520-4018-80fe-1117c8608f86","prompt":"Prompt:---------\nUser New Message: **i wish to create request in this file**\n\nUser Token is: \nacc_b86f5943-d520-4018-80fe-1117c8608f86\n\nHere is the chat information: \n Chat Id : 963071e4-2754-4920-bad0-8aa074ce167b, Message Id : d0fbab64-064f-4b19-90dd-990d00d65a0e\n\nHere is the information of documents: \n\n\n--- File: create_request_sale_sub_negative_case_1 ---\nFile Id : bi_373918c8-7bcf-4b0c-9ab1-cc00f36b8b48\nFile URL : https://dev-imbrace-data.s3.ap-east-1.amazonaws.com/board/org_imbrace/file_Z9U20iqEzrQ8geWCzZbjdAeZnq.xlsx\n--- End of create_request_sale_sub_negative_case_1 ---\n\nHere is the history of the converstion:\nHistory 0. user : **i wish to create request in this file**. Message Time : 1767149334\n\nUser Prompt End----------","chatId":"963071e4-2754-4920-bad0-8aa074ce167b","messageId":"d0fbab64-064f-4b19-90dd-990d00d65a0e","fileId":"bi_373918c8-7bcf-4b0c-9ab1-cc00f36b8b48","confirmAll":false,"removeAll":false,"requests":[]}}}]}},"stopReason":"tool_use","metrics":{"latencyMs":8350},"usage":{"inputTokens":12574,"outputTokens":549,"totalTokens":13123}},"outputTokenCount":549},"schemaType":"ModelInvocationLog","schemaVersion":"1.0"}
