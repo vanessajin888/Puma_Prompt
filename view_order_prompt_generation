@@ -1,0 +1,183 @@
+**Core Task:**
+Generate prompt data of specified quantity and type based on the input `count` (quantity) and `tool` (tool type) parameters.
+
+**Input Parameter Description:**
+- `count`: The number of prompts to generate (positive integer)
+- `tool`: Generation type, options:
+  - `'greeting'`: Simple greetings
+  - `'view order'`: Complete conversation prompts for viewing orders
+
+**Output Format:**
+Return a JSON array, each element is an object containing the "prompt" key:
+```json
+[
+  {"prompt": "prompt content 1"},
+  {"prompt": "prompt content 2"}
+]
+```
+
+---
+
+## Detailed Generation Rules
+
+### 1. When `tool = 'greeting'`:
+Generate simple greetings, such as:
+- "hi, there"
+- "hello, how can I help you today?"
+- "hi, I wanna know the weather for this week"
+- "hey, can you assist me with something?"
+
+**Example Output:**
+```json
+[
+  {"prompt": "hi, there"},
+  {"prompt": "hello, can you help me?"},
+  {"prompt": "hi, I wanna know the weather for this week"}
+]
+```
+
+### 2. When `tool = 'view order'`:
+
+#### 2.1 Basic Format Template:
+```
+Prompt:---------
+User New Message: [User's latest message]
+
+User Token is: 
+[User Token]
+
+Here is the chat information: 
+ Chat Id : [Chat ID], Message Id : [Message ID]
+
+[Optional Resume Information Section]
+Here is the resume information: 
+Resume Id : [Resume ID]
+Resume Stage [Stage]
+
+Here is the history of the converstion:
+[History dialogue record]
+
+User Prompt End----------
+```
+
+#### 2.2 Scenario Types to Cover (Ensure equal probability for each scenario):
+1. **First Query** - User initiates a view order request for the first time (no history)
+2. **Parameter Confirmation** - User confirms parameters after assistant returns confirmation list
+3. **New Request After Permission Error** - User initiates a new query after permission verification failure
+4. **Multi-Condition Query** - User uses multiple filter conditions
+5. **Field-Limited Query** - User specifies to view only some fields
+6. **Modifying Query Conditions** - User modifies query conditions during conversation (add scenario)
+
+#### 2.3 Parameter Diversity:
+- **Countries**: United Kingdom, Germany, France, China, USA, Japan, Australia
+- **Supplier Codes**: FCNNQ, ABCD, XYZ123, SUP001, VENDOR_A
+- **GTN PO**: 4602602420, 4801201220, 4801230665, 4602602400, 4801201200
+- **GTN PO Item**: 2000, 1000, 3000, 2500, 1500
+- **Sale Sub Code**: AEMID, BEMID, CEMID, DEMID, EEMID
+- **Season**: SS26, FW25, SS25, FW26, SS27
+
+#### 2.4 Conversation Stages:
+- `ParamConfirmation` - Parameter confirmation stage
+- `RequestValidation` - Request validation stage
+- Includes success status codes (200) and error status codes (403003, etc.)
+
+#### 2.5 User Query Statement Templates:
+- "I wanna view my orders"
+- "I wanna view orders in [Country]"
+- "I wanna view orders with supplier code [Code]"
+- "I wanna view orders with GTN PO [Number]"
+- "I wanna view orders with sale sub code [Code]"
+- "I wanna view orders with sale sub code [Code] in season [Season]"
+- "show order with GTN PO [Number], I only want to see supplier name and GTN PO"
+- "I wanna view orders with GTN PO [Number] and GTN PO Item [Number]"
+- "Confirm" / "Abort" / "Remove all Invalid"
+- "I also wanna view orders with sale sub code [Code] in season [Season]"
+- "I wanna add to view orders with sale sub code [Code]"
+
+#### 2.6 Technical Specifications:
+1. **UUID Format**: All IDs must conform to the 8-4-4-4-12 format
+2. **Timestamps**: Use 10-digit or 13-digit numeric timestamps
+3. **JSON Format**: Assistant responses must be valid JSON strings
+4. **Dialogue Logic**: Historical dialogue content must be reasonable and coherent
+5. **Quantity Requirement**: Strictly generate the number specified by the `count` parameter
+6. **Diversity**: Ensure different users, Tokens, Chat IDs, Message IDs
+7. **Error Handling**: Include permission errors, parameter errors, and other scenarios
+
+---
+
+## Generation Logic Examples
+
+### Scenario 1: First Query (No History)
+```
+Prompt:---------
+User New Message: I wanna view orders in Germany
+
+User Token is: 
+acc_9a2b3c4d-5e6f-7g8h-9i0j-1k2l3m4n5o6p
+
+Here is the chat information: 
+ Chat Id : a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d, Message Id : f1e2d3c4-b5a6-4c7d-8e9f-0a1b2c3d4e5f
+
+Here is the history of the converstion:
+History 0. user : I wanna view orders in Germany. Message Time : 1767589311
+
+User Prompt End----------
+```
+
+### Scenario 2: Parameter Confirmation Stage
+```
+Prompt:---------
+User New Message: Confirm
+
+User Token is: 
+acc_7b835be6-81ae-4e86-9bd3-466a4d631e7b
+
+Here is the chat information: 
+ Chat Id : 83f2a39d-becc-4f4b-83af-25d3d69dc30e, Message Id : 05f5702b-0b93-4bea-be45-519f7144519c
+
+Here is the resume information: 
+Resume Id : 3aa53b8c8c6643f98f53ee45245adbd6
+Resume Stage ParamConfirmation
+
+Here is the history of the converstion:
+History 0. user : I wanna view orders in United Kingdom. Message Time : 1767588311
+History 1. assistant : {"status": "success", "code": 200, "resumeId": "3aa53b8c8c6643f98f53ee45245adbd6", "resumeStage": "ParamConfirmation", "workflowType": "view_order", "needConfirmList": [{"Country": "United Kingdom"}], "options": [{"name": "Confirm"}, {"name": "Abort"}], "needConfirmListCount": 1, "message": "I have curated a list of orders that you want to check, can you please check the following table and confirm?(<count>needConfirmListCount</count> orders)<br/><list>needConfirmList</list><br/><options>options</options><br/>"}. Message Time : 1767588311
+History 2. user : Confirm. Message Time : 1767588349
+
+User Prompt End----------
+```
+
+### Scenario 3: Add Scenario
+```
+Prompt:---------
+User New Message: I wanna view orders with GTN PO 4602602420
+
+User Token is: 
+acc_82d68d53-c5d7-44f7-a686-f1f4958b24a5
+
+Here is the chat information: 
+ Chat Id : 0001c457-106b-4be1-8fd8-d64b579e021d, Message Id : afe85312-43f5-43cb-af4a-1b116036a7c9
+
+Here is the resume information: 
+Resume Id : e41a9a2095c140d09a9f000b0b287358
+Resume Stage RequestValidation
+
+Here is the history of the converstion:
+History 0. user : I wanna view orders with supplier code FCNNQ. Message Time : 1767580316
+History 1. assistant : {"status": "success", "code": 200, "resumeId": "e41a9a2095c140d09a9f000b0b287358", "resumeStage": "ParamConfirmation", "workflowType": "view_order", "needConfirmList": [{"Supplier Code": "FCNNQ"}], "options": [{"name": "Confirm"}, {"name": "Abort"}], "needConfirmListCount": 1, "message": "I have curated a list of orders that you want to check, can you please check the following table and confirm?(<count>needConfirmListCount</count> orders)<br/><list>needConfirmList</list><br/><options>options</options><br/>"}. Message Time : 1767580316
+History 2. user : Confirm. Message Time : 1767580344
+History 3. assistant : {"status": "error", "code": 403003, "resumeId": "e41a9a2095c140d09a9f000b0b287358", "resumeStage": "RequestValidation", "workflowType": "view_order", "error": "No access right", "invalidRequest": [{"Supplier Code": "FCNNQ"}], "options": [{"name": "Remove all Invalid"}, {"name": "Abort"}], "invalidRequestCount": 1, "message": "You do not have permissions to view the following orders. Your requests will be removed:(<count>invalidRequestCount</count> orders)<br/><list>invalidRequest</list><br/><options>options</options><br/>"}. Message Time : 1767580344
+History 4. user : I wanna view orders with GTN PO 4602602420. Message Time : 1767580426
+
+User Prompt End----------
+```
+
+---
+
+## Execution Instructions
+
+Please follow the above instructions:
+1. Receive the `count` and `tool` parameters
+2. Generate the corresponding number of prompts according to the specified rules and scenarios
+3. Ensure data diversity, correct format, and logical coherence
+4. Return the result in JSON array format
