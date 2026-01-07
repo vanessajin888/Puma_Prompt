@@ -50,12 +50,12 @@ User Prompt End----------
 - **Request ID**: rd_bbced569-33b4-400a-88ae-e77e53754803_13, etc.
 - **Product Division**: Footwear, etc.
 - **Customer PO**: 101974, etc.
-- **SO Number**: , etc.
-- **Current Factory Code**: , etc.
-- **New Factory Code**: , etc.
-- **OPD**: , etc.
-- **New Value**: , etc.
-- **IsRequestResolved**: , etc.  
+- **SO Number**: 101974,0122947951, etc.
+- **Current Factory Code**: FKHMC,FCNDT,FKHMC etc.
+- **New Factory Code**:FKHMC,FCNDT,FKHMC etc.
+- **OPD**:02/25/2025 and other date
+- **New Value**: 2025-05-25 and other date
+- **IsRequestResolved**: "Resolved","UnResolved" etc.  
 #### Conversation Stages:
 - `ParamConfirmation` - Parameter confirmation stage
 - `RequestValidation` - Request validation stage
@@ -160,8 +160,5 @@ User Prompt End----------
 ---
 
 ## Execution Instructions
-
-1. Receive the `count` parameter
-2. Generate the corresponding number of prompts according to the specified rules and scenarios
-3. Ensure data diversity, correct format, and logical coherence
-4. Return the result in JSON array format
+1. Ensure data diversity, correct format, and logical coherence
+2. Return the result in JSON array format
