@@ -1,0 +1,207 @@
+**Output Format:**
+Return a JSON array, each element is an object containing the "prompt" key:
+[
+  {"prompt": "prompt content 1"},
+  {"prompt": "prompt content 2"}
+]
+---
+
+## Detailed Generation Rules
+
+### Basic Format Template:
+
+Prompt:---------
+User New Message: [User's latest message]
+
+User Token is: 
+[User Token]
+
+Here is the chat information: 
+ Chat Id : [Chat ID], Message Id : [Message ID]
+
+[Optional Resume Information Section]
+Here is the resume information: 
+Resume Id : [Resume ID]
+Resume Stage [Stage]
+
+Here is the history of the converstion:
+[History dialogue record]
+
+User Prompt End----------
+
+#### Scenario Types to Cover (Ensure equal probability for each scenario):
+1. **Initial Decision Query** - User initiates a decision-making process (no history)
+2. **Selection Parameter Confirmation** - User confirms selection parameters (SelectionParamConfirmation stage)
+3. **Decision Form Creation** - User views decision form details (DecisionFormCreation stage)
+4. **Specific Request Decision** - User makes decision on specific request ID
+5. **Decision Parameter Confirmation** - User confirms decision parameters (DecisionParamConfirmation stage)
+6. **Multi-Request Scenarios** - Multiple requests in decision form
+7. **Add/Merge Scenarios** - User adds more requests to decision process
+
+#### Conversation Stages:
+- `SelectionParamConfirmation` - Selection parameter confirmation stage
+- `DecisionFormCreation` - Decision form creation stage
+- `DecisionParamConfirmation` - Decision parameter confirmation stage
+
+#### Parameter Diversity:
+**Query Items:**
+- **GTN PO**: 4602602420, 4801201220, 4801230665, 4801246977, 4602602400, 4801201200
+- **GTN PO Item**: 2000, 1000, 3000, 2500, 1500, 00100, 00200, 00300, 00400, 00500, 00600, "view-order-test1"
+- **Customer PO**: 101974, 101632, 101500, TF5729320
+- **SO Number**: 0122947951, 0141331687, 0141348888, 0148275035
+- **SO Item Number**: 00030, 00010, 00040, 00020, 00050
+- **Batch ID**: Formats like "rd_6c9abb88-4a78-4ef2-9c0d-e1d64a1629a5", "rd_26c745ec-34ab-443a-bd7e-70607a2cc9c7", "rd_bbced569-33b4-400a-88ae-e77e53754803"
+- **Request ID**: Formats like "rd_6c9abb88-4a78-4ef2-9c0d-e1d64a1629a5_0", "rd_26c745ec-34ab-443a-bd7e-70607a2cc9c7_0"
+- **Related Request**: "true", "false"
+
+#### Query Steps and Templates:
+
+**Query 1: Initial Decision Query**
+- "I wanna approve my decision with [item] [value]"
+- "I wanna reject the decision with [item] [value]"
+- "I wanna make my decision with [item] [value]"
+- **Examples:**
+  - "I wanna approve my decision with GTN PO 4801246977"
+  - "I wanna approve my decision on SO 0141348888"
+  - "I wanna reject the decision with Customer PO TF5729320"
+
+**Query 2: Confirmation or Adding Requests**
+- "Confirm"
+- "I (also) wanna (add to) approve my decision with [item] [value]"
+- "Abort"
+- "Remove all invalid cases"
+- **Examples:**
+  - "Confirm"
+  - "I also wanna approve my decision with GTN PO 4602602420"
+  - "I wanna add to approve my decision with SO Number 0141331687"
+
+**Query 3: Specific Request Decision**
+- "I wanna [decision type] the request with request id [request_id]"
+- **Examples:**
+  - "I wanna approve the request with request id rd_6c9abb88-4a78-4ef2-9c0d-e1d64a1629a5_0"
+  - "I wanna reject the request with request id rd_26c745ec-34ab-443a-bd7e-70607a2cc9c7_0"
+
+**Query 4: Final Confirmation**
+- "Confirm"
+- "Abort"
+
+#### Technical Specifications:
+1. **UUID Format**: All IDs must conform to the 8-4-4-4-12 format
+2. **Timestamps**: Use 10-digit or 13-digit numeric timestamps
+3. **JSON Format**: Assistant responses must be valid JSON strings with `workflowType: "make_decision"`
+4. **Organization ID**: Always include `"organization_id": "org_imbrace"` in assistant responses
+5. **File Information**: Include file details with proper S3 URLs and Excel file formats
+6. **Dialogue Logic**: Historical dialogue content must be reasonable and coherent
+7. **Quantity Requirement**: Strictly generate the number specified by the `count` parameter
+8. **Diversity**: Ensure different users, Tokens, Chat IDs, Message IDs, Resume IDs, Batch IDs, Request IDs
+9. **Stage Progression**: Ensure logical progression through stages
+10. **Auto Approve Logic**: Include realistic auto-approve logic descriptions
+11. **Request Details**: Include comprehensive request details in DecisionFormCreation stage
+
+---
+
+## Generation Logic Examples
+
+### Scenario 1: Initial Decision Query (No History)
+```
+Prompt:---------
+User New Message: **I wanna approve my decision on SO 0141348888**
+
+User Token is: 
+acc_5e9daf64-4676-400a-93d2-1ff0228f4232
+
+Here is the chat information: 
+ Chat Id : 6fa5ad0f-bad0-4a99-a5d1-081ccb08144d, Message Id : 3c0fbfa2-0d4f-4982-b5bb-806f25388d87
+
+Here is the history of the converstion:
+History 0. user : **I wanna approve my decision on SO 0141348888**. Message Time : 1767947223
+
+User Prompt End----------
+```
+
+### Scenario 2: Selection Parameter Confirmation Stage
+```
+Prompt:---------
+User New Message: Confirm
+
+User Token is: 
+acc_5e9daf64-4676-400a-93d2-1ff0228f4232
+
+Here is the chat information: 
+ Chat Id : 6fa5ad0f-bad0-4a99-a5d1-081ccb08144d, Message Id : b2020916-c4eb-4d80-b4b5-e541ccf5f6ee
+
+Here is the resume information: 
+Resume Id : 463c3b62be3547e8bace3e27add4e0bc
+Resume Stage SelectionParamConfirmation
+
+Here is the history of the converstion:
+History 0. user : **I wanna approve my decision on SO 0141348888**. Message Time : 1767947223
+History 1. assistant : {"status": "success", "code": 200, "resumeId": "463c3b62be3547e8bace3e27add4e0bc", "resumeStage": "SelectionParamConfirmation", "workflowType": "make_decision", "needConfirmList": [{"SO Number": "0141348888"}], "organization_id": "org_imbrace", "needConfirmListCount": 1, "options": [{"name": "Confirm"}, {"name": "Abort"}], "message": "I have curated a list of requests that you want to approve / reject, can you please check the following table and confirm?(<count>needConfirmListCount</count> requests)<br/><list>needConfirmList</list><br/><options>options</options><br/>"}. Message Time : 1767947223
+History 2. user : Confirm. Message Time : 1767947294
+
+User Prompt End----------
+```
+
+### Scenario 3: Decision Form Creation Stage
+```
+Prompt:---------
+User New Message: I wanna approve the request with request id rd_26c745ec-34ab-443a-bd7e-70607a2cc9c7_0
+
+User Token is: 
+acc_5e9daf64-4676-400a-93d2-1ff0228f4232
+
+Here is the chat information: 
+ Chat Id : 6fa5ad0f-bad0-4a99-a5d1-081ccb08144d, Message Id : 960fa353-de83-474b-a7a8-7eee5cc37f57
+
+Here is the resume information: 
+Resume Id : 463c3b62be3547e8bace3e27add4e0bc
+Resume Stage DecisionFormCreation
+
+Here is the history of the converstion:
+History 0. user : **I wanna approve my decision on SO 0141348888**. Message Time : 1767947223
+History 1. assistant : {"status": "success", "code": 200, "resumeId": "463c3b62be3547e8bace3e27add4e0bc", "resumeStage": "SelectionParamConfirmation", "workflowType": "make_decision", "needConfirmList": [{"SO Number": "0141348888"}], "organization_id": "org_imbrace", "needConfirmListCount": 1, "options": [{"name": "Confirm"}, {"name": "Abort"}], "message": "I have curated a list of requests that you want to approve / reject, can you please check the following table and confirm?(<count>needConfirmListCount</count> requests)<br/><list>needConfirmList</list><br/><options>options</options><br/>"}. Message Time : 1767947223
+History 2. user : Confirm. Message Time : 1767947294
+History 3. assistant : {"status": "success", "code": 200, "resumeStage": "DecisionFormCreation", "resumeId": "463c3b62be3547e8bace3e27add4e0bc", "workflowType": "make_decision", "count": 2, "option": [{"name": "Abort"}], "list": [{"Batch ID": "rd_26c745ec-34ab-443a-bd7e-70607a2cc9c7", "Request ID": "rd_26c745ec-34ab-443a-bd7e-70607a2cc9c7_0", "Product Division": "Footwear", "Supplier Code": "FERTC", "Sale Sub Code": "CRAES", "GTN PO": "4801246977", "GTN PO Item": "view-order-test1", "Customer PO": "TF5729320", "SO Number": "0141348888", "Change Type": "Propose CHD", "New Value": "2026-01-13", "Approver": "{\"1\": \"Sale Sub\"}", "Request Status": "Pending", "Requestor Comment": null, "Auto Approve": "{\"0\": \"0: Requestor Supplier match logic matrix of Change Type Propose CHD, Product Division Footwear with value 2026-01-13 that If [chd-rhd]<=14\\nor [chd-rhd]<0, automatically\\napprove and send to approver\\n\\n\\n\\n1: Requestor Supplier match logic matrix of Change Type Propose CHD, Product Division Footwear with value 2026-01-13 that If [chd-rhd]>14,\\nsend to approver\\nfor decision\\n\\n\\n\"}", "Is Valid Input": "{\"1\": \"\"}", "Latest Decided By": null, "Latest Approver Role": null, "Latest Approver Comment": null, "Requestor": "Supplier", "Observer": "{\"1\": \"OM\"}"}, {"Batch ID": "rd_6c9abb88-4a78-4ef2-9c0d-e1d64a1629a5", "Request ID": "rd_6c9abb88-4a78-4ef2-9c0d-e1d64a1629a5_0", "Product Division": "Footwear", "Supplier Code": "FERTC", "Sale Sub Code": "CRAES", "GTN PO": "4801246977", "GTN PO Item": "view-order-test1", "Customer PO": "TF5729320", "SO Number": "0141348888", "Change Type": "Propose CHD", "New Value": "2026-01-13", "Approver": "{\"1\": \"Sale Sub\"}", "Request Status": "Pending", "Requestor Comment": null, "Auto Approve": "{\"0\": \"0: Requestor Supplier match logic matrix of Change Type Propose CHD, Product Division Footwear with value 2026-01-13 that If [chd-rhd]<=14\\nor [chd-rhd]<0, automatically\\napprove and send to approver\\n\\n\\n\\n1: Requestor Supplier match logic matrix of Change Type Propose CHD, Product Division Footwear with value 2026-01-13 that If [chd-rhd]>14,\\nsend to approver\\nfor decision\\n\\n\\n\"}", "Is Valid Input": "{\"1\": \"\"}", "Latest Decided By": null, "Latest Approver Role": null, "Latest Approver Comment": null, "Requestor": "Supplier", "Observer": "{\"1\": \"OM\"}"}], "file": {"user_id": "u_7966c7e4-c1db-4473-b6b5-6459ce69b5ee", "uploader": "salesub.test.puma@outlook.com", "name": "make-decision-463c3b62be3547e8bace3e27add4e0bc", "extension": "xlsx", "sizeInBytes": 6610, "uploadDate": "2026-01-09T08:28:36.329Z", "url": "https://dev-imbrace-data.s3.ap-east-1.amazonaws.com/board/org_imbrace/file_LGSIxQRDf3UdVyDhNVVY1JO3vh.xlsx", "key": "board/org_imbrace/file_LGSIxQRDf3UdVyDhNVVY1JO3vh.xlsx", "error": null, "filename": "file_LGSIxQRDf3UdVyDhNVVY1JO3vh.xlsx"}, "message": "The following is a table of request details, please fill in your decision and comments. (<count>count</count> records):<br/><list>list</list><br/><file>file</file>"}. Message Time : 1767947294
+History 4. user : I wanna approve the request with request id rd_26c745ec-34ab-443a-bd7e-70607a2cc9c7_0. Message Time : 1767947341
+
+User Prompt End----------
+```
+
+### Scenario 4: Decision Parameter Confirmation Stage
+```
+Prompt:---------
+User New Message: Confirm
+
+User Token is: 
+acc_5e9daf64-4676-400a-93d2-1ff0228f4232
+
+Here is the chat information: 
+ Chat Id : 6fa5ad0f-bad0-4a99-a5d1-081ccb08144d, Message Id : ad8ae9b4-8ee9-4111-991c-3e1b43417794
+
+Here is the resume information: 
+Resume Id : 463c3b62be3547e8bace3e27add4e0bc
+Resume Stage DecisionParamConfirmation
+
+Here is the history of the converstion:
+History 0. user : **I wanna approve my decision on SO 0141348888**. Message Time : 1767947223
+History 1. assistant : {"status": "success", "code": 200, "resumeId": "463c3b62be3547e8bace3e27add4e0bc", "resumeStage": "SelectionParamConfirmation", "workflowType": "make_decision", "needConfirmList": [{"SO Number": "0141348888"}], "organization_id": "org_imbrace", "needConfirmListCount": 1, "options": [{"name": "Confirm"}, {"name": "Abort"}], "message": "I have curated a list of requests that you want to approve / reject, can you please check the following table and confirm?(<count>needConfirmListCount</count> requests)<br/><list>needConfirmList</list><br/><options>options</options><br/>"}. Message Time : 1767947223
+History 2. user : Confirm. Message Time : 1767947294
+History 3. assistant : {"status": "success", "code": 200, "resumeStage": "DecisionFormCreation", "resumeId": "463c3b62be3547e8bace3e27add4e0bc", "workflowType": "make_decision", "count": 2, "option": [{"name": "Abort"}], "list": [{"Batch ID": "rd_26c745ec-34ab-443a-bd7e-70607a2cc9c7", "Request ID": "rd_26c745ec-34ab-443a-bd7e-70607a2cc9c7_0", "Product Division": "Footwear", "Supplier Code": "FERTC", "Sale Sub Code": "CRAES", "GTN PO": "4801246977", "GTN PO Item": "view-order-test1", "Customer PO": "TF5729320", "SO Number": "0141348888", "Change Type": "Propose CHD", "New Value": "2026-01-13", "Approver": "{\"1\": \"Sale Sub\"}", "Request Status": "Pending", "Requestor Comment": null, "Auto Approve": "{\"0\": \"0: Requestor Supplier match logic matrix of Change Type Propose CHD, Product Division Footwear with value 2026-01-13 that If [chd-rhd]<=14\\nor [chd-rhd]<0, automatically\\napprove and send to approver\\n\\n\\n\\n1: Requestor Supplier match logic matrix of Change Type Propose CHD, Product Division Footwear with value 2026-01-13 that If [chd-rhd]>14,\\nsend to approver\\nfor decision\\n\\n\\n\"}", "Is Valid Input": "{\"1\": \"\"}", "Latest Decided By": null, "Latest Approver Role": null, "Latest Approver Comment": null, "Requestor": "Supplier", "Observer": "{\"1\": \"OM\"}"}, {"Batch ID": "rd_6c9abb88-4a78-4ef2-9c0d-e1d64a1629a5", "Request ID": "rd_6c9abb88-4a78-4ef2-9c0d-e1d64a1629a5_0", "Product Division": "Footwear", "Supplier Code": "FERTC", "Sale Sub Code": "CRAES", "GTN PO": "4801246977", "GTN PO Item": "view-order-test1", "Customer PO": "TF5729320", "SO Number": "0141348888", "Change Type": "Propose CHD", "New Value": "2026-01-13", "Approver": "{\"1\": \"Sale Sub\"}", "Request Status": "Pending", "Requestor Comment": null, "Auto Approve": "{\"0\": \"0: Requestor Supplier match logic matrix of Change Type Propose CHD, Product Division Footwear with value 2026-01-13 that If [chd-rhd]<=14\\nor [chd-rhd]<0, automatically\\napprove and send to approver\\n\\n\\n\\n1: Requestor Supplier match logic matrix of Change Type Propose CHD, Product Division Footwear with value 2026-01-13 that If [chd-rhd]>14,\\nsend to approver\\nfor decision\\n\\n\\n\"}", "Is Valid Input": "{\"1\": \"\"}", "Latest Decided By": null, "Latest Approver Role": null, "Latest Approver Comment": null, "Requestor": "Supplier", "Observer": "{\"1\": \"OM\"}"}], "file": {"user_id": "u_7966c7e4-c1db-4473-b6b5-6459ce69b5ee", "uploader": "salesub.test.puma@outlook.com", "name": "make-decision-463c3b62be3547e8bace3e27add4e0bc", "extension": "xlsx", "sizeInBytes": 6610, "uploadDate": "2026-01-09T08:28:36.329Z", "url": "https://dev-imbrace-data.s3.ap-east-1.amazonaws.com/board/org_imbrace/file_LGSIxQRDf3UdVyDhNVVY1JO3vh.xlsx", "key": "board/org_imbrace/file_LGSIxQRDf3UdVyDhNVVY1JO3vh.xlsx", "error": null, "filename": "file_LGSIxQRDf3UdVyDhNVVY1JO3vh.xlsx"}, "message": "The following is a table of request details, please fill in your decision and comments. (<count>count</count> records):<br/><list>list</list><br/><file>file</file>"}. Message Time : 1767947294
+History 4. user : I wanna approve the request with request id rd_26c745ec-34ab-443a-bd7e-70607a2cc9c7_0. Message Time : 1767947341
+History 5. assistant : {"status": "success", "code": 200, "resumeId": "463c3b62be3547e8bace3e27add4e0bc", "resumeStage": "DecisionParamConfirmation", "workflowType": "make_decision", "needConfirmList": [{"Request ID": "rd_26c745ec-34ab-443a-bd7e-70607a2cc9c7_0", "Approver Decision": "Approved"}], "organization_id": "org_imbrace", "needConfirmListCount": 1, "options": [{"name": "Confirm"}, {"name": "Abort"}], "message": "I have curated a list of requests that you want to approve / reject, can you please check the following table and confirm?(<count>needConfirmListCount</count> requests)<br/><list>needConfirmList</list><br/><options>options</options><br/>"}. Message Time : 1767947341
+History 6. user : Confirm. Message Time : 1767947497
+
+User Prompt End----------
+```
+
+---
+
+## Execution Instructions
+
+1. Receive the `count` parameter
+2. Generate the corresponding number of prompts according to the specified rules and scenarios
+3. Ensure data diversity, correct format, and logical coherence
+4. Ensure proper stage progression: SelectionParamConfirmation → DecisionFormCreation → DecisionParamConfirmation
+5. Include comprehensive request details with realistic auto-approve logic
+6. Include file information with Excel file details and S3 URLs
+7. Return the result in JSON array format
