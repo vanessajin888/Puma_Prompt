@@ -1,1 +1,186 @@
+A. Basic Description:
+Triggered by user input prompt, and extract 13 types input parmeters from user prompt
 
+
+B. Parameters:
+1. token:
+   (a) Type: String
+   (b) Description:
+   user access token,The token starting with "acc_"
+   (c) Required
+
+2. prompt:
+   (a) Type: String
+   (b) Description:
+    user prompt message
+    The full text input from user start from "Prompt:--------- to  User Prompt End---------- "    （NOTE: Must be the full text without any omissions or LLM laziness）
+
+    for example:
+    "prompt": "Prompt:---------\nUser New Message:"some message"\n\nUser Token is:\n"token"\n\nHere is the chat information:\n\n Chat Id : "chat id", Message Id : "message id"\n\nHere is the history of the conversation:\n\nHistory 0. user : "some history message"\nHistory 1. assistant : "some response from ai agent"\nHistory 2. ...etc.\n\nUser Prompt End----------"
+   (c) Required
+
+3. fileId:
+   (a) Type: String
+   (b) Description:
+   a fileId include filter content: If user upload file, extract fileId; If user does not upload file, fileId = null
+
+4. confirmAll:
+   (a) Type: Boolean
+   (b) Description:
+   when user type "confirmAll" or "confirm", set it to be true; otherwise set it to be false
+   Remind: when confirmAll = true, then filters = null and userAction = "confirm"
+
+5. chatId:
+   (a) Type: String
+   (b) Description:
+   The ID for the chat
+   chatId must extract in the user prompts, the format should be: Chat Id : "The content to be extract"
+
+6. messageId:
+   (a) Type: String
+   (b) Description:
+   The ID for the message
+   messageId must extract in the user prompts, the format should be: Message Id Id : "The content to be extract"
+
+7. resumeId:
+   (a) Type: String
+   (b) Description:
+   The ID for the process to resume
+   Set to `null` for first query, and for other subqueries, resumeId keeps same as lastest prompt history result.
+   NOTE: If current intension is different from last output's intenson, then set resumeId to null
+
+8. resumeStage:
+   (a) Type: String
+   (b) Description:
+   The next stage for the whole process, including ParamConfirmation or RequestValidation
+   (1) Initial query: `null`
+   (2)Subsequent queries: Must exactly match the previous output's `resumeStage`
+   NOTE: If current intension is different from last output's intenson, then set resumeStage to null
+
+9. userAction:
+   (a) Type: String
+   (b) Description:
+     (1)if user type keywords "add"/"remove"/"remove all"/"change" 
+      userAction will be "change", and confirmAll will be false.
+     (2)if user type keywords "confirm" 
+      userAction will be "confirm", and confirmAll will be true, and filters = [].
+     (3)if user type keywords "abort" 
+      userAction will be "abort".
+     (4)Special Handling for Non-New Queries:
+      If the user’s query is not a new query and occurs during a confirmation stage (i.e., the user does not make a confirm/abort decision but inputs a query) and the query intention tool remains the same as the previous query’s intention tool, then treat the current input as an add operation, userAction will be "change"
+
+      Example:
+      - Previous Query: `I want to view request So 423542635`
+      - Current User Input: `I want to view request gtn po aaa`  
+      → This is not a new query.  
+      → `filters`: `["{"GTN PO": "aaa"}"]`  
+      → `addList`: `["{"GTN PO": "aaa"}"]`
+      → `userAction`: "change"
+    (5)None of the above,
+      userAction will be null
+
+10. removeAll:
+   (a) Type: Boolean
+   (b) Description:
+   if user type "remove all" then set it to true;  otherwise, set to false
+   Remind: If removeAll = true, then useAction must be "change" 
+
+11. column:
+   (a) Type: Array
+   (b) Description:
+    An array of column wants to extract
+     column:
+    (1) Utilize user-specified column names when provided; otherwise, set to `null`
+    (2) Preserve previous column selections for lastest history when no new preferences are specified
+    (3) Supported column fields （other column fields don't support）:  "Customer PO", "SO", "GTN PO", "GTN PO Item", "Sale Sub Code", "Ultimate Customer Code", "Article No", "Supplier Code", "Supplier Name", "Factory Code", "Current CHD", "Current LCHD", "Order Status", "SO Status", "Change Type", "New Value", "Request Status", "Request Comment", "Latest Decided By", "Latest Approver Comment", "Latest Approver Role", "Next Approver Role"   
+   (c) Array Item Type: String
+   (d) Array Item Description: column key that wants to extract
+12. addList:
+   (a) Type: Array
+   (b) Description:
+   Define an array of objects. Extract "add" operations from the current user input (user new message) as an array of objects in the format:  
+`["{"Key":"Value"}", ...]`
+Remind: Extract all applicable add conditions from the user's current input into an array (from user new message, please don't extract value from history record)
+Rules:
+1. When `userAction == "change"`, set `addList == filters`.
+2. Related keywords for extraction include: "add", "also want to add".
+3. If `userAction == "abort"` or `userAction == "confirm"` or `removeAll == true`, set `addList` to `null`.
+
+Special Handling for Non-New Queries:
+(1)If the user’s query is not a new query and occurs during a confirmation stage (i.e., the user does not make a confirm/abort decision but inputs a query) and the query intention tool remains the same as the previous query’s intention tool, then treat the current input as an add operation.
+
+Example:
+- Previous Query: `I want to view request So 423542635`
+- Current User Input: `I want to view request gtn po aaa`  
+→ This is not a new query.  
+→ `filters`: `["{"GTN PO": "aaa"}"]`  
+→ `addList`: `["{"GTN PO": "aaa"}"]`                        
+(2) Handling Multiple Values for the Same Key
+- If the user provides multiple values for the same key, only the first occurrence should be processed, all keys must follow this rule (all keys include: `"SO Number"`, `"Supplier Code"`, `"Sale Sub Code"`, `"GTN PO"`, `"GTN PO Item"`, `"Customer PO"`, `"Product Division"`, `"Current Factory Code"`, `"New Factory Code"`, `"OPD"`, `"Factory Code"`, `"IsRequestResolved"`, `"Request Status"`, `"Change Type"`, `"New Value"`).  
+Example:  
+  User says: “I also want to view update requests by SO 12323532 in China and Japan.” 
+  Output:  
+  "addList": [
+    "{\"SO Number\": \"12323532\", \"Country\": \"China\"}"
+  ]
+(Note: "Japan" is ignored)
+
+   (c) Array Item Type: String
+   (d) a JSON object string contain filter keys and value
+
+13. filters:
+   (a) Type: Array
+   (b) Description:
+Array Field: `filters` (JSON String Format)
+Overview：
+The `filters` array stores filter conditions extracted from the user’s new message, formatted as an array of JSON strings.  
+Example format:  
+`["{\"Key\":\"Value\"}"]` 
+1. Extraction Rules：
+- Extract all applicable filter conditions from the user’s current input into an array (from user new message , please don't extract value from history record).
+- If no filters are found, set to an empty array `[]`.
+- If `confirmAll == true`, set `filters = []`.
+2. Supported Filter Fields
+The following keys are supported:  
+`"SO Number"`, `"Supplier Code"`, `"Sale Sub Code"`, `"GTN PO"`, `"GTN PO Item"`, `"Customer PO"`, `"Product Division"`, `"Current Factory Code"`, `"New Factory Code"`, `"OPD"`, `"Factory Code"`, `"IsRequestResolved"`, `"Request Status"`, `"Change Type"`, `"New Value"`.
+3. Special Format & Value Rules
+- OPD: Must be in `"YYYY-MM-DD"` format.
+- IsRequestResolved: Allowed values are `"Resolved"` or `"UnResolved"`.
+- Request Status: Allowed values are `"Needs Follow-up"`, `"Pending"`, `"Approved"`, `"Rejected"`, `"Cancelled"`, or `"In Progress"`.
+4. Handling Multiple Values for the Same Key
+- If the user provides multiple values for the same key, only the first occurrence should be processed, all keys must follow this rule (all keys include: `"SO Number"`, `"Supplier Code"`, `"Sale Sub Code"`, `"GTN PO"`, `"GTN PO Item"`, `"Customer PO"`, `"Product Division"`, `"Current Factory Code"`, `"New Factory Code"`, `"OPD"`, `"Factory Code"`, `"IsRequestResolved"`, `"Request Status"`, `"Change Type"`, `"New Value"`).  
+Example:  
+  User says: “I want to view update requests by SO 12323532 in China and Japan.” 
+  Output:  
+  "filters": [
+    "{\"SO Number\": \"12323532\", \"Country\": \"China\"}"
+  ]
+(Note: "Japan" is ignored)
+5. Combining Multiple Conditions
+- If the user provides more than one filter item, include all valid key-value pairs in **a single JSON string** within the array.  
+  Example:  
+  User says: “I want to view requests where SO is 10002, Product Division is Footwear, and Supplier Code is ABCDE.”  
+  Output:  
+  "filters": [
+    "{\"SO Number\": \"10002\", \"Product Division\": \"Footwear\", \"Supplier Code\": \"ABCDE\"}"
+  ]
+6. Special Case: `userAction = "confirm"`
+- When `userAction` is `"confirm"` and `confirmAll = true`, set:
+  "filters": []
+7. If user input query: I want to view update request 702709820984:
+This case user don't input fields but input numbers,. For this case it is defaulted considered as GTN PO
+So, Output:  
+  "filters": [
+    "{\"GTN PO\": \"702709820984\"}"
+  ]
+
+
+Example Usage
+User query: “I wanna view my pending requests to propose CHD to Apr 29, 2025.” 
+Output:
+"filters": [
+  "{\"Change Type\": \"Propose CHD\", \"New Value\": \"2025-04-29\", \"Request Status\": \"Pending\"}"
+]
+
+   (c) Array Item Type: String
+   (d) Array Item Description:a JSON object string contain filter keys and value
