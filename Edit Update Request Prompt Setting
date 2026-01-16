@@ -276,7 +276,7 @@ B. Parameters:
       - `decisions`: `["{\"Request ID\": \"rd_7092759328\", \"Edited New Value\":\"2025-05-11\",\"Edited Requestor Comment\":\"approved the request\"}"]`
       - `filters`: `[]`
       Current User Input: "I want to edit 2025/05/112 and reviewed the request on request id : rd_70927593289"
-      - **Analysis**: Not a new query, same intention tool, during confirmation stage
+      -  Analysis: Not a new query, same intention tool, during confirmation stage
       - `decisions`: `["{\"Request ID\": \"rd_7092759329\", \"Edited New Value\":\"2025-05-12\",\"Edited Requestor Comment\":\"reviewed the request\"}"]`
       - `filters`: `[]`
       - `decisions`: `["{\"Request ID\": \"rd_7092759329\", \"Edited New Value\":\"2025-05-12\",\"Edited Requestor Comment\":\"reviewed the request\"}"]`
@@ -291,7 +291,7 @@ B. Parameters:
       - `addList`: `["{\"Supplier Code\": \"SUP-123\"}"]`
       
       6. Implementation
-      *Step 1: Determine Query Type
+      Step 1: Determine Query Type
       - Check if current query is new or continuation
       - Verify current workflow stage from `resumeStage`
       - Identify intention tool (should match previous query)
@@ -338,8 +338,8 @@ B. Parameters:
       
       Trigger Condition：
       Extract filters from the current user message if and only if:
-      - The message contains phrases such as: "make decision", "make a decision", "make decisions", or similar variations.
-      - OR the message contains any of these specific keywords: `"SO Number"`, `"Customer PO"`, `"GTN PO"`, `"GTN PO Item"`, `"Batch ID"`, `"Related Request"`.
+      - The message contains phrases such as: "edit","write","edit update request","write update request", "write request","edit request" or similar variations.
+      - OR the message contains any of these specific keywords: `"SO Number"`, `"Customer PO"`, `"GTN PO"`, `"GTN PO Item"`, `"Request ID"`.
       
       If these conditions are not met, do not extract any filters.
       
@@ -360,26 +360,24 @@ B. Parameters:
       - Customer PO (String): Must be extracted whenever mentioned.
       - GTN PO (String): Must be extracted whenever mentioned.
       - GTN PO Item (String): Must be extracted whenever mentioned.
-      - Batch ID (String): Must be extracted whenever mentioned.
       - Request ID (String)
-      - Related Request (String): Accepts only `"true"` or `"false"` as values.
-      
+   
       （3） Handling Multiple Conditions
       When the user specifies multiple valid filter conditions within a single message, combine all key-value pairs into a single JSON string within the array.
       
       Example
-      User Message: "I want to make a decision on SO 10002 with Batch ID 670970147098014"
+      User Message: "I want to edit a request on SO 10002 with Request ID 670970147098014"
       
       Output:
       "filters": [
-        "{\"SO Number\": \"10002\", \"Batch ID\": \"670970147098014\"}"
+        "{\"SO Number\": \"10002\", \"Request ID\": \"670970147098014\"}"
       ]
       
        Handling Multiple Values for the Same Key
       If the user provides multiple values for the same filter key, process only the first occurrence and ignore subsequent ones.
       
       Example
-      User Message: "I want to make decision on SO 12323532 and SO 70140914901"
+      User Message: "I want to edit on SO 12323532 and SO 70140914901"
       
       Output:
       
@@ -391,22 +389,22 @@ B. Parameters:
       6 Examples & Edge Cases
       
       Example 1: Decision-making Phrase
-      User Message: "I wanna make a decision on GTN PO 4509871234"
+      User Message: "I wanna make an edit on GTN PO 4509871234"
       Output:
       "filters": [
         "{\"GTN PO\": \"4509871234\"}"
       ]
       
       Example 2: Multiple Valid Keywords
-      User Message: "Make decision for Customer PO CPO-2024-001 and Batch ID BATCH-789"
+      User Message: "Make decision for Customer PO CPO-2024-001 and Request ID rd-789"
       Output:
       "filters": [
-        "{\"Customer PO\": \"CPO-2024-001\", \"Batch ID\": \"BATCH-789\"}"
+        "{\"Customer PO\": \"CPO-2024-001\", \"Request ID\": \"rd-789\"}"
       ]
       
       7. Summary of Key Rules
       （1）Source: Extract only from the current user message. Never use historical context.
-      （2）Trigger: Extraction is triggered by "make decision" phrases **OR** the presence of specific mandatory keywords (`SO Number`, `Customer PO`, `GTN PO`, `GTN PO Item`, `Batch ID`, `Related Request`).
+      （2）Trigger: Extraction is triggered by "make decision" phrases **OR** the presence of specific mandatory keywords (`SO Number`, `Customer PO`, `GTN PO`, `GTN PO Item`, `Request ID`).
       （3）Format: Output filters as an array containing a single, combined JSON string of all valid key-value pairs.
       （4）Deduplication: For any key provided multiple times, use only the first value provided.
       （5）Validation: Strictly include only the supported fields listed in Section 3.
