@@ -196,11 +196,13 @@ userAction: "change"
 11. column:
    (a) Type: Array
    (b) Description:
-   An array of column wants to extract
-column:
-(1) Utilize user-specified column names when provided; otherwise, set to `null`
-(2) Preserve previous column selections from latest history record when no new preferences are specified
-(3) Supported column fields: "SO Status", "Supplier Confirmation", "Order Status", "PO Priority", "Article Priority", "Purchasing Group", "Sourcing Organization", "Purchase Organization", "Lead Time", "HS Number", "Ship Mode", "Currency", "Ultimate Customer Name", "Ultimate Customer Code", "Customer Color", "Customer Style Number", "Destination Country", "Country", "Order Unit", "New Quantity", "Current Quantity", "Color", "Style Description", "Style", "Sale Sub Name", "Sale Sub Code", "New Factory Code", "Current Factory Code", "Supplier Name", "Supplier Code", "Brand", "Article", "Season", "Product Division", "SO Number", "SO Item Number", "GTN PO", "GTN PO Item", "Customer PO", "Purchase Requisition", "New LCHD", "Current LCHD", "New CHD", "Current CHD", "EHD", "PHD", "OPD", "RHD", "ON"
+     An array of column wants to extract
+     column:
+     (1) Utilize user-specified column names when provided; otherwise, set to `null`
+     (2) Preserve previous column selections from latest history record when no new preferences are specified
+     (3) Supported column fields: "Batch ID",
+     "Request ID","Product Division","Supplier Code","Sale Sub Code","GTN PO","GTN PO Item","Customer PO","SO Number","SO Item Number","Change Type","New Value","Approver","Request Status","Requestor Comment","Auto Approve","Is Valid Input","Latest Decided By","Latest Approver Role",
+     "Latest Approver Comment","Requestor","Observer"
    (c) Array Item Type: String
    (d) Array Item Description: column key that wants to extract
 12. addList:
