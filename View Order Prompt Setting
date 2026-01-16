@@ -6,111 +6,111 @@ B. Parameters:
 1. token:
    (a) Type: String
    (b) Description:
-   user access token,The token starting with "acc_"
+       user access token,The token starting with "acc_"
    (c) Required
 
 2. prompt:
    (a) Type: String
    (b) Description:
-   user prompt message
-   The full text input from user start from "Prompt:--------- to  User Prompt End---------- "    （NOTE: Must be the full text without any omissions or LLM laziness）
+      user prompt message
+      The full text input from user start from "Prompt:--------- to  User Prompt End---------- "    （NOTE: Must be the full text without any omissions or LLM laziness）
    (c) Required
 
 3. fileId:
    (a) Type: String
    (b) Description:
-   a fileId include filter content: If user upload file, extract fileId; If user does not upload file, fileId = null
+      a fileId include filter content: If user upload file, extract fileId; If user does not upload file, fileId = null
 
 4. confirmAll:
    (a) Type: Boolean
    (b) Description:
-   when user type "confirmAll" or "confirm", set it to be true; otherwise set it to be false
-   Remind: when confirmAll = true, then filters = null and userAction = "confirm"
+      when user type "confirmAll" or "confirm", set it to be true; otherwise set it to be false
+      Remind: when confirmAll = true, then filters = null and userAction = "confirm"
 
 5. chatId:
    (a) Type: String
    (b) Description:
-   The ID for the chat
-   chatId must extract in the user prompts, the format should be: Chat Id : "The content to be extract"
+      The ID for the chat
+      chatId must extract in the user prompts, the format should be: Chat Id : "The content to be extract"
 
 6. messageId:
    (a) Type: String
    (b) Description:
-   The ID for the message
-   messageId must extract in the user prompts, the format should be: Message Id Id : "The content to be extract"
+      The ID for the message
+      messageId must extract in the user prompts, the format should be: Message Id Id : "The content to be extract"
 
 7. resumeId:
    (a) Type: String
    (b) Description:
-   The ID for the process to resume
-   Set to `null` for first query, and for other subqueries, resumeId keeps same as lastest prompt history result.
-   NOTE: If current intension is different from last output's intenson, then set resumeId to null
+      The ID for the process to resume
+      Set to `null` for first query, and for other subqueries, resumeId keeps same as lastest prompt history result.
+      NOTE: If current intension is different from last output's intenson, then set resumeId to null
 
 8. resumeStage:
    (a) Type: String
    (b) Description:
-   The next stage for the whole process, including ParamConfirmation or RequestValidation
-   (1) Initial query: `null`
-   (2)Subsequent queries: Must exactly match the previous output's `resumeStage`
-   NOTE: If current intension is different from last output's intenson, then set resumeStage to null
+      The next stage for the whole process, including ParamConfirmation or RequestValidation
+      (1) Initial query: `null`
+      (2)Subsequent queries: Must exactly match the previous output's `resumeStage`
+      NOTE: If current intension is different from last output's intenson, then set resumeStage to null
 
 9. userAction:
    (a) Type: String
    (b) Description:
-   if user type keywords "add"/"remove"/"remove all"/"change" 
-   userAction will be "change", and confirmAll will be false.
-   if user type keywords "confirm" 
-   userAction will be "confirm", and confirmAll will be true, filters = []
-   if user type keywords "abort" 
-   userAction will be "abort".
-   None of the above,
-   userAction will be null
+      if user type keywords "add"/"remove"/"remove all"/"change" 
+      userAction will be "change", and confirmAll will be false.
+      if user type keywords "confirm" 
+      userAction will be "confirm", and confirmAll will be true, filters = []
+      if user type keywords "abort" 
+      userAction will be "abort".
+      None of the above,
+      userAction will be null
 
 10. removeAll:
    (a) Type: Boolean
    (b) Description:
-   if user type "remove all" then set it to true;  otherwise, set to false
-   Remind: If removeAll = true, then useAction must be "change" 
+      if user type "remove all" then set it to true;  otherwise, set to false
+      Remind: If removeAll = true, then useAction must be "change" 
 
 11. column:
    (a) Type: Array
    (b) Description:
-    An array of column wants to extract
-    column:
-    (1) Utilize user-specified column names when provided; otherwise, set to `null`
-    (2) Preserve previous column selections from latest history record when no new preferences are specified
-    (3) Supported column fields (other columns are not supported): "Customer PO", "SO", "SO Item", "GTN PO", "GTN PO Item", "Sale Sub Code", "Ultimate Customer Code", "Article No", "Supplier Code", "Supplier Name", "Factory Code", "Current CHD", "Current LCHD", "Order Status", "SO Status"
+       An array of column wants to extract
+       column:
+       (1) Utilize user-specified column names when provided; otherwise, set to `null`
+       (2) Preserve previous column selections from latest history record when no new preferences are specified
+       (3) Supported column fields (other columns are not supported): "Customer PO", "SO", "SO Item", "GTN PO", "GTN PO Item", "Sale Sub Code", "Ultimate Customer Code", "Article No", "Supplier Code", "Supplier Name", "Factory Code", "Current CHD", "Current LCHD", "Order Status", "SO Status"
    (c) Array Item Type: String
    (d) Array Item Description: column key that wants to extract
 12. addList:
    (a) Type: Array
    (b) Description:
-    Define an array of objects. Extract "add" operations from the current user input (user new message) as an array of objects in the format:  
-`["{"Key":"Value"}", ...]`
-Remind: Extract all applicable add conditions from the user's current input into an array (from user new message, please don't extract value from history record)
-Rules:
-1. When `userAction == "change"`, set `addList == filters`.
-2. Related keywords for extraction include: "add", "also want to add".
-3. If `userAction == "abort"` or `userAction == "confirm"` or `removeAll == true`, set `addList` to `null`.
-
-Special Handling for Non-New Queries:
-（1）If the user’s query is not a new query and occurs during a confirmation stage (i.e., the user does not make a confirm/abort decision but inputs a query) and the query intention tool remains the same as the previous query’s intention tool, then treat the current input as an add operation.
-
-Example:
-- Previous Query: `I want to view order So 423542635`
-- Current User Input: `I want to view order gtn po aaa`  
-→ This is not a new query.  
-→ `filters`: `["{"GTN PO": "aaa"}"]`  
-→ `addList`: `["{"GTN PO": "aaa"}"]
-(2) Handling Multiple Values for the Same Key
-- If the user provides multiple values for the same key, only the first occurrence should be processed, all keys must follow this rule (all keys include: "SO Number", "Supplier Code", "Sale Sub Code", "GTN PO", "GTN PO Item", "Customer PO", "Product Division", "Current Factory Code", "New Factory Code", "OPD", "Factory Code", "Season", "Country").  
-Example:  
-  User says: “I also want to view update orders by SO 12323532 in China and Japan.” 
-  Output:  
-  "addList": [
-    "{\"SO Number\": \"12323532\", \"Country\": \"China\"}"
-  ]
-(Note: "Japan" is ignored)   
+          Define an array of objects. Extract "add" operations from the current user input (user new message) as an array of objects in the format:  
+      `["{"Key":"Value"}", ...]`
+      Remind: Extract all applicable add conditions from the user's current input into an array (from user new message, please don't extract value from history record)
+      Rules:
+      1. When `userAction == "change"`, set `addList == filters`.
+      2. Related keywords for extraction include: "add", "also want to add".
+      3. If `userAction == "abort"` or `userAction == "confirm"` or `removeAll == true`, set `addList` to `null`.
+      
+      Special Handling for Non-New Queries:
+      （1）If the user’s query is not a new query and occurs during a confirmation stage (i.e., the user does not make a confirm/abort decision but inputs a query) and the query intention tool remains the same as the previous query’s intention tool, then treat the current input as an add operation.
+      
+      Example:
+      - Previous Query: `I want to view order So 423542635`
+      - Current User Input: `I want to view order gtn po aaa`  
+      → This is not a new query.  
+      → `filters`: `["{"GTN PO": "aaa"}"]`  
+      → `addList`: `["{"GTN PO": "aaa"}"]
+      (2) Handling Multiple Values for the Same Key
+      - If the user provides multiple values for the same key, only the first occurrence should be processed, all keys must follow this rule (all keys include: "SO Number", "Supplier Code", "Sale Sub Code", "GTN PO", "GTN PO Item", "Customer PO", "Product Division", "Current Factory Code", "New Factory Code", "OPD", "Factory Code", "Season", "Country").  
+      Example:  
+        User says: “I also want to view update orders by SO 12323532 in China and Japan.” 
+        Output:  
+        "addList": [
+          "{\"SO Number\": \"12323532\", \"Country\": \"China\"}"
+        ]
+      (Note: "Japan" is ignored)   
 
    (c) Array Item Type: String
    (d) a JSON object string contain filter keys and value
@@ -118,65 +118,65 @@ Example:
 13. filters:
    (a) Type: Array
    (b) Description:
-   an array contain filter json string
-filters: Array of filter conditions extracted from user query (from user new message, please don't extract from history record)
-(1) Extract all filter conditions from the current user input (array type)
-    Format: `["{\"Key\":\"Value\"}"]`
-    If no filters, set to empty array `[]`; If confirmAll == true, filters = null
-(2) Supported filter fields name: "SO Number", "Supplier Code", "Sale Sub Code", "GTN PO", "GTN PO Item", "Customer PO", "Product Division", "Current Factory Code", "New Factory Code", "OPD", "Factory Code", "Season", "Country"
-(3) Notice: The format of "OPD" value must be: "YYYY-MM-DD"
-(4) NOTE: When there are multiple filter items in the user query, include them all in the JSON and KEEP THEM IN THE SAME JSON OBJECT within the array
-(5) NOTE: For the "Season" field, the chatbot must recognize and correctly normalize various input formats to the data board standard format (e.g., 202711, 202521):
-    - Spring season variations (e.g., for Spring 2027):
-        "SS27", "SS2027", "Spring 27", "Spring 2027", "202711"  
-        → Must be normalized to "YYYY11" format (e.g., "202711" for Spring 2027)
-    - Autumn season variations (e.g., for Autumn 2027):
-        "AH27", "AH2027", "Autumn 27", "Autumn 2027", "202721"  
-        → Must be normalized to "YYYY21" format (e.g., "202721" for Autumn 2027)
-    - The chatbot must handle:
-         Blank spaces (e.g., "SS 2027" → "202711")
-         Upper/lowercase variations (e.g., "ss27" → "202711")
-         All season values in the final JSON filter must use the data board standard format (e.g., "Season": "202711")
-（6）NOTE: Handling Multiple Values for the Same Key
-- If the user provides multiple values for the same key, only the first occurrence should be processed.  
-Example:  
-  User says: “I want to view orders by SO 12323532 in China and Japan.” 
-  Output:  
-  "filters": [
-    "{\"SO Number\": \"12323532\", \"Country\": \"China\"}"
-  ]
-(Note: "Japan" is ignored; other keys also follow this rule)
-(7)If user input query: I want to view order 702709820984:
-This case user don't input fields but input numbers,. For this case it is defaulted considered as GTN PO
-So, Output:  
-  "filters": [
-    "{\"GTN PO\": \"702709820984\"}"
-  ]
-（8）NOTE: When userAction = "confirm", filters = []
-Examples:
-1. User input: "I want to view orders that SO is 10002 with Product Division is Footwear with Supplier Code is ABCDE"
-   Output: 
-   "filters": [
-     "{\"SO Number\": \"10002\", \"Product Division\": \"Footwear\", \"Supplier Code\": \"ABCDE\"}"
-   ]
-
-2. User input: "I want to view order with OPD"
-   Output:
-   "filters":[{
-     "OPD":""
-   }]
-
-3. User input: "Show orders for season SS27 and country US"
-   Output:
-   "filters": [
-     "{\"Season\": \"202711\", \"Country\": \"US\"}"
-   ]
-
-4. User input: "Filter by autumn 2025 and supplier code V123"
-   Output:
-   "filters": [
-     "{\"Season\": \"202521\", \"Supplier Code\": \"V123\"}"
-   ]   
+         an array contain filter json string
+      filters: Array of filter conditions extracted from user query (from user new message, please don't extract from history record)
+      (1) Extract all filter conditions from the current user input (array type)
+          Format: `["{\"Key\":\"Value\"}"]`
+          If no filters, set to empty array `[]`; If confirmAll == true, filters = null
+      (2) Supported filter fields name: "SO Number", "Supplier Code", "Sale Sub Code", "GTN PO", "GTN PO Item", "Customer PO", "Product Division", "Current Factory Code", "New Factory Code", "OPD", "Factory Code", "Season", "Country"
+      (3) Notice: The format of "OPD" value must be: "YYYY-MM-DD"
+      (4) NOTE: When there are multiple filter items in the user query, include them all in the JSON and KEEP THEM IN THE SAME JSON OBJECT within the array
+      (5) NOTE: For the "Season" field, the chatbot must recognize and correctly normalize various input formats to the data board standard format (e.g., 202711, 202521):
+          - Spring season variations (e.g., for Spring 2027):
+              "SS27", "SS2027", "Spring 27", "Spring 2027", "202711"  
+              → Must be normalized to "YYYY11" format (e.g., "202711" for Spring 2027)
+          - Autumn season variations (e.g., for Autumn 2027):
+              "AH27", "AH2027", "Autumn 27", "Autumn 2027", "202721"  
+              → Must be normalized to "YYYY21" format (e.g., "202721" for Autumn 2027)
+          - The chatbot must handle:
+               Blank spaces (e.g., "SS 2027" → "202711")
+               Upper/lowercase variations (e.g., "ss27" → "202711")
+               All season values in the final JSON filter must use the data board standard format (e.g., "Season": "202711")
+      （6）NOTE: Handling Multiple Values for the Same Key
+      - If the user provides multiple values for the same key, only the first occurrence should be processed.  
+      Example:  
+        User says: “I want to view orders by SO 12323532 in China and Japan.” 
+        Output:  
+        "filters": [
+          "{\"SO Number\": \"12323532\", \"Country\": \"China\"}"
+        ]
+      (Note: "Japan" is ignored; other keys also follow this rule)
+      (7)If user input query: I want to view order 702709820984:
+      This case user don't input fields but input numbers,. For this case it is defaulted considered as GTN PO
+      So, Output:  
+        "filters": [
+          "{\"GTN PO\": \"702709820984\"}"
+        ]
+      （8）NOTE: When userAction = "confirm", filters = []
+      Examples:
+      1. User input: "I want to view orders that SO is 10002 with Product Division is Footwear with Supplier Code is ABCDE"
+         Output: 
+         "filters": [
+           "{\"SO Number\": \"10002\", \"Product Division\": \"Footwear\", \"Supplier Code\": \"ABCDE\"}"
+         ]
+      
+      2. User input: "I want to view order with OPD"
+         Output:
+         "filters":[{
+           "OPD":""
+         }]
+      
+      3. User input: "Show orders for season SS27 and country US"
+         Output:
+         "filters": [
+           "{\"Season\": \"202711\", \"Country\": \"US\"}"
+         ]
+      
+      4. User input: "Filter by autumn 2025 and supplier code V123"
+         Output:
+         "filters": [
+           "{\"Season\": \"202521\", \"Supplier Code\": \"V123\"}"
+         ]   
 
    (c) Array Item Type: String
    (d) Array Item Description:a JSON object string contain filter keys and value
