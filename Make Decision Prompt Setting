@@ -175,7 +175,7 @@ B. Parameters:
       
       At this point, the user should input "confirm"/"abort"/"remove", but the actual input is an add operation, therefore it is determined as add behavior.
       filters: ["{\"GTN PO\": \"4602602420\"}"]
-      addList: ["{\"GTN PO\": \"4602602420\"}"]
+      addList: ["{\"GTN PO\": \"4602602420\"}"] (addList == filters)
       userAction: "change"
       Query 3 (After first-stage confirmation is completed): I wanna approve the request with request id rd_26c745ec-34ab-443a-bd7e-70607a2cc9c7_0
       
@@ -183,8 +183,8 @@ B. Parameters:
       Enters second-stage confirmation
       Query 4 (During second-stage confirmation): I wanna add to approve with request id rd_bbced569-33b4-400a-88ae-e77e53754803
       
-      decisions: Contains decision information for both requests
-      addList: ["{\"Request ID\": \"rd_bbced569-33b4-400a-88ae-e77e53754803\"}", "{\"Approver Decision\": \"Approved\"}"]
+      decisions: Contains decision information for current query
+      addList: ["{\"Request ID\": \"rd_bbced569-33b4-400a-88ae-e77e53754803\"}", "{\"Approver Decision\": \"Approved\"}"] (addList == decisions)
       userAction: "change"
 
 10. removeAll:
