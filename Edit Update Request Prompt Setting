@@ -26,35 +26,35 @@ B. Parameters:
 4. confirmAll:
    (a) Type: Boolean
    (b) Description:
-      when user type "confirmAll" or "confirm", set it to be true; otherwise set it to be false
-      Remind: when confirmAll = true, then filters = null and userAction = "confirm"
+       when user type "confirmAll" or "confirm", set it to be true; otherwise set it to be false
+       Remind: when confirmAll = true, then filters = null and userAction = "confirm"
 
 5. chatId:
    (a) Type: String
    (b) Description:
-      The ID for the chat
-      chatId must extract in the user prompts, the format should be: Chat Id : "The content to be extract"
+       The ID for the chat
+       chatId must extract in the user prompts, the format should be: Chat Id : "The content to be extract"
 
 6. messageId:
    (a) Type: String
    (b) Description:
-      The ID for the message
-      messageId must extract in the user prompts, the format should be: Message Id Id : "The content to be extract"
+       The ID for the message
+       messageId must extract in the user prompts, the format should be: Message Id Id : "The content to be extract"
 
 7. resumeId:
    (a) Type: String
    (b) Description:
-      The ID for the process to resume
-      Set to `null` for first query, and for other subqueries, resumeId keeps same as lastest prompt history result.
-      NOTE: If current intension is different from last output's intenson, then set resumeId to null
+       The ID for the process to resume
+       Set to `null` for first query, and for other subqueries, resumeId keeps same as lastest prompt history result.
+       NOTE: If current intension is different from last output's intenson, then set resumeId to null
 
 8. resumeStage:
    (a) Type: String
    (b) Description:
-      The next stage for the whole process, including "SelectionParamConfirmation" ,"SelectionRequestConfirmation","SelectionSuccessValidation", "EditFormCreation", "DecisionParamConfirmation", "DecisionSuccessValidation"
-      (1) Initial query: `null`
-      (2)Subsequent queries: Must exactly match the previous output's `resumeStage`
-      NOTE: If current intension is different from last output's intenson, then set resumeStage to null
+       The next stage for the whole process, including "SelectionParamConfirmation" ,"SelectionRequestConfirmation","SelectionSuccessValidation", "EditFormCreation", "DecisionParamConfirmation", "DecisionSuccessValidation"
+       (1) Initial query: `null`
+       (2)Subsequent queries: Must exactly match the previous output's `resumeStage`
+       NOTE: If current intension is different from last output's intenson, then set resumeStage to null
 
 9. userAction:
    (a) Type: String
@@ -176,21 +176,23 @@ B. Parameters:
       filters: ["{\"GTN PO\": \"4602602420\"}"]
       addList: ["{\"GTN PO\": \"4602602420\"}"]   (addlist == filters)
       userAction: "change"
-      Query 3 (After first-stage confirmation is completed): I wanna edit  request id rd_26c745ec-34ab-443a-bd7e-70607a2cc9c7_0
+      Query 3 (After first-stage confirmation is completed): I wanna edit 2025/07/30 on request id rd_26c745ec-34ab-443a-bd7e-70607a2cc9c7_0
       
-      decisions: ["{\"Request ID\": \"rd_26c745ec-34ab-443a-bd7e-70607a2cc9c7_0\", \"Approver Decision\": \"Approved\"}"]
+      "decisions": ["{\"Request ID\":\"rd_26c745ec-34ab-443a-bd7e-70607a2cc9c7_0\",\"Edited New Value\":\"2025-07-30\",\"Edited Requestor Comment\":\"\"}"]
+      userAction: null
       Enters second-stage confirmation
-      Query 4 (During second-stage confirmation): I wanna add to approve with request id rd_bbced569-33b4-400a-88ae-e77e53754803
+      Query 4 (During second-stage confirmation): I wanna add to edit  2025/08/01 on request id rd_bbced569-33b4-400a-88ae-e77e53754803
       
-      decisions: Contains decision information for both requests
-      addList: ["{\"Request ID\": \"rd_bbced569-33b4-400a-88ae-e77e53754803\"}", "{\"Approver Decision\": \"Approved\"}"] (addlist == decisions)
+      decisions: Contains decision information for current request
+      "decisions": ["{\"Request ID\":\"rd_bbced569-33b4-400a-88ae-e77e53754803\",\"Edited New Value\":\"2025-08-01\",\"Edited Requestor Comment\":\"\"}"]
+      addList:["{\"Request ID\":\"rd_bbced569-33b4-400a-88ae-e77e53754803\",\"Edited New Value\":\"2025-08-01\",\"Edited Requestor Comment\":\"\"}"] (addlist == decisions)
       userAction: "change"
 
 10. removeAll:
    (a) Type: Boolean
    (b) Description:
-      if user type "remove all" then set it to true;  otherwise, set to false
-      Remind: If removeAll = true, then useAction must be "change" 
+       if user type "remove all" then set it to true;  otherwise, set to false
+       Remind: If removeAll = true, then useAction must be "change" 
 
 11. column:
    (a) Type: Array
@@ -246,8 +248,8 @@ B. Parameters:
       
       Key Principle
       When parameters are extracted into `addList`, they should **also** be included in the appropriate primary array:
-      - If the parameters are filter-related → Include in **both** `addList` **and** `filters`
-      - If the parameters are decision-related → Include in **both** `addList` **and** `decisions`
+      - If the parameters are filter-related → Include in both `addList` and `filters`
+      - If the parameters are decision-related → Include in both `addList` and `decisions`
       Extraction Logic
       1. First, extract parameters from the current user input into either `filters` or `decisions` based on standard rules
       2. Then, if any of the trigger conditions in Section 2 are met, copy those parameters into `addList`
@@ -257,56 +259,55 @@ B. Parameters:
       Example 1: Adding Filter Conditions
       Scenario: User is in confirmation stage for a previous filter query
       
-      **Previous Query**: "I want to make decision on SO 423542635"
+      Previous Query: "I want to edit on SO 423542635"
       - `filters`: `["{\"SO Number\": \"423542635\"}"]`
       - `decisions`: `[]`
       
-      **Current User Input**: "I want to make a decision on GTN PO aaa"
-      - **Analysis**: Not a new query, same intention tool, during confirmation stage
+      Current User Input: "I want to edit a request on GTN PO aaa"
+      - Analysis: Not a new query, same intention tool, during confirmation stage
       - `filters`: `["{\"GTN PO\": \"aaa\"}"]`
       - `decisions`: `[]`
       - `addList`: `["{\"GTN PO\": \"aaa\"}"]`
       
       Example 2: Adding Decision Parameters
-      **Scenario**: User is in confirmation stage for a previous decision query
+      Scenario: User is in confirmation stage for a previous decision query
       
-      **Previous Query**: "I want to approve on request id : rd_7092759328"
-      - `decisions`: `["{\"Request ID\": \"rd_7092759328\", \"Approver Decision\": \"Approved\"}"]`
+      Previous Query: "I want to edit 2025/05/11 and approved the request on request id : rd_7092759328"
+      - `decisions`: `["{\"Request ID\": \"rd_7092759328\", \"Edited New Value\":\"2025-05-11\",\"Edited Requestor Comment\":\"approved the request\"}"]`
       - `filters`: `[]`
-      
-      **Current User Input**: "I want to approve on request id : rd_7023409180973097"
+      Current User Input: "I want to edit 2025/05/112 and reviewed the request on request id : rd_70927593289"
       - **Analysis**: Not a new query, same intention tool, during confirmation stage
-      - `decisions`: `["{\"Request ID\": \"rd_7023409180973097\", \"Approver Decision\": \"Approved\"}"]`
+      - `decisions`: `["{\"Request ID\": \"rd_7092759329\", \"Edited New Value\":\"2025-05-12\",\"Edited Requestor Comment\":\"reviewed the request\"}"]`
       - `filters`: `[]`
-      - `addList`: `["{\"Request ID\": \"rd_7023409180973097\"}"]`
+      - `decisions`: `["{\"Request ID\": \"rd_7092759329\", \"Edited New Value\":\"2025-05-12\",\"Edited Requestor Comment\":\"reviewed the request\"}"]`
       
       Example 3: Explicit "Add" Keyword
-      **Previous Query**: "Show me requests with SO Number 10001"
+      Previous Query: "Edit the request with SO Number 10001"
       - `filters`: `["{\"SO Number\": \"10001\"}"]`
       
-      **Current User Input**: "Add requests with Supplier Code SUP-123"
-      - **Analysis**: Contains explicit "add" keyword
+      Current User Input: "Add edit requests with Supplier Code SUP-123"
+      - Analysis: Contains explicit "add" keyword
       - `filters`: `["{\"Supplier Code\": \"SUP-123\"}"]`
       - `addList`: `["{\"Supplier Code\": \"SUP-123\"}"]`
       
       6. Implementation
-      ### **Step 1: Determine Query Type**
+      *Step 1: Determine Query Type
       - Check if current query is new or continuation
       - Verify current workflow stage from `resumeStage`
       - Identify intention tool (should match previous query)
       
-      ### **Step 2: Extract Primary Parameters**
+      tep 2: Extract Primary Parameters
       - Apply standard rules to extract into `filters` or `decisions`
       
-      ### **Step 3: Determine if `addList` Applies**
+      Step 3: Determine if `addList` Applies
       - Check for explicit "add" keywords
       - OR verify all conditions for non-new query during confirmation stage
       
-      ### **Step 4: Populate `addList`**
+      Step 4: Populate `addList`
       - If conditions met, copy extracted parameters into `addList`
       - Maintain same format as source array (`filters` or `decisions`)
       
-      ### **Step 5: Handle Special Actions**
+      Step 5: Handle Special Actions
       - If `userAction == "change"`: Set `addList = filters` or `addList = decisions`
       - If `userAction == "abort"`/`"confirm"` or `removeAll == true`: Set `addList = null`
       
