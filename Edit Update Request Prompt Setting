@@ -61,7 +61,7 @@ B. Parameters:
    (b) Description:
      Overview
 The userAction parameter is used to identify the user's operational intent within the conversation flow. This specification defines the userAction values corresponding to various user inputs and the rules for setting related parameters.
-
+userAction can be "confirm"/ "change"/"abort"/null
 1. Basic Status Determination Rules
 (1) Rule One: Change Operation
 
@@ -141,11 +141,11 @@ Parameter Requirements:
 User on edit stage, so userAction = null
 Example:
 "I wanna edit a new value 2025/07/30 to request id rd_26c745ec-34ab-443a-bd7e-70607a2cc9c7_0, and i want to make a test"
-then userAction = null;
+then userAction = null; (because it is on the edit stage)
 "decisions": ["{\"Request ID\":\"rd_26c745ec-34ab-443a-bd7e-70607a2cc9c7_0\",\"Edited New Value\":\"2025-07-30\",\"Edited Requestor Comment\":\"make a test\"}"]
 
 Add Operation Example:
-After Query 3, the user should enter the second confirmation stage. If the user does not perform a confirm/abort/remove operation but instead inputs Query 4: "I (also) wanna (add to) edit [Edited New Value] on [field] [value], and [Edit Comment]"
+After Query 3 (after edit stage), the user should enter the second confirmation stage. If the user does not perform a confirm/abort/remove operation but instead inputs Query 4: "I (also) wanna (add to) edit [Edited New Value] on [field] [value], and [Edit Comment]"
 
 It is also treated as an add operation
 userAction: "change"
@@ -157,12 +157,11 @@ Previous Query: I want to edit a update request on SO 423542635
 filters: ["{\"SO Number\": \"423542635\"}"]
 userAction: Determined based on the initial query
 Current Input: I want to edit on GTN PO aaa
-
 Analysis: Non-first query. The user should have entered the confirmation stage but has not performed confirm/abort/remove, and uses the same intent tool.
 Determination: Meets all conditions for a non-first query add operation.
 Parameter Settings:
 filters: ["{\"GTN PO\": \"aaa\"}"]
-addList: ["{\"GTN PO\": \"aaa\"}"]
+addList: ["{\"GTN PO\": \"aaa\"}"]  (addList == filters)
 userAction: "change"
 Example 2: Stage Transition in Decision Workflow
 
@@ -175,7 +174,7 @@ Query 2 (During first-stage confirmation): I also wanna add to edit request with
 
 At this point, the user should input "confirm"/"abort"/"remove", but the actual input is an add operation, therefore it is determined as add behavior.
 filters: ["{\"GTN PO\": \"4602602420\"}"]
-addList: ["{\"GTN PO\": \"4602602420\"}"]
+addList: ["{\"GTN PO\": \"4602602420\"}"]   (addlist == filters)
 userAction: "change"
 Query 3 (After first-stage confirmation is completed): I wanna edit  request id rd_26c745ec-34ab-443a-bd7e-70607a2cc9c7_0
 
@@ -184,7 +183,7 @@ Enters second-stage confirmation
 Query 4 (During second-stage confirmation): I wanna add to approve with request id rd_bbced569-33b4-400a-88ae-e77e53754803
 
 decisions: Contains decision information for both requests
-addList: ["{\"Request ID\": \"rd_bbced569-33b4-400a-88ae-e77e53754803\"}", "{\"Approver Decision\": \"Approved\"}"]
+addList: ["{\"Request ID\": \"rd_bbced569-33b4-400a-88ae-e77e53754803\"}", "{\"Approver Decision\": \"Approved\"}"] (addlist == decisions)
 userAction: "change"
 
 10. removeAll:
