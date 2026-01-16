@@ -6,56 +6,56 @@ B. Parameters:
 1. token:
    (a) Type: String
    (b) Description:
-   user access token,The token starting with "acc_"
+       user access token,The token starting with "acc_"
    (c) Required
 
 2. prompt:
    (a) Type: String
    (b) Description:
-    user prompt message
-    The full text input from user start from "Prompt:--------- to  User Prompt End---------- "    （NOTE: Must be the full text without any omissions or LLM laziness）
-
-    for example:
-    "prompt": "Prompt:---------\nUser New Message:"some message"\n\nUser Token is:\n"token"\n\nHere is the chat information:\n\n Chat Id : "chat id", Message Id : "message id"\n\nHere is the history of the conversation:\n\nHistory 0. user : "some history message"\nHistory 1. assistant : "some response from ai agent"\nHistory 2. ...etc.\n\nUser Prompt End----------"
+       user prompt message
+       The full text input from user start from "Prompt:--------- to  User Prompt End---------- "    （NOTE: Must be the full text without any omissions or LLM laziness）
+   
+       for example:
+       "prompt": "Prompt:---------\nUser New Message:"some message"\n\nUser Token is:\n"token"\n\nHere is the chat information:\n\n Chat Id : "chat id", Message Id : "message id"\n\nHere is the history of the conversation:\n\nHistory 0. user : "some history message"\nHistory 1. assistant : "some response from ai agent"\nHistory 2. ...etc.\n\nUser Prompt End----------"
    (c) Required
 
 3. fileId:
    (a) Type: String
    (b) Description:
-   a fileId include filter content: If user upload file, extract fileId; If user does not upload file, fileId = null
+      a fileId include filter content: If user upload file, extract fileId; If user does not upload file, fileId = null
 
 4. confirmAll:
    (a) Type: Boolean
    (b) Description:
-   when user type "confirmAll" or "confirm", set it to be true; otherwise set it to be false
-   Remind: when confirmAll = true, then filters = null and userAction = "confirm"
+      when user type "confirmAll" or "confirm", set it to be true; otherwise set it to be false
+      Remind: when confirmAll = true, then filters = null and userAction = "confirm"
 
 5. chatId:
    (a) Type: String
    (b) Description:
-   The ID for the chat
-   chatId must extract in the user prompts, the format should be: Chat Id : "The content to be extract"
+      The ID for the chat
+      chatId must extract in the user prompts, the format should be: Chat Id : "The content to be extract"
 
 6. messageId:
    (a) Type: String
    (b) Description:
-   The ID for the message
-   messageId must extract in the user prompts, the format should be: Message Id Id : "The content to be extract"
+      The ID for the message
+      messageId must extract in the user prompts, the format should be: Message Id Id : "The content to be extract"
 
 7. resumeId:
    (a) Type: String
    (b) Description:
-   The ID for the process to resume
-   Set to `null` for first query, and for other subqueries, resumeId keeps same as lastest prompt history result.
-   NOTE: If current intension is different from last output's intenson, then set resumeId to null
+      The ID for the process to resume
+      Set to `null` for first query, and for other subqueries, resumeId keeps same as lastest prompt history result.
+      NOTE: If current intension is different from last output's intenson, then set resumeId to null
 
 8. resumeStage:
    (a) Type: String
    (b) Description:
-   The next stage for the whole process, including "SelectionParamConfirmation","SelectionRequestConfirmation","SelectionSuccessValidation","DecisionFormCreation","DecisionParamConfirmation","DecisionSuccessValidation"
-   (1) Initial query: `null`
-   (2)Subsequent queries: Must exactly match the previous output's `resumeStage`
-   NOTE: If current intension is different from last output's intenson, then set resumeStage to null
+      The next stage for the whole process, including "SelectionParamConfirmation","SelectionRequestConfirmation","SelectionSuccessValidation","DecisionFormCreation","DecisionParamConfirmation","DecisionSuccessValidation"
+      (1) Initial query: `null`
+      (2)Subsequent queries: Must exactly match the previous output's `resumeStage`
+      NOTE: If current intension is different from last output's intenson, then set resumeStage to null
 
 9. userAction:
    (a) Type: String
@@ -190,8 +190,8 @@ B. Parameters:
 10. removeAll:
    (a) Type: Boolean
    (b) Description:
-   if user type "remove all" then set it to true;  otherwise, set to false
-   Remind: If removeAll = true, then useAction must be "change" 
+      if user type "remove all" then set it to true;  otherwise, set to false
+      Remind: If removeAll = true, then useAction must be "change" 
 
 11. column:
    (a) Type: Array
@@ -513,5 +513,5 @@ B. Parameters:
       - Format as JSON string with required fields
       - Place in `decisions` array (not `filters`)
 
-(c) Array Item Type: String
-(d) Array Item Description:include "Request ID", "Approver Decision", "Approver Comment"
+ (c) Array Item Type: String
+ (d) Array Item Description:include "Request ID", "Approver Decision", "Approver Comment"
