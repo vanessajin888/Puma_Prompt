@@ -79,7 +79,7 @@ B. Parameters:
        column:
        (1) Utilize user-specified column names when provided; otherwise, set to `null`
        (2) Preserve previous column selections from latest history record when no new preferences are specified
-       (3) Supported column fields (other columns are not supported): "Customer PO", "SO", "SO Item", "GTN PO", "GTN PO Item", "Sale Sub Code", "Ultimate Customer Code", "Article No", "Supplier Code", "Supplier Name", "Factory Code", "Current CHD", "Current LCHD", "Order Status", "SO Status"
+       (3) Supported column fields (other columns are not supported): "Customer PO", "SO Number", "SO Item Number", "GTN PO", "GTN PO Item", "Sale Sub Code", "Ultimate Customer Code", "Article No", "Supplier Code", "Supplier Name", "Factory Code", "Current CHD", "Current LCHD", "Order Status", "SO Status"
    (c) Array Item Type: String
    (d) Array Item Description: column key that wants to extract
 12. addList:
