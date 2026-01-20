@@ -425,7 +425,7 @@ B. Parameters:
    (a) Type: Array
    (b) Description:
          Overview
-      The `decisions` array contains decision parameters extracted from the current user message. This extraction occurs only when the user is explicitly making an approval or rejection decision.
+      The `decisions` array contains decision parameters extracted from the current user message (NOTE: must not extract from hostory data). This extraction occurs only when the user is explicitly making an approval or rejection decision.
       
       1. Extraction Logic
       Trigger Condition
@@ -436,12 +436,12 @@ B. Parameters:
       
       Format：
       The extracted decisions must be formatted as an array of JSON strings:
-      "decisions": ["{\"Request ID\":\"value\",\"Approver Decision\":\"value\",\"Approver Comment\":\"value\"}"]
+      `decisions`: `["{\"Request ID\": \"rd_7092759329\", \"Edited New Value\":\"2025-05-12\",\"Edited Requestor Comment\":\"reviewed the request\"}"]`
       Required Fields
       Each decision object must include the following three fields:
       1. `Request ID` (String): The unique identifier of the request being decided upon.
-      2. `Approver Decision` (String): The decision outcome. Must be either `"Approved"` or `"Rejected"`.
-      3. `Approver Comment` (String): Any comment or reason provided by the user. Extract this from the user's input text. If no comment is provided, set to an empty string `""`.
+      2. `Edited New Value` (String): Follow the date format: "YYYY-MM-DD".
+      3. `Edited Requestor Comment` (String): Any comment or reason provided by the user. Extract this from the user's input text. If no comment is provided, set to an empty string `""`.
       
       Special Cases
       - No decision input: If the user's message does not contain approval/rejection actions, set `"decisions": null`
@@ -450,46 +450,35 @@ B. Parameters:
       2. Extraction Priority
       
       Primary Rule
-      When the user's query contains `"approve"` or `"reject"` keywords, the system must:
+      When the user's query at edit stage, the system must:
       - Extract parameters into the `decisions` array
       - Not extract these same parameters into the `filters` array
       
       Mutual Exclusivity
       - `filters` and `decisions` arrays are **mutually exclusive for the same parameters
-      - Decision-related parameters (`Request ID`, `Approver Decision`, `Approver Comment`) should **never** appear in the `filters` array
+      - Decision-related parameters (`Request ID`, `Edited New Value`, `Edited Requestor Comment`) should **never** appear in the `filters` array
       
       3. Examples
       
       Example 1: Basic Approval
-      User Message: "I approve RD89982cd148314c3e85f1_110, with the consent of Simon and Matthew as well."
+      User Message: "I edit new date 2025/10/29 on RD89982cd148314c3e85f1_110, with the consent of Simon and Matthew as well."
       
       Output:
-      "decisions": ["{\"Request ID\":\"RD89982cd148314c3e85f1_110\",\"Approver Decision\":\"Approved\",\"Approver Comment\":\"with the consent of Simon and Matthew\"}"]
-      
-      Example 2: Simple Rejection
-      User Message: "I reject request ID REQ-2024-001"
-      
-      Output:
-      "decisions": ["{\"Request ID\":\"REQ-2024-001\",\"Approver Decision\":\"Rejected\",\"Approver Comment\":\"\"}"]
+      "decisions": ["{\"Request ID\":\"RD89982cd148314c3e85f1_110\",\"Edited New Value\":\"2025-10-29\",\"Edited Requestor Comment\":\"with the consent of Simon and Matthew\"}"
       
       Example 3: Multiple Requests
-      User Message: "Approve REQ001 and REQ002 due to compliance"
+      User Message: "AI edit new date 2025/10/29 on REQ001 and REQ002, with the consent of Simon and Matthew as well"
       
       Output:
       "decisions": [
-        "{\"Request ID\":\"REQ001\",\"Approver Decision\":\"Approved\",\"Approver Comment\":\"due to compliance\"}",
-        "{\"Request ID\":\"REQ002\",\"Approver Decision\":\"Approved\",\"Approver Comment\":\"due to compliance\"}"
+        "{\"Request ID\":\"REQ001\",\"Edited New Value\":\"2025-10-29\",\"Edited Requestor Comment\":\"with the consent of Simon and Matthew\"}",
+        "{\"Request ID\":\"REQ002\",\"Edited New Value\":\"2025-10-29\",\"Edited Requestor Comment\":\"with the consent of Simon and Matthew\"}"
       ]
       
       4. Processing Rules
       Request ID Extraction
-      - Extract the Request ID value that appears closest to the approval/rejection verb
+      - Extract the Request ID value that appears closest to the edit verb
       - Request IDs may be alphanumeric and can include underscores, hyphens, or other standard identifier characters
-      
-      Decision Type Determination
-      - Map user words to standardized values:
-        - `"approve"`, `"approval"`, `"confirm approve"` → `"Approved"`
-        - `"reject"`, `"rejection"`, `"deny"`, `"decline"` → `"Rejected"`
       
       Comment Extraction
       - Extract any text following the Request ID as the comment
@@ -499,16 +488,16 @@ B. Parameters:
       5. Summary of Key Rules
       1. Trigger: Extract only when user message contains `approve`/`reject` keywords
       2. Exclusivity: Decision parameters go to `decisions` array, not `filters` array
-      3. Required Fields: Must include `Request ID`, `Approver Decision`, `Approver Comment`
+      3. Required Fields: Must include `Request ID`, `Edited New Value`, `Edited Requestor Comment`
       4. Format: Array of JSON strings with exact field names
       
       Implementation Checklist
-      - Check for `approve`/`reject` keywords in user message
+      - Check for `edit` keywords in user message
       - Extract Request ID value
-      - Determine decision type (`Approved` or `Rejected`)
+      - Determine decision content and new value
       - Extract any user comments
       - Format as JSON string with required fields
       - Place in `decisions` array (not `filters`)
 
 (c) Array Item Type: String
-(d) Array Item Description:include "Request ID", "Approver Decision", "Approver Comment"
+(d) Array Item Description:include "Request ID", "Edited New Value", "Edited Requestor Comment"
