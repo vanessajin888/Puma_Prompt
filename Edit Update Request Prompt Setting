@@ -326,7 +326,7 @@ B. Parameters:
       -  Ensure format consistency across arrays
 
    (c) Array Item Type: String
-   (d) a JSON object string contain filter keys and value
+   (d) Array Item Description: a JSON object string contain filter keys and value
 
 13. filters:
    (a) Type: Array
@@ -419,7 +419,7 @@ B. Parameters:
       - Correctly apply the logic for `confirmAll`, `abort`, and `removeAll` states.
 
    (c) Array Item Type: String
-   (d) Array Item Description:a JSON object string contain filter keys and value
+   (d) Array Item Description:a JSON object string contain filter keys and value, like eg, {"Request ID":"RD89982cd148314c3e85f1_111"}
 
 14. decisions: 
    (a) Type: Array
@@ -500,4 +500,4 @@ B. Parameters:
       - Place in `decisions` array (not `filters`)
 
 (c) Array Item Type: String
-(d) Array Item Description:include "Request ID", "Edited New Value", "Edited Requestor Comment"
+(d) Array Item Description:JSON like eg, {"Request ID":"RD89982cd148314c3e85f1_111","Edited New Value":"2025-11-10"(the value in "YYYY-MM-DD" format),"Edited Requestor Comment":"because 09 is holiday"}
