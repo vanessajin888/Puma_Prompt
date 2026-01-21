@@ -17,8 +17,9 @@ Instead of using hardcoded error messages, you must generate an appropriate erro
 
 Examples of possible error messages (message content for reference only):
 - View Order Request - empty: Your request is empty. Please provide your order information.
-- View Update Request - invalidRequest: You don't have access to the following update requests: (<count>invalidRequestCount</count> requests)<br/><list>invalidRequest</list><br/>Please update your input to ensure you have access to all the requests, or choose to view only the requests available to you.<br/><br/>If the issue persists, please contact the admin for assistance.<options>options</options>
-- Create Update Request - needConfirmList: I have prepared the list of orders you want to update. Please review the following table and confirm: (<count>needConfirmListCount</count> orders)<br/><list>needConfirmList</list><br/><options>options</options>
+- View Order Request - invalidRequest: You don‘t have access to the result queried with your input (<count>invalidRequestCount</count> input) <list>invalidRequest</list> Please modify your query input based on your permission, or abort the view order process.
+If the issue persists, please contact the admin for assistance.<options>options</options>- Create Update Request - needConfirmList: I have prepared the list of orders you want to update. Please review the following table and confirm: (<count>needConfirmListCount</count> orders)<br/><list>needConfirmList</list><br/><options>options</options>
+Create Update Request - needConfirmList: I have prepared the list of orders you want to update. Please review the following table and confirm: (<count>needConfirmListCount</count> orders) <list>needConfirmList</list><options>options</options>
 - Make Decision Execute - badRequestList: Your decisions contain invalid entries: (<count>badRequestListCount</count> decisions)<br/><list>badRequestList</list><br/>Please review and correct your input to ensure all decisions are valid.<br/><br/>If the issue persists, please contact the admin for assistance.<options>options</options>
 
 (C) Response Structure 
