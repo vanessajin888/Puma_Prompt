@@ -1,5 +1,5 @@
 A. Basic Description:
-Triggered by user input prompt, and extract 13 types input parmeters from user prompt
+Triggered by user queries containing "view request history", "check history of request", "past history", "past record data of requests" and similar keywords. Intention = "view request history", and return 13 types input parmeters
 
 
 B. Parameters:
@@ -70,8 +70,8 @@ B. Parameters:
       If the user’s query is not a new query and occurs during a confirmation stage (i.e., the user does not make a confirm/abort decision but inputs a query) and the query intention tool remains the same as the previous query’s intention tool, then treat the current input as an add operation, userAction will be "change"
 
       Example:
-      - Previous Query: `I want to view request So 423542635`
-      - Current User Input: `I want to view request gtn po aaa`  
+      - Previous Query: `I want to view history request So 423542635`
+      - Current User Input: `I want to view history request gtn po aaa`  
       → This is not a new query.  
       → `filters`: `["{"GTN PO": "aaa"}"]`  
       → `addList`: `["{"GTN PO": "aaa"}"]`
@@ -92,7 +92,7 @@ B. Parameters:
         column:
        (1) Utilize user-specified column names when provided; otherwise, set to `null`
        (2) Preserve previous column selections for lastest history when no new preferences are specified
-       (3) Supported column fields （other column fields don't support）:  "Customer PO", "SO", "GTN PO", "GTN PO Item", "Sale Sub Code", "Ultimate Customer Code", "Article No", "Supplier Code", "Supplier Name", "Factory Code", "Current CHD", "Current LCHD", "Order Status", "SO Status", "Change Type", "New Value", "Request Status", "Request Comment", "Latest Decided By", "Latest Approver Comment", "Latest Approver Role", "Next Approver Role"   
+       (3) Supported column fields: "Edit ID","Batch ID","Request ID","Previous New Value","Edited New Value", "Previous Requestor Comment", "Edited Requestor Comment", "Edit Type","Edited By", "Edited At"
    (c) Array Item Type: String
    (d) Array Item Description: column key that wants to extract
 12. addList:
@@ -110,20 +110,20 @@ B. Parameters:
       (1)If the user’s query is not a new query and occurs during a confirmation stage (i.e., the user does not make a confirm/abort decision but inputs a query) and the query intention tool remains the same as the previous query’s intention tool, then treat the current input as an add operation.
       
       Example:
-      - Previous Query: `I want to view request So 423542635`
-      - Current User Input: `I want to view request gtn po aaa`  
+      - Previous Query: `I want to view history request So 423542635`
+      - Current User Input: `I want to view history request gtn po aaa`  
       → This is not a new query.  
       → `filters`: `["{"GTN PO": "aaa"}"]`  
       → `addList`: `["{"GTN PO": "aaa"}"]`                        
       (2) Handling Multiple Values for the Same Key
-      - If the user provides multiple values for the same key, only the first occurrence should be processed, all keys must follow this rule (all keys include: `"SO Number"`, `"Supplier Code"`, `"Sale Sub Code"`, `"GTN PO"`, `"GTN PO Item"`, `"Customer PO"`, `"Product Division"`, `"Current Factory Code"`, `"New Factory Code"`, `"OPD"`, `"Factory Code"`, `"IsRequestResolved"`, `"Request Status"`, `"Change Type"`, `"New Value"`).  
+      - If the user provides multiple values for the same key, only the first occurrence should be processed, all keys must follow this rule (all keys include: "SO Number","GTN PO", "GTN PO Item", "Customer PO", "Batch ID", "Request ID").  
       Example:  
-        User says: “I also want to view update requests by SO 12323532 in China and Japan.” 
+        User says: “I want to view history requests by SO 12323532 and request id rd_3134314 and rd_777888213.” 
         Output:  
-        "addList": [
-          "{\"SO Number\": \"12323532\", \"Country\": \"China\"}"
+        "filters": [
+          "{\"SO Number\": \"12323532\", \"Request ID\": \"rd_3134314\"}"
         ]
-      (Note: "Japan" is ignored)
+      (Note: "rd_777888213" is ignored)
 
    (c) Array Item Type: String
    (d) a JSON object string contain filter keys and value
@@ -131,8 +131,8 @@ B. Parameters:
 13. filters:
    (a) Type: Array
    (b) Description:
-      Array Field: `filters` (JSON String Format)
-      Overview：
+     Array Field: `filters` (JSON String Format)
+Overview：
       The `filters` array stores filter conditions extracted from the user’s new message, formatted as an array of JSON strings.  
       Example format:  
       `["{\"Key\":\"Value\"}"]` 
@@ -141,46 +141,40 @@ B. Parameters:
       - If no filters are found, set to an empty array `[]`.
       - If `confirmAll == true`, set `filters = []`.
       2. Supported Filter Fields
-      The following keys are supported:  
-      `"SO Number"`, `"Supplier Code"`, `"Sale Sub Code"`, `"GTN PO"`, `"GTN PO Item"`, `"Customer PO"`, `"Product Division"`, `"Current Factory Code"`, `"New Factory Code"`, `"OPD"`, `"Factory Code"`, `"IsRequestResolved"`, `"Request Status"`, `"Change Type"`, `"New Value"`.
-      3. Special Format & Value Rules
-      - OPD: Must be in `"YYYY-MM-DD"` format.
-      - IsRequestResolved: Allowed values are `"Resolved"` or `"UnResolved"`.
-      - Request Status: Allowed values are `"Needs Follow-up"`, `"Pending"`, `"Approved"`, `"Rejected"`, `"Cancelled"`, or `"In Progress"`.
+      The following keys are supported:  "Batch ID","Request ID", "GTN PO",
+"GTN PO Item", "Customer PO","SO Number"
       4. Handling Multiple Values for the Same Key
-      - If the user provides multiple values for the same key, only the first occurrence should be processed, all keys must follow this rule (all keys include: `"SO Number"`, `"Supplier Code"`, `"Sale Sub Code"`, `"GTN PO"`, `"GTN PO Item"`, `"Customer PO"`, `"Product Division"`, `"Current Factory Code"`, `"New Factory Code"`, `"OPD"`, `"Factory Code"`, `"IsRequestResolved"`, `"Request Status"`, `"Change Type"`, `"New Value"`).  
+      - If the user provides multiple values for the same key, only the first occurrence should be processed, all keys must follow this rule (all keys include).  
       Example:  
-        User says: “I want to view update requests by SO 12323532 in China and Japan.” 
+        User says: “I want to view history requests by SO 12323532 and request id rd_3134314 and rd_777888213.” 
         Output:  
         "filters": [
-          "{\"SO Number\": \"12323532\", \"Country\": \"China\"}"
+          "{\"SO Number\": \"12323532\", \"Request ID\": \"rd_3134314\"}"
         ]
-      (Note: "Japan" is ignored)
+      (Note: "rd_777888213" is ignored)
       5. Combining Multiple Conditions
       - If the user provides more than one filter item, include all valid key-value pairs in **a single JSON string** within the array.  
         Example:  
-        User says: “I want to view requests where SO is 10002, Product Division is Footwear, and Supplier Code is ABCDE.”  
+        User says: “I want to view requests where SO is 10002, and Supplier Code is ABCDE.”  
         Output:  
         "filters": [
-          "{\"SO Number\": \"10002\", \"Product Division\": \"Footwear\", \"Supplier Code\": \"ABCDE\"}"
+          "{\"SO Number\": \"10002\", \"Supplier Code\": \"ABCDE\"}"
         ]
       6. Special Case: `userAction = "confirm"`
       - When `userAction` is `"confirm"` and `confirmAll = true`, set:
         "filters": []
-      7. If user input query: I want to view update request 702709820984:
+      7. If user input query: I want to view history request 702709820984:
       This case user don't input fields but input numbers,. For this case it is defaulted considered as GTN PO
       So, Output:  
         "filters": [
           "{\"GTN PO\": \"702709820984\"}"
         ]
-      
-      
-      Example Usage
-      User query: “I wanna view my pending requests to propose CHD to Apr 29, 2025.” 
-      Output:
-      "filters": [
-        "{\"Change Type\": \"Propose CHD\", \"New Value\": \"2025-04-29\", \"Request Status\": \"Pending\"}"
-      ]
-
+      8. If user input filters parameter only have key name but don't have value
+        for example:
+      If user query: I want to view request history GTN PO
+      then,  "filters": [
+          "{\"GTN PO\": \"\"}"
+        ]
+   
    (c) Array Item Type: String
    (d) Array Item Description:a JSON object string contain filter keys and value
