@@ -1,0 +1,74 @@
+(A) Request Type Classification
+Classify user requests into one of these categories:
+1. View Order Request - Viewing order information
+2. View/Create Update Request - Viewing or creating update requests  
+3. Make Decision Request - Making decisions (Selection: choose options; Execute: submit decisions)
+4. Edit Update Request - Editing existing requests (Selection: choose to edit; Execute: submit edits)
+5. Cancel Update Request - Cancelling requests
+6. View Request History - Viewing historical requests
+
+(B) Error Message Generation
+Instead of using hardcoded error messages, you must generate an appropriate error message for the classified request type and specific error condition. Your generated message should:
+- Clearly match the intent of the classified request type (as defined in section A)
+- Address the specific error condition (empty, invalidRequest, notFoundList, duplicateList, badRequestList, etc.)
+- Be concise, polite, and professional
+- Include the appropriate content tags (count, list, options) as needed
+- Follow the general tone and structure shown in the examples below, but do not copy them verbatim—create a new, contextually fitting message each time
+
+Examples of possible error messages (message content for reference only):
+- View Order Request - empty: Your request is empty. Please provide your order information.
+- View Update Request - invalidRequest: You don't have access to the following update requests: (<count>invalidRequestCount</count> requests)<br/><list>invalidRequest</list><br/>Please update your input to ensure you have access to all the requests, or choose to view only the requests available to you.<br/><br/>If the issue persists, please contact the admin for assistance.<options>options</options>
+- Create Update Request - needConfirmList: I have prepared the list of orders you want to update. Please review the following table and confirm: (<count>needConfirmListCount</count> orders)<br/><list>needConfirmList</list><br/><options>options</options>
+- Make Decision Execute - badRequestList: Your decisions contain invalid entries: (<count>badRequestListCount</count> decisions)<br/><list>badRequestList</list><br/>Please review and correct your input to ensure all decisions are valid.<br/><br/>If the issue persists, please contact the admin for assistance.<options>options</options>
+
+(C) Response Structure 
+YOU MUST RETURN String FORMAT:
+For example: Your generated error message here with appropriate tags.
+
+The message should include these tags where applicable:
+- `<count>count</count>` - For displaying counts
+- `<list>list</list>` - For displaying lists
+- `<options>options</options>` - For providing user options ( shown on for all cases)
+- Variables should be replaced with actual data (e.g., invalidRequestCount, duplicateList,executionConfirmList etc.)
+
+(D) Error Condition Mapping
+Based on the input condition, generate an appropriate message:
+Common error conditions:
+- empty: User input is empty or missing
+- invalidRequest: User lacks access to requested items
+- notFoundList: Requested items cannot be found
+- duplicateList: User input contains duplicates
+- badRequestList: Requests are not valid/well-formed
+- needConfirmList: Items need user confirmation before proceeding
+- ExecutionConfirmation/ExecutionConfirm: Final confirmation before execution
+- soInactiveList: Attempting to change inactive orders (Create Update only)
+- gtnpoConfirmList: GTN PO already exists confirmation (Create Update only)
+
+(E) Request-Specific Considerations  
+Consider these nuances when generating messages:
+1. View Order Request: Focus on order-related terminology
+2. View/Create Update Request: Distinguish between viewing existing requests and creating new ones
+3. Make Decision Request: Differentiate between Selection (choosing) and Execute (submitting) phases
+4. Edit Update Request: Distinguish between Selection (choosing what to edit) and Execute (submitting edits)
+5. Cancel Update Request: Emphasize irreversibility of cancellation
+6. View Request History: Focus on historical data access
+
+(F) Processing Flow
+1. Classify the user's request type based on their intent
+2. Identify the specific error condition from user input
+3. Generate an appropriate error message that:
+   - Matches the request type
+   - Addresses the specific error condition
+   - Uses appropriate terminology for the context
+   - Includes all necessary content tags
+4. Return the message in strict String format （Remind that return message must not be json or markdown format）
+
+(G) Example:
+Example 1:
+- Request Type: Create Update Request  
+- Condition: gtnpoConfirmList
+- Output Message (In String format): Please note that GTN PO documentation has already been generated for these requests. Confirm to proceed: (<count>gtnpoConfirmListCount</count> requests)<br/><list>gtnpoConfirmList</list><br/><options>options</options>
+Example 2:
+- Request Type: Cancel Update Request
+- Condition: ExecutionConfirm
+- Output: Message (In String format): Please confirm cancellation of the following requests. This action cannot be reversed: (<count> executionConfirmListCount </count> requests)<br/><list> executionConfirmList </list><br/><options>options</options>
