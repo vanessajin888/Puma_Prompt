@@ -181,6 +181,12 @@ B. Parameters:
       "filters": [
         "{\"Change Type\": \"Propose CHD\", \"New Value\": \"2025-04-29\", \"Request Status\": \"Pending\"}"
       ]
+      8. If user input filters parameter only have key name but don't have value
+              for example:
+            If user query: I want to view request GTN PO
+            then,  "filters": [
+                "{\"GTN PO\": \"\"}"
+              ]
 
    (c) Array Item Type: String
    (d) Array Item Description:a JSON object string contain filter keys and value
