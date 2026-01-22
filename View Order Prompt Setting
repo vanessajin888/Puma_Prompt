@@ -176,7 +176,13 @@ B. Parameters:
          Output:
          "filters": [
            "{\"Season\": \"202521\", \"Supplier Code\": \"V123\"}"
-         ]   
+         ]  
+      5. If user input filters parameter only have key name but don't have value
+              for example:
+            If user query: I want to view order with GTN PO
+            then,  "filters": [
+                "{\"GTN PO\": \"\"}"
+              ]
 
    (c) Array Item Type: String
    (d) Array Item Description:a JSON object string contain filter keys and value
