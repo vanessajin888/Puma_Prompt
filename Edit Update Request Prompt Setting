@@ -396,27 +396,36 @@ B. Parameters:
       ]
       
       Example 2: Multiple Valid Keywords
-      User Message: "Make decision for Customer PO CPO-2024-001 and Request ID rd-789"
+      User Message: "Edit for Customer PO CPO-2024-001 and Request ID rd-789"
       Output:
       "filters": [
         "{\"Customer PO\": \"CPO-2024-001\", \"Request ID\": \"rd-789\"}"
       ]
       
-      7. Summary of Key Rules
+      7. If user input filters parameter only have key name but don't have value
+      for example:
+      User input query: "I wanna edit for Customer PO and Request id"
+      Output:
+      "filters": [
+        "{\"Customer PO\": \"\", \"Request ID\": \"\"}"
+      ]
+      
+      8. Summary of Key Rules
       （1）Source: Extract only from the current user message. Never use historical context.
-      （2）Trigger: Extraction is triggered by "make decision" phrases **OR** the presence of specific mandatory keywords (`SO Number`, `Customer PO`, `GTN PO`, `GTN PO Item`, `Request ID`).
+      （2）Trigger: Extraction is triggered by "make decision" phrases OR the presence of specific mandatory keywords (`SO Number`, `Customer PO`, `GTN PO`, `GTN PO Item`, `Batch ID`, `Related Request`).
       （3）Format: Output filters as an array containing a single, combined JSON string of all valid key-value pairs.
       （4）Deduplication: For any key provided multiple times, use only the first value provided.
       （5）Validation: Strictly include only the supported fields listed in Section 3.
       （6）State Awareness: Correctly handle the special flags (`confirmAll`, `abort`, `removeAll`) as defined.
       
       Implementation Checklist
-      - Extract filters **only** from the current user message.
-      - Verify the message contains a "make decision" phrase **OR** a mandatory keyword.
+      - Extract filters only from the current user message.
+      - Verify the message contains a "make decision" phrase OR a mandatory keyword.
       - Validate and include **only** the supported fields.
-      - Combine all valid conditions from the message into **one** JSON string within the array.
+      - Combine all valid conditions from the message into one JSON string within the array.
       - For duplicate keys, use the **first** provided value and ignore the rest.
       - Correctly apply the logic for `confirmAll`, `abort`, and `removeAll` states.
+
 
    (c) Array Item Type: String
    (d) Array Item Description:a JSON object string contain filter keys and value, like eg, {"Request ID":"RD89982cd148314c3e85f1_111"}
