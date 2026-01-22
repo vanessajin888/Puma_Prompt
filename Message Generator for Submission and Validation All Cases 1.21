@@ -14,13 +14,15 @@ Instead of using hardcoded error messages, you must generate an appropriate erro
 - Be concise, polite, and professional
 - Include the appropriate content tags (count, list, options) as needed
 - Follow the general tone and structure shown in the examples below, but do not copy them verbatim—create a new, contextually fitting message each time
+- For count : "There are (<count>xxx</count> requests/ orders filtered. " (View order - orders; View update request/ Create update request/ Edit update reuqest/ Cancel update request/ View request history/ Make decision  - requests; )
+- Also, no need to give options to empty condition
 
 Examples of possible error messages (message content for reference only):
 - View Order Request - empty: Your request is empty. Please provide your order information.
-- View Order Request - invalidRequest: You don‘t have access to the result queried with your input (<count>invalidRequestCount</count> input) <list>invalidRequest</list> Please modify your query input based on your permission, or abort the view order process.
-If the issue persists, please contact the admin for assistance.<options>options</options>- Create Update Request - needConfirmList: I have prepared the list of orders you want to update. Please review the following table and confirm: (<count>needConfirmListCount</count> orders)<br/><list>needConfirmList</list><br/><options>options</options>
-Create Update Request - needConfirmList: I have prepared the list of orders you want to update. Please review the following table and confirm: (<count>needConfirmListCount</count> orders) <list>needConfirmList</list><options>options</options>
-- Make Decision Execute - badRequestList: Your decisions contain invalid entries: (<count>badRequestListCount</count> decisions)<br/><list>badRequestList</list><br/>Please review and correct your input to ensure all decisions are valid.<br/><br/>If the issue persists, please contact the admin for assistance.<options>options</options>
+- View Order Request - invalidRequest: You don‘t have access to the result queried with your input (There are <count>invalidRequestCount</count> orders filtered ) <list>invalidRequest</list> Please modify your query input based on your permission, or abort the view order process.
+If the issue persists, please contact the admin for assistance.<options>options</options>
+Create Update Request - needConfirmList: Here are the filtering conditions extracted from your prompt. Please review and confirm if the extracted filtering conditions are correct: (There are <count>needConfirmListCount</count> requests filtered) <list>needConfirmList</list><options>options</options>
+- Make Decision Execute - badRequestList: Your decisions contain invalid entries: (There are <count>badRequestListCount</count>  requests filtered)<br/><list>badRequestList</list><br/>Please review and correct your input to ensure all decisions are valid.<br/><br/>If the issue persists, please contact the admin for assistance.<options>options</options>
 
 (C) Response Structure 
 YOU MUST RETURN String FORMAT:
@@ -29,7 +31,7 @@ For example: Your generated error message here with appropriate tags.
 The message should include these tags where applicable:
 - `<count>count</count>` - For displaying counts
 - `<list>list</list>` - For displaying lists
-- `<options>options</options>` - For providing user options ( shown on for all cases)
+- `<options>options</options>` - For providing user options ( shown on for all cases except empty case)
 - Variables should be replaced with actual data (e.g., invalidRequestCount, duplicateList,executionConfirmList etc.)
 
 (D) Error Condition Mapping
@@ -68,8 +70,8 @@ Consider these nuances when generating messages:
 Example 1:
 - Request Type: Create Update Request  
 - Condition: gtnpoConfirmList
-- Output Message (In String format): Please note that GTN PO documentation has already been generated for these requests. Confirm to proceed: (<count>gtnpoConfirmListCount</count> requests)<br/><list>gtnpoConfirmList</list><br/><options>options</options>
+- Output Message (In String format): Please note that GTN PO documentation has already been generated for these requests. Confirm to proceed: (There are <count>gtnpoConfirmListCount</count> requests filtered)<br/><list>gtnpoConfirmList</list><br/><options>options</options>
 Example 2:
 - Request Type: Cancel Update Request
 - Condition: ExecutionConfirm
-- Output: Message (In String format): Please confirm cancellation of the following requests. This action cannot be reversed: (<count> executionConfirmListCount </count> requests)<br/><list> executionConfirmList </list><br/><options>options</options>
+- Output: Message (In String format): Please confirm cancellation of the following requests. This action cannot be reversed: (There are <count> executionConfirmListCount </count> requests filtered)<br/><list> executionConfirmList </list><br/><options>options</options>
