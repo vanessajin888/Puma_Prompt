@@ -133,7 +133,7 @@ B. Parameters:
 13. requests:
    (a) Type: Array
    (b) Description:
-      requests: Extract all filter conditions from the current user input request (user new message; Remind: must don't extract from history record data); If no filters, set to empty array
+           requests: Extract all filter conditions from the current user input request (user new message; Remind: must don't extract from history record data); If no filters, set to empty array
       e.g 1:  If the user input: I want to change the request SO 0141348900, update LCHD to a new value 2025-11-07
          requests = ["{"SO Number":"0141348900", "Change Type": "Update LCHD", "New Value": "2025-11-07", "Requestor Comment":null }"]
       
@@ -150,6 +150,10 @@ B. Parameters:
       This case user don't input fields but input numbers,. For this case it is defaulted considered as GTN PO
       So, Output:  
        requests = ["{"GTN PO":"0141348900", "Change Type": "Update LCHD", "New Value": "2025-11-07", "Requestor Comment":null }"]
+      NOTE 4: If user input request parameter only have key name but don't have value
+              for example:
+            If user query:  want to change the request, update LCHD to a new value 2025-11-07
+         requests = ["{"SO Number":"","Change Type": "Update LCHD", "New Value": "2025-11-07", "Requestor Comment":null }"]
 
    (c) Array Item Type: String
    (d) Array Item Description:a JSON object string contain filter keys and value
