@@ -57,7 +57,7 @@ B. Parameters:
 9. userAction:
    (a) Type: String
    (b) Description:
-      if user type keywords "add"/"remove"/"remove all"/"change" 
+      if user type keywords "remove"/"remove all"/"change" 
       userAction will be "change", and confirmAll will be false.
       if user type keywords "confirm" 
       userAction will be "confirm", and confirmAll will be true, filters = []
@@ -82,39 +82,6 @@ B. Parameters:
        (3) Supported column fields (other columns are not supported): "Customer PO", "SO Number", "SO Item Number", "GTN PO", "GTN PO Item", "Sale Sub Code", "Ultimate Customer Code", "Article No", "Supplier Code", "Supplier Name", "Factory Code", "Current CHD", "Current LCHD", "Order Status", "SO Status"
    (c) Array Item Type: String
    (d) Array Item Description: column key that wants to extract
-12. addList:
-   (a) Type: Array
-   (b) Description:
-          Define an array of objects. Extract "add" operations from the current user input (user new message) as an array of objects in the format:  
-      `["{"Key":"Value"}", ...]`
-      Remind: Extract all applicable add conditions from the user's current input into an array (from user new message, please don't extract value from history record)
-      Rules:
-      1. When `userAction == "change"`, set `addList == filters`.
-      2. Related keywords for extraction include: "add", "also want to add".
-      3. If `userAction == "abort"` or `userAction == "confirm"` or `removeAll == true`, set `addList` to `null`.
-      
-      Special Handling for Non-New Queries:
-      （1）If the user’s query is not a new query and occurs during a confirmation stage (i.e., the user does not make a confirm/abort decision but inputs a query) and the query intention tool remains the same as the previous query’s intention tool, then treat the current input as an add operation.
-      
-      Example:
-      - Previous Query: `I want to view order So 423542635`
-      - Current User Input: `I want to view order gtn po aaa`  
-      → This is not a new query.  
-      → `filters`: `["{"GTN PO": "aaa"}"]`  
-      → `addList`: `["{"GTN PO": "aaa"}"]
-      (2) Handling Multiple Values for the Same Key
-      - If the user provides multiple values for the same key, only the first occurrence should be processed, all keys must follow this rule (all keys include: "SO Number", "Supplier Code", "Sale Sub Code", "GTN PO", "GTN PO Item", "Customer PO", "Product Division", "Current Factory Code", "New Factory Code", "OPD", "Factory Code", "Season", "Country").  
-      Example:  
-        User says: “I also want to view update orders by SO 12323532 in China and Japan.” 
-        Output:  
-        "addList": [
-          "{\"SO Number\": \"12323532\", \"Country\": \"China\"}"
-        ]
-      (Note: "Japan" is ignored)   
-
-   (c) Array Item Type: String
-   (d) a JSON object string contain filter keys and value
-
 13. filters:
    (a) Type: Array
    (b) Description:
