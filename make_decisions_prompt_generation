@@ -1,207 +1,525 @@
-**Output Format:**
-Return a JSON array, each element is an object containing the "prompt" key:
-[
-  {"prompt": "prompt content 1"},
-  {"prompt": "prompt content 2"}
-]
----
+A. Basic Description:
+Trigger when user queries contain "approval" (if the user query includes "approval", the decision tool must be triggered, with "approval" having the highest priority), "make a decision", "make the decisions", "make decision request", "decision", or similar keywords. The user's intention is "make a decision", and 14 types of input parameters need to be returned.
 
-## Detailed Generation Rules
 
-### Basic Format Template:
+B. Parameters:
+1. token:
+   (a) Type: String
+   (b) Description:
+       user access token,The token starting with "acc_"
+   (c) Required
 
-Prompt:---------
-User New Message: [User's latest message]
+2. prompt:
+   (a) Type: String
+   (b) Description:
+       user prompt message
+       The full text input from user start from "Prompt:--------- to  User Prompt End---------- "    （NOTE: Must be the full text without any omissions or LLM laziness）
+   
+       for example:
+       "prompt": "Prompt:---------\nUser New Message:"some message"\n\nUser Token is:\n"token"\n\nHere is the chat information:\n\n Chat Id : "chat id", Message Id : "message id"\n\nHere is the history of the conversation:\n\nHistory 0. user : "some history message"\nHistory 1. assistant : "some response from ai agent"\nHistory 2. ...etc.\n\nUser Prompt End----------"
+   (c) Required
 
-User Token is: 
-[User Token]
+3. fileId:
+   (a) Type: String
+   (b) Description:
+      a fileId include filter content: If user upload file, extract fileId; If user does not upload file, fileId = null
 
-Here is the chat information: 
- Chat Id : [Chat ID], Message Id : [Message ID]
+4. confirmAll:
+   (a) Type: Boolean
+   (b) Description:
+      when user type "confirmAll" or "confirm", set it to be true; otherwise set it to be false
+      Remind: when confirmAll = true, then filters = null and userAction = "confirm"
 
-[Optional Resume Information Section]
-Here is the resume information: 
-Resume Id : [Resume ID]
-Resume Stage [Stage]
+5. chatId:
+   (a) Type: String
+   (b) Description:
+      The ID for the chat
+      chatId must extract in the user prompts, the format should be: Chat Id : "The content to be extract"
 
-Here is the history of the converstion:
-[History dialogue record]
+6. messageId:
+   (a) Type: String
+   (b) Description:
+      The ID for the message
+      messageId must extract in the user prompts, the format should be: Message Id Id : "The content to be extract"
 
-User Prompt End----------
+7. resumeId:
+   (a) Type: String
+   (b) Description:
+      The ID for the process to resume
+      Set to `null` for first query, and for other subqueries, resumeId keeps same as lastest prompt history result.
+      NOTE: If current intension is different from last output's intenson, then set resumeId to null
 
-#### Scenario Types to Cover (Ensure equal probability for each scenario):
-1. **Initial Decision Query** - User initiates a decision-making process (no history)
-2. **Selection Parameter Confirmation** - User confirms selection parameters (SelectionParamConfirmation stage)
-3. **Decision Form Creation** - User views decision form details (DecisionFormCreation stage)
-4. **Specific Request Decision** - User makes decision on specific request ID
-5. **Decision Parameter Confirmation** - User confirms decision parameters (DecisionParamConfirmation stage)
-6. **Multi-Request Scenarios** - Multiple requests in decision form
-7. **Add/Merge Scenarios** - User adds more requests to decision process
+8. resumeStage:
+   (a) Type: String
+   (b) Description:
+      The next stage for the whole process, including "SelectionParamConfirmation","SelectionRequestConfirmation","SelectionSuccessValidation","DecisionFormCreation","DecisionParamConfirmation","DecisionSuccessValidation"
+      (1) Initial query: `null`
+      (2)Subsequent queries: Must exactly match the previous output's `resumeStage`
+      NOTE: If current intension is different from last output's intenson, then set resumeStage to null
 
-#### Conversation Stages:
-- `SelectionParamConfirmation` - Selection parameter confirmation stage
-- `DecisionFormCreation` - Decision form creation stage
-- `DecisionParamConfirmation` - Decision parameter confirmation stage
+9. userAction:
+   (a) Type: String
+   (b) Description:
+           Overview
+      The userAction parameter is used to identify the user's operational intent within the conversation flow. This specification defines the userAction values corresponding to various user inputs and the rules for setting related parameters.
+      
+      1. Basic Status Determination Rules
+      (1) Rule One: Change Operation
+      
+      Trigger Condition: The user input contains any of the following keywords:
+      "add"
+      "remove"
+      "remove all"
+      "change"
+      Parameter Settings:
+      userAction: "change"
+      confirmAll: false
+      (2) Rule Two: Confirm Operation
+      
+      Trigger Condition: The user input contains the keyword "confirm"
+      Parameter Settings:
+      userAction: "confirm"
+      confirmAll: true
+      filters: null
+      decisions: null
+      (3) Rule Three: Abort Operation
+      
+      Trigger Condition: The user input contains the keyword "abort"
+      Parameter Settings:
+      userAction: "abort"
+      removeAll: false
+      filters: null
+      decisions: null
+      (4) Rule Four: First Query
+      
+      Trigger Condition: The current user query is the first message in the conversation
+      Parameter Settings:
+      userAction: null
+      Example
+      User's first query: "I wanna reject/approve/make my decision with Customer PO 101632 and GTN PO Item 1000"
+      Then: userAction = null
+      
+      (5) Rule Five: No Matching Operation
+      
+      Trigger Condition: The user input does not meet any of the above conditions
+      Parameter Settings:
+      userAction: null
+      2. Special Handling for Non-First Queries
+      Add Operation During Confirmation Stage
+      The current input is treated as an add operation when all of the following conditions are met:
+      
+      The user's query is not a completely new request;
+      The conversation is in a confirmation stage (i.e., resumeStage indicates a pending confirmation state);
+      The user has not made a final confirm/abort/remove decision;
+      The intent tool used in the current query is the same as in the previous query;
+      The user provides additional parameters.
+      Parameter Settings:
+      
+      userAction: "change"
+      3. Special Logic for the Decision Workflow
+      Two Confirmation Stages of the Decision Tool
+      The decision workflow includes two independent confirmation stages, each corresponding to a different query pattern:
+      
+      Stage One: Filter Requests
+      
+      Query Pattern:
+      Query 1: "I wanna approve my decision with [field] [value]"
+      Supported Filter Fields:
+      SO Number, Customer PO, GTN PO, GTN PO Item, Batch ID, Request ID, Related Request
+      Add Operation Example:
+      After Query 1, if the user does not perform a confirm/abort/remove operation but instead inputs Query 2: "I (also) wanna (add to) make my decision with [field] [value]"
+      
+      Query 2 is treated as an add operation
+      userAction: "change"
+      Stage Two: Execute Decision
+      
+      Query Pattern:
+      Query 3: "I wanna [decision type] the request with [field] [value]"
+      Parameter Requirements:
+      [field]: Only "Request ID"
+      [value]: The corresponding request ID value
+      [decision type]: "approve" or "reject"
+      User on make decision stage, so userAction = null
+      Example:
+      "I wanna approve the request with request id rd_26c745ec-34ab-443a-bd7e-70607a2cc9c7_0"
+      then userAction = null;
+      
+      Add Operation Example:
+      After Query 3, the user should enter the second confirmation stage. If the user does not perform a confirm/abort/remove operation but instead inputs Query 4: "I (also) wanna (add to) approve/reject my decision with [field] [value]"
+      
+      It is also treated as an add operation
+      userAction: "change"
+      4. Comprehensive Examples
+      Example 1: Adding Parameters During Confirmation Stage
+      
+      Previous Query: I want to make decision on SO 423542635
+      
+      filters: ["{\"SO Number\": \"423542635\"}"]
+      userAction: Determined based on the initial query
+      Current Input: I want to make decision on GTN PO aaa
+      
+      Analysis: Non-first query. The user should have entered the confirmation stage but has not performed confirm/abort/remove, and uses the same intent tool.
+      Determination: Meets all conditions for a non-first query add operation.
+      Parameter Settings:
+      filters: ["{\"GTN PO\": \"aaa\"}"]
+      addList: ["{\"GTN PO\": \"aaa\"}"]
+      userAction: "change"
+      Example 2: Stage Transition in Decision Workflow
+      
+      Query 1: I wanna approve my decision with SO Number 101974
+      
+      filters: ["{\"SO Number\": \"101974\"}"]
+      Enters first-stage confirmation
+      userAction = null
+      Query 2 (During first-stage confirmation): I also wanna add to make my decision with GTN PO 4602602420
+      
+      At this point, the user should input "confirm"/"abort"/"remove", but the actual input is an add operation, therefore it is determined as add behavior.
+      filters: ["{\"GTN PO\": \"4602602420\"}"]
+      addList: ["{\"GTN PO\": \"4602602420\"}"] (addList == filters)
+      userAction: "change"
+      Query 3 (After first-stage confirmation is completed): I wanna approve the request with request id rd_26c745ec-34ab-443a-bd7e-70607a2cc9c7_0
+      
+      decisions: ["{\"Request ID\": \"rd_26c745ec-34ab-443a-bd7e-70607a2cc9c7_0\", \"Approver Decision\": \"Approved\"}"]
+      Enters second-stage confirmation
+      Query 4 (During second-stage confirmation): I wanna add to approve with request id rd_bbced569-33b4-400a-88ae-e77e53754803
+      
+      decisions: Contains decision information for current query
+      addList: ["{\"Request ID\": \"rd_bbced569-33b4-400a-88ae-e77e53754803\"}", "{\"Approver Decision\": \"Approved\"}"] (addList == decisions)
+      userAction: "change"
 
-#### Parameter Diversity:
-**Query Items:**
-- **GTN PO**: 4602602420, 4801201220, 4801230665, 4801246977, 4602602400, 4801201200
-- **GTN PO Item**: 2000, 1000, 3000, 2500, 1500, 00100, 00200, 00300, 00400, 00500, 00600, "view-order-test1"
-- **Customer PO**: 101974, 101632, 101500, TF5729320
-- **SO Number**: 0122947951, 0141331687, 0141348888, 0148275035
-- **SO Item Number**: 00030, 00010, 00040, 00020, 00050
-- **Batch ID**: Formats like "rd_6c9abb88-4a78-4ef2-9c0d-e1d64a1629a5", "rd_26c745ec-34ab-443a-bd7e-70607a2cc9c7", "rd_bbced569-33b4-400a-88ae-e77e53754803"
-- **Request ID**: Formats like "rd_6c9abb88-4a78-4ef2-9c0d-e1d64a1629a5_0", "rd_26c745ec-34ab-443a-bd7e-70607a2cc9c7_0"
-- **Related Request**: "true", "false"
+10. removeAll:
+   (a) Type: Boolean
+   (b) Description:
+      if user type "remove all" then set it to true;  otherwise, set to false
+      Remind: If removeAll = true, then useAction must be "change" 
 
-#### Query Steps and Templates:
+11. column:
+   (a) Type: Array
+   (b) Description:
+     An array of column wants to extract
+     column:
+     (1) Utilize user-specified column names when provided; otherwise, set to `null`
+     (2) Preserve previous column selections from latest history record when no new preferences are specified
+     (3) Supported column fields: "Batch ID",
+     "Request ID","Product Division","Supplier Code","Sale Sub Code","GTN PO","GTN PO Item","Customer PO","SO Number","SO Item Number","Change Type","New Value","Approver","Request Status","Requestor Comment","Auto Approve","Is Valid Input","Latest Decided By","Latest Approver Role",
+     "Latest Approver Comment","Requestor","Observer"
+   (c) Array Item Type: String
+   (d) Array Item Description: column key that wants to extract
+12. addList:
+   (a) Type: Array
+   (b) Description:
+      Overview
+      The `addList` array contains additional parameters that the user wants to append to an existing query during an ongoing workflow. It captures "add" operations from the current user input when they are expanding or modifying their previous request. Extract addList from user new message, not from history record
+      
+      1. Definition & Format
+      The `addList` is an array of JSON strings, each representing an additional condition or parameter to be included:
+      "addList": ["{\"Key\":\"Value\"}", ...]
+      
+      
+      2. Extraction Triggers
+      Extract parameters into `addList` when **any** of the following conditions are met:
+      Condition A: Explicit "Add" Keywords
+      The user's message contains explicit "add" terminology:
+      - "add"
+      - "also want to add"
+      - "also"
+      - "additionally"
+      - "plus"
+      
+      Condition B: Non-New Query During Confirmation Stage
+      When all of the following are true:
+      1. The user's query is **not** a completely new request
+      2. The interaction occurs during a confirmation stage (`resumeStage` indicates pending confirmation)
+      3. The user does **not** make a final `confirm`/`abort` decision
+      4. The current query uses the same intention tool as the previous query
+      5. The user provides additional parameters
+      
+      3. Special Cases & State Handling
+      
+      (1)When `userAction == "change"`:
+      - Set `addList` equal to whichever array (`filters` or `decisions`) contains the extracted parameters from the current query.
+      
+      (2)When to Set `addList` to `null`:
+      - `userAction == "abort"`
+      - `userAction == "confirm"`
+      - `removeAll == true`
+      
+      4. Relationship with `filters` and `decisions` Arrays
+      
+      Key Principle
+      When parameters are extracted into `addList`, they should **also** be included in the appropriate primary array:
+      - If the parameters are filter-related → Include in **both** `addList` **and** `filters`
+      - If the parameters are decision-related → Include in **both** `addList` **and** `decisions`
+      Extraction Logic
+      1. First, extract parameters from the current user input into either `filters` or `decisions` based on standard rules
+      2. Then, if any of the trigger conditions in Section 2 are met, copy those parameters into `addList`
+      
+      5. Examples
+      
+      Example 1: Adding Filter Conditions
+      Scenario: User is in confirmation stage for a previous filter query
+      
+      **Previous Query**: "I want to make decision on SO 423542635"
+      - `filters`: `["{\"SO Number\": \"423542635\"}"]`
+      - `decisions`: `[]`
+      
+      **Current User Input**: "I want to make a decision on GTN PO aaa"
+      - **Analysis**: Not a new query, same intention tool, during confirmation stage
+      - `filters`: `["{\"GTN PO\": \"aaa\"}"]`
+      - `decisions`: `[]`
+      - `addList`: `["{\"GTN PO\": \"aaa\"}"]`
+      
+      Example 2: Adding Decision Parameters
+      **Scenario**: User is in confirmation stage for a previous decision query
+      
+      **Previous Query**: "I want to approve on request id : rd_7092759328"
+      - `decisions`: `["{\"Request ID\": \"rd_7092759328\", \"Approver Decision\": \"Approved\"}"]`
+      - `filters`: `[]`
+      
+      **Current User Input**: "I want to approve on request id : rd_7023409180973097"
+      - **Analysis**: Not a new query, same intention tool, during confirmation stage
+      - `decisions`: `["{\"Request ID\": \"rd_7023409180973097\", \"Approver Decision\": \"Approved\"}"]`
+      - `filters`: `[]`
+      - `addList`: `["{\"Request ID\": \"rd_7023409180973097\"}"]`
+      
+      Example 3: Explicit "Add" Keyword
+      **Previous Query**: "Show me requests with SO Number 10001"
+      - `filters`: `["{\"SO Number\": \"10001\"}"]`
+      
+      **Current User Input**: "Add requests with Supplier Code SUP-123"
+      - **Analysis**: Contains explicit "add" keyword
+      - `filters`: `["{\"Supplier Code\": \"SUP-123\"}"]`
+      - `addList`: `["{\"Supplier Code\": \"SUP-123\"}"]`
+      
+      6. Implementation
+      ### **Step 1: Determine Query Type**
+      - Check if current query is new or continuation
+      - Verify current workflow stage from `resumeStage`
+      - Identify intention tool (should match previous query)
+      
+      ### **Step 2: Extract Primary Parameters**
+      - Apply standard rules to extract into `filters` or `decisions`
+      
+      ### **Step 3: Determine if `addList` Applies**
+      - Check for explicit "add" keywords
+      - OR verify all conditions for non-new query during confirmation stage
+      
+      ### **Step 4: Populate `addList`**
+      - If conditions met, copy extracted parameters into `addList`
+      - Maintain same format as source array (`filters` or `decisions`)
+      
+      ### **Step 5: Handle Special Actions**
+      - If `userAction == "change"`: Set `addList = filters` or `addList = decisions`
+      - If `userAction == "abort"`/`"confirm"` or `removeAll == true`: Set `addList = null`
+      
+      7. Edge Cases
+      Case 1: Mixed Parameters
+      If user adds both filter and decision parameters:
+      - Extract each type into respective primary arrays
+      - Combine both sets into `addList`
+      
+      Implementation Checklist
+      -  Determine if query is new or continuation
+      -  Check for "add" keywords or confirmation stage context
+      -  Extract parameters to primary arrays (`filters`/`decisions`)
+      -  If conditions met, copy to `addList`
+      -  Handle special `userAction` and `removeAll` states
+      -  Ensure format consistency across arrays
 
-**Query 1: Initial Decision Query**
-- "I wanna approve my decision with [item] [value]"
-- "I wanna reject the decision with [item] [value]"
-- "I wanna make my decision with [item] [value]"
-- **Examples:**
-  - "I wanna approve my decision with GTN PO 4801246977"
-  - "I wanna approve my decision on SO 0141348888"
-  - "I wanna reject the decision with Customer PO TF5729320"
+   (c) Array Item Type: String
+   (d) a JSON object string contain filter keys and value
 
-**Query 2: Confirmation or Adding Requests**
-- "Confirm"
-- "I (also) wanna (add to) approve my decision with [item] [value]"
-- "Abort"
-- "Remove all invalid cases"
-- **Examples:**
-  - "Confirm"
-  - "I also wanna approve my decision with GTN PO 4602602420"
-  - "I wanna add to approve my decision with SO Number 0141331687"
+13. filters:
+   (a) Type: Array
+   (b) Description:
+     1.Overview
+      The `filters` array contains filter conditions that are extracted exclusively from the current user message. Do not extract filters from any previous conversation history.
+      
+      2. Extraction Logic
+      
+      Trigger Condition：
+      Extract filters from the current user message if and only if:
+      - The message contains phrases such as: "make decision", "make a decision", "make decisions", or similar variations.
+      - OR the message contains any of these specific keywords: `"SO Number"`, `"Customer PO"`, `"GTN PO"`, `"GTN PO Item"`, `"Batch ID"`, `"Related Request"`.
+      
+      If these conditions are not met, do not extract any filters.
+      
+      3.Format
+      The extracted filters must be formatted as an array of JSON strings:
+      "filters": ["{\"Key\":\"Value\"}"]
+      
+      4.Special Cases & State Handling
+      （1）- No filters found: Set to empty array `"filters": []`
+      - Confirmation with `confirmAll`: When `confirmAll == true` and `userAction = "confirm"`, set `"filters": null`
+      - User aborts: When `userAction = "abort"`, set `"filters": []`
+      - Remove all filters: When `removeAll = true`, set `"filters": []`
+      
+      （2） Supported Filter Fields
+      Only the following fields are supported. Any other fields mentioned in the user query must be ignored.
+      
+      - SO Number (String): Must be extracted whenever mentioned.
+      - Customer PO (String): Must be extracted whenever mentioned.
+      - GTN PO (String): Must be extracted whenever mentioned.
+      - GTN PO Item (String): Must be extracted whenever mentioned.
+      - Batch ID (String): Must be extracted whenever mentioned.
+      - Request ID (String)
+      - Related Request (String): Accepts only `"true"` or `"false"` as values.
+      
+      （3） Handling Multiple Conditions
+      When the user specifies multiple valid filter conditions within a single message, combine all key-value pairs into a single JSON string within the array.
+      
+      Example
+      User Message: "I want to make a decision on SO 10002 with Batch ID 670970147098014"
+      
+      Output:
+      "filters": [
+        "{\"SO Number\": \"10002\", \"Batch ID\": \"670970147098014\"}"
+      ]
+      
+       Handling Multiple Values for the Same Key
+      If the user provides multiple values for the same filter key, process only the first occurrence and ignore subsequent ones.
+      
+      Example
+      User Message: "I want to make decision on SO 12323532 and SO 70140914901"
+      
+      Output:
+      
+      "filters": [
+        "{\"SO Number\": \"12323532\"}"
+      ]
+      *(Note: The second value "70140914901" is ignored because a value for "SO Number" has already been processed.)* This rule applies to all supported fields.
+      
+      6 Examples & Edge Cases
+      
+      Example 1: Decision-making Phrase
+      User Message: "I wanna make a decision on GTN PO 4509871234"
+      Output:
+      "filters": [
+        "{\"GTN PO\": \"4509871234\"}"
+      ]
+      
+      Example 2: Multiple Valid Keywords
+      User Message: "Make decision for Customer PO CPO-2024-001 and Batch ID BATCH-789"
+      Output:
+      "filters": [
+        "{\"Customer PO\": \"CPO-2024-001\", \"Batch ID\": \"BATCH-789\"}"
+      ]
+      7. If user input filters parameter only have key name but don't have value
+      for example:
+      User input query: "Make decision for Customer PO and Request id"
+      Output:
+      "filters": [
+        "{\"Customer PO\": \"\", \"Request ID\": \"\"}"
+      ]
+      
+      8. Summary of Key Rules
+      （1）Source: Extract only from the current user message. Never use historical context.
+      （2）Trigger: Extraction is triggered by "make decision" phrases OR the presence of specific mandatory keywords (`SO Number`, `Customer PO`, `GTN PO`, `GTN PO Item`, `Batch ID`, `Related Request`).
+      （3）Format: Output filters as an array containing a single, combined JSON string of all valid key-value pairs.
+      （4）Deduplication: For any key provided multiple times, use only the first value provided.
+      （5）Validation: Strictly include only the supported fields listed in Section 3.
+      （6）State Awareness: Correctly handle the special flags (`confirmAll`, `abort`, `removeAll`) as defined.
+      
+      Implementation Checklist
+      - Extract filters only from the current user message.
+      - Verify the message contains a "make decision" phrase OR a mandatory keyword.
+      - Validate and include **only** the supported fields.
+      - Combine all valid conditions from the message into one JSON string within the array.
+      - For duplicate keys, use the **first** provided value and ignore the rest.
+      - Correctly apply the logic for `confirmAll`, `abort`, and `removeAll` states.
 
-**Query 3: Specific Request Decision**
-- "I wanna [decision type] the request with request id [request_id]"
-- **Examples:**
-  - "I wanna approve the request with request id rd_6c9abb88-4a78-4ef2-9c0d-e1d64a1629a5_0"
-  - "I wanna reject the request with request id rd_26c745ec-34ab-443a-bd7e-70607a2cc9c7_0"
 
-**Query 4: Final Confirmation**
-- "Confirm"
-- "Abort"
+   (c) Array Item Type: String
+   (d) Array Item Description:a JSON object string contain filter keys and value
 
-#### Technical Specifications:
-1. **UUID Format**: All IDs must conform to the 8-4-4-4-12 format
-2. **Timestamps**: Use 10-digit or 13-digit numeric timestamps
-3. **JSON Format**: Assistant responses must be valid JSON strings with `workflowType: "make_decision"`
-4. **Organization ID**: Always include `"organization_id": "org_imbrace"` in assistant responses
-5. **File Information**: Include file details with proper S3 URLs and Excel file formats
-6. **Dialogue Logic**: Historical dialogue content must be reasonable and coherent
-7. **Quantity Requirement**: Strictly generate the number specified by the `count` parameter
-8. **Diversity**: Ensure different users, Tokens, Chat IDs, Message IDs, Resume IDs, Batch IDs, Request IDs
-9. **Stage Progression**: Ensure logical progression through stages
-10. **Auto Approve Logic**: Include realistic auto-approve logic descriptions
-11. **Request Details**: Include comprehensive request details in DecisionFormCreation stage
+14. decisions: 
+   (a) Type: Array
+   (b) Description:
+   Overview
+      The `decisions` array contains decision parameters extracted from the current user message. This extraction occurs only when the user is explicitly making an approval or rejection decision.
+      
+      1. Extraction Logic
+      Trigger Condition
+      Extract decisions from the current user message if and only if:
+      - The message contains words or phrases indicating a decision action, such as: `"approve"`, `"reject"`, `"approval"`, `"rejection"`, `"confirm approval"`, `"confirm reject"`
+      
+      If these conditions are not met, do not extract any decisions.
+      
+      Format：
+      The extracted decisions must be formatted as an array of JSON strings:
+      "decisions": ["{\"Request ID\":\"value\",\"Approver Decision\":\"value\",\"Approver Comment\":\"value\"}"]
+      Required Fields
+      Each decision object must include the following three fields:
+      1. `Request ID` (String): The unique identifier of the request being decided upon.
+      2. `Approver Decision` (String): The decision outcome. Must be either `"Approved"` or `"Rejected"`.
+      3. `Approver Comment` (String): Any comment or reason provided by the user. Extract this from the user's input text. If no comment is provided, set to an empty string `""`.
+      
+      Special Cases
+      - No decision input: If the user's message does not contain approval/rejection actions, set `"decisions": null`
+      - Multiple decisions: If the user makes decisions on multiple requests in one message, each decision should be a separate JSON string within the array.
+      - When confirmAll = true, decisions = []; When userAction = "abort", decisions = []; When removeAll = true, decisions =[]
+      2. Extraction Priority
+      
+      Primary Rule
+      When the user's query contains `"approve"` or `"reject"` keywords, the system must:
+      - Extract parameters into the `decisions` array
+      - Not extract these same parameters into the `filters` array
+      
+      Mutual Exclusivity
+      - `filters` and `decisions` arrays are **mutually exclusive for the same parameters
+      - Decision-related parameters (`Request ID`, `Approver Decision`, `Approver Comment`) should **never** appear in the `filters` array
+      
+      3. Examples
+      
+      Example 1: Basic Approval
+      User Message: "I approve RD89982cd148314c3e85f1_110, with the consent of Simon and Matthew as well."
+      
+      Output:
+      "decisions": ["{\"Request ID\":\"RD89982cd148314c3e85f1_110\",\"Approver Decision\":\"Approved\",\"Approver Comment\":\"with the consent of Simon and Matthew\"}"]
+      
+      Example 2: Simple Rejection
+      User Message: "I reject request ID REQ-2024-001"
+      
+      Output:
+      "decisions": ["{\"Request ID\":\"REQ-2024-001\",\"Approver Decision\":\"Rejected\",\"Approver Comment\":\"\"}"]
+      
+      Example 3: Multiple Requests
+      User Message: "Approve REQ001 and REQ002 due to compliance"
+      
+      Output:
+      "decisions": [
+        "{\"Request ID\":\"REQ001\",\"Approver Decision\":\"Approved\",\"Approver Comment\":\"due to compliance\"}",
+        "{\"Request ID\":\"REQ002\",\"Approver Decision\":\"Approved\",\"Approver Comment\":\"due to compliance\"}"
+      ]
+      
+      4. Processing Rules
+      Request ID Extraction
+      - Extract the Request ID value that appears closest to the approval/rejection verb
+      - Request IDs may be alphanumeric and can include underscores, hyphens, or other standard identifier characters
+      
+      Decision Type Determination
+      - Map user words to standardized values:
+        - `"approve"`, `"approval"`, `"confirm approve"` → `"Approved"`
+        - `"reject"`, `"rejection"`, `"deny"`, `"decline"` → `"Rejected"`
+      
+      Comment Extraction
+      - Extract any text following the Request ID as the comment
+      - Remove redundant phrases like "with the comment of" or "reason:"
+      - If the user provides no comment beyond the Request ID, set to empty string
+      
+      5. Summary of Key Rules
+      1. Trigger: Extract only when user message contains `approve`/`reject` keywords
+      2. Exclusivity: Decision parameters go to `decisions` array, not `filters` array
+      3. Required Fields: Must include `Request ID`, `Approver Decision`, `Approver Comment`
+      4. Format: Array of JSON strings with exact field names
+      
+      Implementation Checklist
+      - Check for `approve`/`reject` keywords in user message
+      - Extract Request ID value
+      - Determine decision type (`Approved` or `Rejected`)
+      - Extract any user comments
+      - Format as JSON string with required fields
+      - Place in `decisions` array (not `filters`)
 
----
-
-## Generation Logic Examples
-
-### Scenario 1: Initial Decision Query (No History)
-```
-Prompt:---------
-User New Message: **I wanna approve my decision on SO 0141348888**
-
-User Token is: 
-acc_5e9daf64-4676-400a-93d2-1ff0228f4232
-
-Here is the chat information: 
- Chat Id : 6fa5ad0f-bad0-4a99-a5d1-081ccb08144d, Message Id : 3c0fbfa2-0d4f-4982-b5bb-806f25388d87
-
-Here is the history of the converstion:
-History 0. user : **I wanna approve my decision on SO 0141348888**. Message Time : 1767947223
-
-User Prompt End----------
-```
-
-### Scenario 2: Selection Parameter Confirmation Stage
-```
-Prompt:---------
-User New Message: Confirm
-
-User Token is: 
-acc_5e9daf64-4676-400a-93d2-1ff0228f4232
-
-Here is the chat information: 
- Chat Id : 6fa5ad0f-bad0-4a99-a5d1-081ccb08144d, Message Id : b2020916-c4eb-4d80-b4b5-e541ccf5f6ee
-
-Here is the resume information: 
-Resume Id : 463c3b62be3547e8bace3e27add4e0bc
-Resume Stage SelectionParamConfirmation
-
-Here is the history of the converstion:
-History 0. user : **I wanna approve my decision on SO 0141348888**. Message Time : 1767947223
-History 1. assistant : {"status": "success", "code": 200, "resumeId": "463c3b62be3547e8bace3e27add4e0bc", "resumeStage": "SelectionParamConfirmation", "workflowType": "make_decision", "needConfirmList": [{"SO Number": "0141348888"}], "organization_id": "org_imbrace", "needConfirmListCount": 1, "options": [{"name": "Confirm"}, {"name": "Abort"}], "message": "I have curated a list of requests that you want to approve / reject, can you please check the following table and confirm?(<count>needConfirmListCount</count> requests)<br/><list>needConfirmList</list><br/><options>options</options><br/>"}. Message Time : 1767947223
-History 2. user : Confirm. Message Time : 1767947294
-
-User Prompt End----------
-```
-
-### Scenario 3: Decision Form Creation Stage
-```
-Prompt:---------
-User New Message: I wanna approve the request with request id rd_26c745ec-34ab-443a-bd7e-70607a2cc9c7_0
-
-User Token is: 
-acc_5e9daf64-4676-400a-93d2-1ff0228f4232
-
-Here is the chat information: 
- Chat Id : 6fa5ad0f-bad0-4a99-a5d1-081ccb08144d, Message Id : 960fa353-de83-474b-a7a8-7eee5cc37f57
-
-Here is the resume information: 
-Resume Id : 463c3b62be3547e8bace3e27add4e0bc
-Resume Stage DecisionFormCreation
-
-Here is the history of the converstion:
-History 0. user : **I wanna approve my decision on SO 0141348888**. Message Time : 1767947223
-History 1. assistant : {"status": "success", "code": 200, "resumeId": "463c3b62be3547e8bace3e27add4e0bc", "resumeStage": "SelectionParamConfirmation", "workflowType": "make_decision", "needConfirmList": [{"SO Number": "0141348888"}], "organization_id": "org_imbrace", "needConfirmListCount": 1, "options": [{"name": "Confirm"}, {"name": "Abort"}], "message": "I have curated a list of requests that you want to approve / reject, can you please check the following table and confirm?(<count>needConfirmListCount</count> requests)<br/><list>needConfirmList</list><br/><options>options</options><br/>"}. Message Time : 1767947223
-History 2. user : Confirm. Message Time : 1767947294
-History 3. assistant : {"status": "success", "code": 200, "resumeStage": "DecisionFormCreation", "resumeId": "463c3b62be3547e8bace3e27add4e0bc", "workflowType": "make_decision", "count": 2, "option": [{"name": "Abort"}], "list": [{"Batch ID": "rd_26c745ec-34ab-443a-bd7e-70607a2cc9c7", "Request ID": "rd_26c745ec-34ab-443a-bd7e-70607a2cc9c7_0", "Product Division": "Footwear", "Supplier Code": "FERTC", "Sale Sub Code": "CRAES", "GTN PO": "4801246977", "GTN PO Item": "view-order-test1", "Customer PO": "TF5729320", "SO Number": "0141348888", "Change Type": "Propose CHD", "New Value": "2026-01-13", "Approver": "{\"1\": \"Sale Sub\"}", "Request Status": "Pending", "Requestor Comment": null, "Auto Approve": "{\"0\": \"0: Requestor Supplier match logic matrix of Change Type Propose CHD, Product Division Footwear with value 2026-01-13 that If [chd-rhd]<=14\\nor [chd-rhd]<0, automatically\\napprove and send to approver\\n\\n\\n\\n1: Requestor Supplier match logic matrix of Change Type Propose CHD, Product Division Footwear with value 2026-01-13 that If [chd-rhd]>14,\\nsend to approver\\nfor decision\\n\\n\\n\"}", "Is Valid Input": "{\"1\": \"\"}", "Latest Decided By": null, "Latest Approver Role": null, "Latest Approver Comment": null, "Requestor": "Supplier", "Observer": "{\"1\": \"OM\"}"}, {"Batch ID": "rd_6c9abb88-4a78-4ef2-9c0d-e1d64a1629a5", "Request ID": "rd_6c9abb88-4a78-4ef2-9c0d-e1d64a1629a5_0", "Product Division": "Footwear", "Supplier Code": "FERTC", "Sale Sub Code": "CRAES", "GTN PO": "4801246977", "GTN PO Item": "view-order-test1", "Customer PO": "TF5729320", "SO Number": "0141348888", "Change Type": "Propose CHD", "New Value": "2026-01-13", "Approver": "{\"1\": \"Sale Sub\"}", "Request Status": "Pending", "Requestor Comment": null, "Auto Approve": "{\"0\": \"0: Requestor Supplier match logic matrix of Change Type Propose CHD, Product Division Footwear with value 2026-01-13 that If [chd-rhd]<=14\\nor [chd-rhd]<0, automatically\\napprove and send to approver\\n\\n\\n\\n1: Requestor Supplier match logic matrix of Change Type Propose CHD, Product Division Footwear with value 2026-01-13 that If [chd-rhd]>14,\\nsend to approver\\nfor decision\\n\\n\\n\"}", "Is Valid Input": "{\"1\": \"\"}", "Latest Decided By": null, "Latest Approver Role": null, "Latest Approver Comment": null, "Requestor": "Supplier", "Observer": "{\"1\": \"OM\"}"}], "file": {"user_id": "u_7966c7e4-c1db-4473-b6b5-6459ce69b5ee", "uploader": "salesub.test.puma@outlook.com", "name": "make-decision-463c3b62be3547e8bace3e27add4e0bc", "extension": "xlsx", "sizeInBytes": 6610, "uploadDate": "2026-01-09T08:28:36.329Z", "url": "https://dev-imbrace-data.s3.ap-east-1.amazonaws.com/board/org_imbrace/file_LGSIxQRDf3UdVyDhNVVY1JO3vh.xlsx", "key": "board/org_imbrace/file_LGSIxQRDf3UdVyDhNVVY1JO3vh.xlsx", "error": null, "filename": "file_LGSIxQRDf3UdVyDhNVVY1JO3vh.xlsx"}, "message": "The following is a table of request details, please fill in your decision and comments. (<count>count</count> records):<br/><list>list</list><br/><file>file</file>"}. Message Time : 1767947294
-History 4. user : I wanna approve the request with request id rd_26c745ec-34ab-443a-bd7e-70607a2cc9c7_0. Message Time : 1767947341
-
-User Prompt End----------
-```
-
-### Scenario 4: Decision Parameter Confirmation Stage
-```
-Prompt:---------
-User New Message: Confirm
-
-User Token is: 
-acc_5e9daf64-4676-400a-93d2-1ff0228f4232
-
-Here is the chat information: 
- Chat Id : 6fa5ad0f-bad0-4a99-a5d1-081ccb08144d, Message Id : ad8ae9b4-8ee9-4111-991c-3e1b43417794
-
-Here is the resume information: 
-Resume Id : 463c3b62be3547e8bace3e27add4e0bc
-Resume Stage DecisionParamConfirmation
-
-Here is the history of the converstion:
-History 0. user : **I wanna approve my decision on SO 0141348888**. Message Time : 1767947223
-History 1. assistant : {"status": "success", "code": 200, "resumeId": "463c3b62be3547e8bace3e27add4e0bc", "resumeStage": "SelectionParamConfirmation", "workflowType": "make_decision", "needConfirmList": [{"SO Number": "0141348888"}], "organization_id": "org_imbrace", "needConfirmListCount": 1, "options": [{"name": "Confirm"}, {"name": "Abort"}], "message": "I have curated a list of requests that you want to approve / reject, can you please check the following table and confirm?(<count>needConfirmListCount</count> requests)<br/><list>needConfirmList</list><br/><options>options</options><br/>"}. Message Time : 1767947223
-History 2. user : Confirm. Message Time : 1767947294
-History 3. assistant : {"status": "success", "code": 200, "resumeStage": "DecisionFormCreation", "resumeId": "463c3b62be3547e8bace3e27add4e0bc", "workflowType": "make_decision", "count": 2, "option": [{"name": "Abort"}], "list": [{"Batch ID": "rd_26c745ec-34ab-443a-bd7e-70607a2cc9c7", "Request ID": "rd_26c745ec-34ab-443a-bd7e-70607a2cc9c7_0", "Product Division": "Footwear", "Supplier Code": "FERTC", "Sale Sub Code": "CRAES", "GTN PO": "4801246977", "GTN PO Item": "view-order-test1", "Customer PO": "TF5729320", "SO Number": "0141348888", "Change Type": "Propose CHD", "New Value": "2026-01-13", "Approver": "{\"1\": \"Sale Sub\"}", "Request Status": "Pending", "Requestor Comment": null, "Auto Approve": "{\"0\": \"0: Requestor Supplier match logic matrix of Change Type Propose CHD, Product Division Footwear with value 2026-01-13 that If [chd-rhd]<=14\\nor [chd-rhd]<0, automatically\\napprove and send to approver\\n\\n\\n\\n1: Requestor Supplier match logic matrix of Change Type Propose CHD, Product Division Footwear with value 2026-01-13 that If [chd-rhd]>14,\\nsend to approver\\nfor decision\\n\\n\\n\"}", "Is Valid Input": "{\"1\": \"\"}", "Latest Decided By": null, "Latest Approver Role": null, "Latest Approver Comment": null, "Requestor": "Supplier", "Observer": "{\"1\": \"OM\"}"}, {"Batch ID": "rd_6c9abb88-4a78-4ef2-9c0d-e1d64a1629a5", "Request ID": "rd_6c9abb88-4a78-4ef2-9c0d-e1d64a1629a5_0", "Product Division": "Footwear", "Supplier Code": "FERTC", "Sale Sub Code": "CRAES", "GTN PO": "4801246977", "GTN PO Item": "view-order-test1", "Customer PO": "TF5729320", "SO Number": "0141348888", "Change Type": "Propose CHD", "New Value": "2026-01-13", "Approver": "{\"1\": \"Sale Sub\"}", "Request Status": "Pending", "Requestor Comment": null, "Auto Approve": "{\"0\": \"0: Requestor Supplier match logic matrix of Change Type Propose CHD, Product Division Footwear with value 2026-01-13 that If [chd-rhd]<=14\\nor [chd-rhd]<0, automatically\\napprove and send to approver\\n\\n\\n\\n1: Requestor Supplier match logic matrix of Change Type Propose CHD, Product Division Footwear with value 2026-01-13 that If [chd-rhd]>14,\\nsend to approver\\nfor decision\\n\\n\\n\"}", "Is Valid Input": "{\"1\": \"\"}", "Latest Decided By": null, "Latest Approver Role": null, "Latest Approver Comment": null, "Requestor": "Supplier", "Observer": "{\"1\": \"OM\"}"}], "file": {"user_id": "u_7966c7e4-c1db-4473-b6b5-6459ce69b5ee", "uploader": "salesub.test.puma@outlook.com", "name": "make-decision-463c3b62be3547e8bace3e27add4e0bc", "extension": "xlsx", "sizeInBytes": 6610, "uploadDate": "2026-01-09T08:28:36.329Z", "url": "https://dev-imbrace-data.s3.ap-east-1.amazonaws.com/board/org_imbrace/file_LGSIxQRDf3UdVyDhNVVY1JO3vh.xlsx", "key": "board/org_imbrace/file_LGSIxQRDf3UdVyDhNVVY1JO3vh.xlsx", "error": null, "filename": "file_LGSIxQRDf3UdVyDhNVVY1JO3vh.xlsx"}, "message": "The following is a table of request details, please fill in your decision and comments. (<count>count</count> records):<br/><list>list</list><br/><file>file</file>"}. Message Time : 1767947294
-History 4. user : I wanna approve the request with request id rd_26c745ec-34ab-443a-bd7e-70607a2cc9c7_0. Message Time : 1767947341
-History 5. assistant : {"status": "success", "code": 200, "resumeId": "463c3b62be3547e8bace3e27add4e0bc", "resumeStage": "DecisionParamConfirmation", "workflowType": "make_decision", "needConfirmList": [{"Request ID": "rd_26c745ec-34ab-443a-bd7e-70607a2cc9c7_0", "Approver Decision": "Approved"}], "organization_id": "org_imbrace", "needConfirmListCount": 1, "options": [{"name": "Confirm"}, {"name": "Abort"}], "message": "I have curated a list of requests that you want to approve / reject, can you please check the following table and confirm?(<count>needConfirmListCount</count> requests)<br/><list>needConfirmList</list><br/><options>options</options><br/>"}. Message Time : 1767947341
-History 6. user : Confirm. Message Time : 1767947497
-
-User Prompt End----------
-```
-
----
-
-## Execution Instructions
-
-1. Receive the `count` parameter
-2. Generate the corresponding number of prompts according to the specified rules and scenarios
-3. Ensure data diversity, correct format, and logical coherence
-4. Ensure proper stage progression: SelectionParamConfirmation → DecisionFormCreation → DecisionParamConfirmation
-5. Include comprehensive request details with realistic auto-approve logic
-6. Include file information with Excel file details and S3 URLs
-7. Return the result in JSON array format
+ (c) Array Item Type: String
+ (d) Array Item Description:include "Request ID", "Approver Decision", "Approver Comment"
