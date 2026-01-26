@@ -1,5 +1,5 @@
 A. Basic Description:
-Triggered by user input prompt, and extract 13 types input parmeters from user prompt
+Triggered by user input prompt, and extract 12 types input parmeters from user prompt
 
 
 B. Parameters:
@@ -86,7 +86,7 @@ B. Parameters:
    (c) Array Item Type: String
    (d) Array Item Description: column key that wants to extract
 
-13. filters:
+12. filters:
    (a) Type: Array
    (b) Description:
              Array Field: `filters` (JSON String Format)
