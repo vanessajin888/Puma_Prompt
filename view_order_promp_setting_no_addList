@@ -57,7 +57,7 @@ B. Parameters:
 9. userAction:
    (a) Type: String
    (b) Description:
-      if user type keywords "remove"/"remove all"/"change" 
+      if user type keywords "remove"/"remove all" 
       userAction will be "change", and confirmAll will be false.
       if user type keywords "confirm" 
       userAction will be "confirm", and confirmAll will be true, filters = []
