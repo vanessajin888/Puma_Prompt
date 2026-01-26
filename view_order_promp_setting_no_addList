@@ -1,5 +1,5 @@
 A. Basic Description:
-Triggered by user input prompt, and extract 13 types input parmeters from user prompt
+Triggered by user input prompt, and extract 12 types input parmeters from user prompt
 
 
 B. Parameters:
@@ -82,7 +82,7 @@ B. Parameters:
        (3) Supported column fields (other columns are not supported): "Customer PO", "SO Number", "SO Item Number", "GTN PO", "GTN PO Item", "Sale Sub Code", "Ultimate Customer Code", "Article No", "Supplier Code", "Supplier Name", "Factory Code", "Current CHD", "Current LCHD", "Order Status", "SO Status"
    (c) Array Item Type: String
    (d) Array Item Description: column key that wants to extract
-13. filters:
+12. filters:
    (a) Type: Array
    (b) Description:
          an array contain filter json string
