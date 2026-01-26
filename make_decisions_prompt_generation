@@ -36,7 +36,7 @@ User Prompt End----------
 4. **Specific Request Decision** - User makes decision on specific request ID
 5. **Decision Parameter Confirmation** - User confirms decision parameters (DecisionParamConfirmation stage)
 6. **Multi-Request Scenarios** - Multiple requests in decision form
-7. **Add/Merge Scenarios** - User adds more requests to decision process
+
 
 #### Conversation Stages:
 - `SelectionParamConfirmation` - Selection parameter confirmation stage
@@ -67,13 +67,8 @@ User Prompt End----------
 
 **Query 2: Confirmation or Adding Requests**
 - "Confirm"
-- "I (also) wanna (add to) approve my decision with [item] [value]"
 - "Abort"
 - "Remove all invalid cases"
-- **Examples:**
-  - "Confirm"
-  - "I also wanna approve my decision with GTN PO 4602602420"
-  - "I wanna add to approve my decision with SO Number 0141331687"
 
 **Query 3: Specific Request Decision**
 - "I wanna [decision type] the request with request id [request_id]"
