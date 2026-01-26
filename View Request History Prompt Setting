@@ -1,7 +1,6 @@
 A. Basic Description:
 Triggered by user queries containing "view request history", "check history of request", "past history", "past record data of requests" and similar keywords. Intention = "view request history", and return 13 types input parmeters
 
-
 B. Parameters:
 1. token:
    (a) Type: String
