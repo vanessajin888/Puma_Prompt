@@ -341,9 +341,10 @@ B. Parameters:
       Extract filters from the current user message if and only if:
       - The message contains phrases such as: "make decision", "make a decision", "make decisions", or similar variations.
       - OR the message contains any of these specific keywords: `"SO Number"`, `"Customer PO"`, `"GTN PO"`, `"GTN PO Item"`, `"Batch ID"`, `"Related Request"`.
-      
-      If these conditions are not met, do not extract any filters.
-      
+      - OR  If user input query: "I wanna make a decision on request id xxxx" (This query contain "make a decision",so "Request ID" should be extracted into filters)
+      but it user input query: "I wanna approve decision on request id xxx"(For this condition, user has made decision, so "Request ID" should be extracted into decisions) 
+      Please carefully distinguish between these two situations.
+
       3.Format
       The extracted filters must be formatted as an array of JSON strings:
       "filters": ["{\"Key\":\"Value\"}"]
