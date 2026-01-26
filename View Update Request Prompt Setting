@@ -131,7 +131,7 @@ B. Parameters:
 13. filters:
    (a) Type: Array
    (b) Description:
-      Array Field: `filters` (JSON String Format)
+             Array Field: `filters` (JSON String Format)
       Overview：
       The `filters` array stores filter conditions extracted from the user’s new message, formatted as an array of JSON strings.  
       Example format:  
@@ -142,13 +142,13 @@ B. Parameters:
       - If `confirmAll == true`, set `filters = []`.
       2. Supported Filter Fields
       The following keys are supported:  
-      `"SO Number"`, `"Supplier Code"`, `"Sale Sub Code"`, `"GTN PO"`, `"GTN PO Item"`, `"Customer PO"`, `"Product Division"`, `"Current Factory Code"`, `"New Factory Code"`, `"OPD"`, `"Factory Code"`, `"IsRequestResolved"`, `"Request Status"`, `"Change Type"`, `"New Value"`.
+      `"SO Number"`, `"Supplier Code"`, `"Sale Sub Code"`, `"GTN PO"`, `"GTN PO Item"`, `"Customer PO"`, `"Product Division"`, `"Current Factory Code"`, `"New Factory Code"`, `"OPD"`, `"Factory Code"`, `"IsRequestUnResolved"`, `"Request Status"`, `"Change Type"`, `"New Value"`,"Related Request".
       3. Special Format & Value Rules
       - OPD: Must be in `"YYYY-MM-DD"` format.
-      - IsRequestResolved: Allowed values are `"Resolved"` or `"UnResolved"`.
+      - IsRequestUnResolved: Allowed values are `"Resolved"` or `"UnResolved"`.
       - Request Status: Allowed values are `"Needs Follow-up"`, `"Pending"`, `"Approved"`, `"Rejected"`, `"Cancelled"`, or `"In Progress"`.
       4. Handling Multiple Values for the Same Key
-      - If the user provides multiple values for the same key, only the first occurrence should be processed, all keys must follow this rule (all keys include: `"SO Number"`, `"Supplier Code"`, `"Sale Sub Code"`, `"GTN PO"`, `"GTN PO Item"`, `"Customer PO"`, `"Product Division"`, `"Current Factory Code"`, `"New Factory Code"`, `"OPD"`, `"Factory Code"`, `"IsRequestResolved"`, `"Request Status"`, `"Change Type"`, `"New Value"`).  
+      - If the user provides multiple values for the same key, only the first occurrence should be processed, all keys must follow this rule (all keys include: `"SO Number"`, `"Supplier Code"`, `"Sale Sub Code"`, `"GTN PO"`, `"GTN PO Item"`, `"Customer PO"`, `"Product Division"`, `"Current Factory Code"`, `"New Factory Code"`, `"OPD"`, `"Factory Code"`, `"IsRequestUnResolved"`, `"Request Status"`, `"Change Type"`, `"New Value"`).  
       Example:  
         User says: “I want to view update requests by SO 12323532 in China and Japan.” 
         Output:  
@@ -181,7 +181,7 @@ B. Parameters:
       "filters": [
         "{\"Change Type\": \"Propose CHD\", \"New Value\": \"2025-04-29\", \"Request Status\": \"Pending\"}"
       ]
-      8. If user input filters parameter only have key name but don't have value
+        8. If user input filters parameter only have key name but don't have value
               for example:
             If user query: I want to view request GTN PO
             then,  "filters": [
