@@ -1,0 +1,290 @@
+A. Basic Description:
+Triggered by user queries containing "edit update request", "edit request", "edit", "write" and similar keywords. Intention = "edit update request",and return 13 types input parmeters 
+
+B. Parameters:
+1. token:
+   (a) Type: String
+   (b) Description:
+      user access token,The token starting with "acc_"
+   (c) Required
+
+2. prompt:
+   (a) Type: String
+   (b) Description:
+       user prompt message
+       The full text input from user start from "Prompt:--------- to  User Prompt End---------- "    （NOTE: Must be the full text without any omissions or LLM laziness）
+   
+       for example:
+       "prompt": "Prompt:---------\nUser New Message:"some message"\n\nUser Token is:\n"token"\n\nHere is the chat information:\n\n Chat Id : "chat id", Message Id : "message id"\n\nHere is the history of the conversation:\n\nHistory 0. user : "some history message"\nHistory 1. assistant : "some response from ai agent"\nHistory 2. ...etc.\n\nUser Prompt End----------"
+   (c) Required
+
+3. fileId:
+   (a) Type: String
+   (b) Description:
+       a fileId include filter content: If user upload file, extract fileId; If user does not upload file, fileId = null
+
+4. confirmAll:
+   (a) Type: Boolean
+   (b) Description:
+       when user type "confirmAll" or "confirm", set it to be true; otherwise set it to be false
+       Remind: when confirmAll = true, then filters = null and userAction = "confirm"
+
+5. chatId:
+   (a) Type: String
+   (b) Description:
+       The ID for the chat
+       chatId must extract in the user prompts, the format should be: Chat Id : "The content to be extract"
+
+6. messageId:
+   (a) Type: String
+   (b) Description:
+       The ID for the message
+       messageId must extract in the user prompts, the format should be: Message Id Id : "The content to be extract"
+
+7. resumeId:
+   (a) Type: String
+   (b) Description:
+       The ID for the process to resume
+       Set to `null` for first query, and for other subqueries, resumeId keeps same as lastest prompt history result.
+       NOTE: If current intension is different from last output's intenson, then set resumeId to null
+
+8. resumeStage:
+   (a) Type: String
+   (b) Description:
+       The next stage for the whole process, including "SelectionParamConfirmation" ,"SelectionRequestConfirmation","SelectionSuccessValidation", "EditFormCreation", "DecisionParamConfirmation", "DecisionSuccessValidation"
+       (1) Initial query: `null`
+       (2)Subsequent queries: Must exactly match the previous output's `resumeStage`
+       NOTE: If current intension is different from last output's intenson, then set resumeStage to null
+
+9. userAction:
+   (a) Type: String
+   (b) Description:
+           Overview
+      The userAction parameter is used to identify the user's operational intent within the conversation flow. This specification defines the userAction values corresponding to various user inputs and the rules for setting related parameters.
+      userAction can be "confirm"/ "change"/"abort"/null
+      1. Basic Status Determination Rules
+      (1) Rule One: Change Operation
+      Trigger Condition: The user input contains any of the following keywords:
+      "remove"/"remove all"
+      Parameter Settings:
+      userAction: "change"
+      confirmAll: false
+      (2) Rule Two: Confirm Operation
+      Trigger Condition: The user input contains the keyword "confirm"
+      Parameter Settings:
+      userAction: "confirm"
+      confirmAll: true
+      filters: null
+      decisions: null
+      (3) Rule Three: Abort Operation
+      Trigger Condition: The user input contains the keyword "abort"
+      Parameter Settings:
+      userAction: "abort"
+      removeAll: false
+      filters: null
+      decisions: null
+      (4) Rule Five: No Matching Operation
+      Trigger Condition: The user input does not meet any of the above conditions
+      Parameter Settings:
+      userAction: null
+
+10. removeAll:
+   (a) Type: Boolean
+   (b) Description:
+       if user type "remove all" then set it to true;  otherwise, set to false
+       Remind: If removeAll = true, then useAction must be "change" 
+
+11. column:
+   (a) Type: Array
+   (b) Description:
+       An array of column wants to extract
+       column:
+       (1) Utilize user-specified column names when provided; otherwise, set to `null`
+       (2) Preserve previous column selections from latest history record when no new preferences are specified
+       (3) Supported column fields:  "Batch ID","Request ID","GTN PO","GTN PO Item","Customer PO","SO Number","Edited New Value","Edited Requestor Comment","Change Type","Previous New Value","Previous Requestor Comment"
+
+   (c) Array Item Type: String
+   (d) Array Item Description: column key that wants to extract
+
+12. filters:
+   (a) Type: Array
+   (b) Description:
+      1.Overview
+      The `filters` array contains filter conditions that are extracted exclusively from the current user message. Do not extract filters from any previous conversation history.
+      
+      2. Extraction Logic
+      
+      Trigger Condition：
+      Extract filters from the current user message if and only if:
+      - The message contains phrases such as: "edit","write","edit update request","write update request", "write request","edit request" or similar variations.
+      - OR the message contains any of these specific keywords: `"SO Number"`, `"Customer PO"`, `"GTN PO"`, `"GTN PO Item"`, `"Request ID"`.
+      
+      If these conditions are not met, do not extract any filters.
+      
+      3.Format
+      The extracted filters must be formatted as an array of JSON strings:
+      "filters": ["{\"Key\":\"Value\"}"]
+      
+      4.Special Cases & State Handling
+      （1）- No filters found: Set to empty array `"filters": []`
+      - Confirmation with `confirmAll`: When `confirmAll == true` and `userAction = "confirm"`, set `"filters": null`
+      - User aborts: When `userAction = "abort"`, set `"filters": []`
+      - Remove all filters: When `removeAll = true`, set `"filters": []`
+      
+      （2） Supported Filter Fields
+      Only the following fields are supported. Any other fields mentioned in the user query must be ignored.
+      
+      - SO Number (String): Must be extracted whenever mentioned.
+      - Customer PO (String): Must be extracted whenever mentioned.
+      - GTN PO (String): Must be extracted whenever mentioned.
+      - GTN PO Item (String): Must be extracted whenever mentioned.
+      - Request ID (String)
+   
+      （3） Handling Multiple Conditions
+      When the user specifies multiple valid filter conditions within a single message, combine all key-value pairs into a single JSON string within the array.
+      
+      Example
+      User Message: "I want to edit a request on SO 10002 with Request ID 670970147098014"
+      
+      Output:
+      "filters": [
+        "{\"SO Number\": \"10002\", \"Request ID\": \"670970147098014\"}"
+      ]
+      
+       Handling Multiple Values for the Same Key
+      If the user provides multiple values for the same filter key, process only the first occurrence and ignore subsequent ones.
+      
+      Example
+      User Message: "I want to edit on SO 12323532 and SO 70140914901"
+      
+      Output:
+      
+      "filters": [
+        "{\"SO Number\": \"12323532\"}"
+      ]
+      *(Note: The second value "70140914901" is ignored because a value for "SO Number" has already been processed.)* This rule applies to all supported fields.
+      
+      6 Examples & Edge Cases
+      
+      Example 1: Decision-making Phrase
+      User Message: "I wanna make an edit on GTN PO 4509871234"
+      Output:
+      "filters": [
+        "{\"GTN PO\": \"4509871234\"}"
+      ]
+      
+      Example 2: Multiple Valid Keywords
+      User Message: "Edit for Customer PO CPO-2024-001 and Request ID rd-789"
+      Output:
+      "filters": [
+        "{\"Customer PO\": \"CPO-2024-001\", \"Request ID\": \"rd-789\"}"
+      ]
+      
+      7. If user input filters parameter only have key name but don't have value
+      for example:
+      User input query: "I wanna edit for Customer PO and Request id"
+      Output:
+      "filters": [
+        "{\"Customer PO\": \"\", \"Request ID\": \"\"}"
+      ]
+      
+      8. Summary of Key Rules
+      （1）Source: Extract only from the current user message. Never use historical context.
+      （2）Trigger: Extraction is triggered by "make decision" phrases OR the presence of specific mandatory keywords (`SO Number`, `Customer PO`, `GTN PO`, `GTN PO Item`, `Batch ID`, `Related Request`).
+      （3）Format: Output filters as an array containing a single, combined JSON string of all valid key-value pairs.
+      （4）Deduplication: For any key provided multiple times, use only the first value provided.
+      （5）Validation: Strictly include only the supported fields listed in Section 3.
+      （6）State Awareness: Correctly handle the special flags (`confirmAll`, `abort`, `removeAll`) as defined.
+      
+      Implementation Checklist
+      - Extract filters only from the current user message.
+      - Verify the message contains a "make decision" phrase OR a mandatory keyword.
+      - Validate and include **only** the supported fields.
+      - Combine all valid conditions from the message into one JSON string within the array.
+      - For duplicate keys, use the **first** provided value and ignore the rest.
+      - Correctly apply the logic for `confirmAll`, `abort`, and `removeAll` states.
+
+
+   (c) Array Item Type: String
+   (d) Array Item Description:a JSON object string contain filter keys and value, like eg, {"Request ID":"RD89982cd148314c3e85f1_111"}
+
+14. decisions: 
+   (a) Type: Array
+   (b) Description:
+         Overview
+      The `decisions` array contains decision parameters extracted from the current user message (NOTE: must not extract from hostory data). This extraction occurs only when the user is explicitly making an approval or rejection decision.
+      
+      1. Extraction Logic
+      Trigger Condition
+      Extract decisions from the current user message if and only if:
+      - The message contains words or phrases indicating a decision action, such as: `"approve"`, `"reject"`, `"approval"`, `"rejection"`, `"confirm approval"`, `"confirm reject"`
+      
+      If these conditions are not met, do not extract any decisions.
+      
+      Format：
+      The extracted decisions must be formatted as an array of JSON strings:
+      `decisions`: `["{\"Request ID\": \"rd_7092759329\", \"Edited New Value\":\"2025-05-12\",\"Edited Requestor Comment\":\"reviewed the request\"}"]`
+      Required Fields
+      Each decision object must include the following three fields:
+      1. `Request ID` (String): The unique identifier of the request being decided upon.
+      2. `Edited New Value` (String): Follow the date format: "YYYY-MM-DD".
+      3. `Edited Requestor Comment` (String): Any comment or reason provided by the user. Extract this from the user's input text. If no comment is provided, set to an empty string `""`.
+      
+      Special Cases
+      - No decision input: If the user's message does not contain approval/rejection actions, set `"decisions": null`
+      - Multiple decisions: If the user makes decisions on multiple requests in one message, each decision should be a separate JSON string within the array.
+      - When confirmAll = true, decisions = []; When userAction = "abort", decisions = []; When removeAll = true, decisions =[]
+      2. Extraction Priority
+      
+      Primary Rule
+      When the user's query at edit stage, the system must:
+      - Extract parameters into the `decisions` array
+      - Not extract these same parameters into the `filters` array
+      
+      Mutual Exclusivity
+      - `filters` and `decisions` arrays are **mutually exclusive for the same parameters
+      - Decision-related parameters (`Request ID`, `Edited New Value`, `Edited Requestor Comment`) should **never** appear in the `filters` array
+      
+      3. Examples
+      
+      Example 1: Basic Approval
+      User Message: "I edit new date 2025/10/29 on RD89982cd148314c3e85f1_110, with the consent of Simon and Matthew as well."
+      
+      Output:
+      "decisions": ["{\"Request ID\":\"RD89982cd148314c3e85f1_110\",\"Edited New Value\":\"2025-10-29\",\"Edited Requestor Comment\":\"with the consent of Simon and Matthew\"}"
+      
+      Example 3: Multiple Requests
+      User Message: "AI edit new date 2025/10/29 on REQ001 and REQ002, with the consent of Simon and Matthew as well"
+      
+      Output:
+      "decisions": [
+        "{\"Request ID\":\"REQ001\",\"Edited New Value\":\"2025-10-29\",\"Edited Requestor Comment\":\"with the consent of Simon and Matthew\"}",
+        "{\"Request ID\":\"REQ002\",\"Edited New Value\":\"2025-10-29\",\"Edited Requestor Comment\":\"with the consent of Simon and Matthew\"}"
+      ]
+      
+      4. Processing Rules
+      Request ID Extraction
+      - Extract the Request ID value that appears closest to the edit verb
+      - Request IDs may be alphanumeric and can include underscores, hyphens, or other standard identifier characters
+      
+      Comment Extraction
+      - Extract any text following the Request ID as the comment
+      - Remove redundant phrases like "with the comment of" or "reason:"
+      - If the user provides no comment beyond the Request ID, set to empty string
+      
+      5. Summary of Key Rules
+      1. Trigger: Extract only when user message contains `approve`/`reject` keywords
+      2. Exclusivity: Decision parameters go to `decisions` array, not `filters` array
+      3. Required Fields: Must include `Request ID`, `Edited New Value`, `Edited Requestor Comment`
+      4. Format: Array of JSON strings with exact field names
+      
+      Implementation Checklist
+      - Check for `edit` keywords in user message
+      - Extract Request ID value
+      - Determine decision content and new value
+      - Extract any user comments
+      - Format as JSON string with required fields
+      - Place in `decisions` array (not `filters`)
+
+(c) Array Item Type: String
+(d) Array Item Description:JSON like eg, {"Request ID":"RD89982cd148314c3e85f1_111","Edited New Value":"2025-11-10"(the value in "YYYY-MM-DD" format),"Edited Requestor Comment":"because 09 is holiday"}
