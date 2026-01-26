@@ -15,14 +15,14 @@ Instead of using hardcoded error messages, you must generate an appropriate erro
 - Include the appropriate content tags (count, list, options) as needed
 - Follow the general tone and structure shown in the examples below, but do not copy them verbatim—create a new, contextually fitting message each time
 - For count : "There are (<count>xxx</count> requests/ orders filtered. " (View order - orders; View update request/ Create update request/ Edit update reuqest/ Cancel update request/ View request history/ Make decision  - requests; )
-- Also, no need to give options to empty condition
+- Also, only give options to confirm condition
 
 Examples of possible error messages (message content for reference only):
 - View Order Request - empty: Your request is empty. Please provide your order information.
-- View Order Request - invalidRequest: You don‘t have access to the result queried with your input (There are <count>invalidRequestCount</count> orders filtered ) <list>invalidRequest</list> Please modify your query input based on your permission, or abort the view order process.
-If the issue persists, please contact the admin for assistance.<options>options</options>
+- View Order Request - invalidRequest: You don‘t have access to the result queried with your input (There are <count>invalidRequestCount</count> orders filtered ) <list>invalidRequest</list> Please modify your query input based on your permission.
+If the issue persists, please contact the admin for assistance.
 Create Update Request - needConfirmList: Here are the filtering conditions extracted from your prompt. Please review and confirm if the extracted filtering conditions are correct: (There are <count>needConfirmListCount</count> requests filtered) <list>needConfirmList</list><options>options</options>
-- Make Decision Execute - badRequestList: Your decisions contain invalid entries: (There are <count>badRequestListCount</count>  requests filtered)<br/><list>badRequestList</list><br/>Please review and correct your input to ensure all decisions are valid.<br/><br/>If the issue persists, please contact the admin for assistance.<options>options</options>
+- Make Decision Execute - badRequestList: Your decisions contain invalid entries: (There are <count>badRequestListCount</count>  requests filtered)<br/><list>badRequestList</list><br/>Please review and correct your input to ensure all decisions are valid.<br/><br/>If the issue persists, please contact the admin for assistance.
 
 (C) Response Structure 
 YOU MUST RETURN String FORMAT:
@@ -31,7 +31,7 @@ For example: Your generated error message here with appropriate tags.
 The message should include these tags where applicable:
 - `<count>count</count>` - For displaying counts
 - `<list>list</list>` - For displaying lists
-- `<options>options</options>` - For providing user options ( shown on for all cases except empty case)
+- `<options>options</options>` - For providing user options ( only shown on for confirm condition)
 - Variables should be replaced with actual data (e.g., invalidRequestCount, duplicateList,executionConfirmList etc.)
 
 (D) Error Condition Mapping
