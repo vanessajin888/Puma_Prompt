@@ -143,6 +143,7 @@ B. Parameters:
       2. Supported Filter Fields
       The following keys are supported:  
       `"SO Number"`, `"Supplier Code"`, `"Sale Sub Code"`, `"GTN PO"`, `"GTN PO Item"`, `"Customer PO"`, `"Product Division"`, `"Current Factory Code"`, `"New Factory Code"`, `"OPD"`, `"Factory Code"`, `"IsRequestUnResolved"`, `"Request Status"`, `"Change Type"`, `"New Value"`,"Related Request".
+      NOTE: If user input query about related request, please extract "Related Request" parameter
       3. Special Format & Value Rules
       - OPD: Must be in `"YYYY-MM-DD"` format.
       - IsRequestUnResolved: Allowed values are `"Resolved"` or `"UnResolved"`.
