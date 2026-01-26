@@ -75,8 +75,6 @@ User Prompt End----------
 - "show request with GTN PO [Number], I only want to see supplier name and GTN PO"
 - "I wanna view request with GTN PO [Number] and GTN PO Item [Number]"
 - "Confirm" / "Abort" / "Remove all Invalid"
-- "I also wanna view requests with sale sub code [Code] in season [Season]"
-- "I wanna add to view requests with sale sub code [Code]"
 
 #### Technical Specifications:
 1. **UUID Format**: All IDs must conform to the 8-4-4-4-12 format
@@ -128,31 +126,6 @@ Here is the history of the converstion:
 History 0. user : I wanna view all my unresolved requests. Message Time : 1767671267
 History 1. assistant : {"status": "success", "code": 200, "resumeId": "70114ec1be8b4d8d9e6e02e00637b33a", "resumeStage": "ParamConfirmation", "workflowType": "view_update_request", "needConfirmList": [{"IsRequestResolved": "UnResolved"}], "options": [{"name": "Confirm"}, {"name": "Abort"}], "needConfirmListCount": 1, "message": "I have curated a list of requests that you want to check, can you please check the following table and confirm?(<count>needConfirmListCount</count> requests)<br/><list>needConfirmList</list><br/><options>options</options><br/>"}. Message Time : 1767671267
 History 2. user : Confirm. Message Time : 1767671399
-
-User Prompt End----------
-```
-
-### Scenario 3: Add Scenario with Permission Error
-```
-Prompt:---------
-User New Message: I wanna view request with GTN PO 4602602420
-
-User Token is: 
-acc_82d68d53-c5d7-44f7-a686-f1f4958b24a5
-
-Here is the chat information: 
- Chat Id : 0001c457-106b-4be1-8fd8-d64b579e021d, Message Id : afe85312-43f5-43cb-af4a-1b116036a7c9
-
-Here is the resume information: 
-Resume Id : e41a9a2095c140d09a9f000b0b287358
-Resume Stage RequestValidation
-
-Here is the history of the converstion:
-History 0. user : I wanna view request with supplier code FCNNQ. Message Time : 1767580316
-History 1. assistant : {"status": "success", "code": 200, "resumeId": "e41a9a2095c140d09a9f000b0b287358", "resumeStage": "ParamConfirmation", "workflowType": "view_update_request", "needConfirmList": [{"Supplier Code": "FCNNQ"}], "options": [{"name": "Confirm"}, {"name": "Abort"}], "needConfirmListCount": 1, "message": "I have curated a list of requests that you want to check, can you please check the following table and confirm?(<count>needConfirmListCount</count> requests)<br/><list>needConfirmList</list><br/><options>options</options><br/>"}. Message Time : 1767580316
-History 2. user : Confirm. Message Time : 1767580344
-History 3. assistant : {"status": "error", "code": 403003, "resumeId": "e41a9a2095c140d09a9f000b0b287358", "resumeStage": "RequestValidation", "workflowType": "view_update_request", "error": "No access right", "invalidRequest": [{"Supplier Code": "FCNNQ"}], "options": [{"name": "Remove all Invalid"}, {"name": "Abort"}], "invalidRequestCount": 1, "message": "You do not have permissions to view the following requests. Your requests will be removed:(<count>invalidRequestCount</count> requests)<br/><list>invalidRequest</list><br/><options>options</options><br/>"}. Message Time : 1767580344
-History 4. user : I wanna view request with GTN PO 4602602420. Message Time : 1767580426
 
 User Prompt End----------
 ```
