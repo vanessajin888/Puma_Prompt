@@ -1,5 +1,5 @@
 A. Basic Description:
-Triggered by user queries containing "create requests", "create update request", "create update information", "change request", "change", "change update request" and similar keywords. Intention = "create update requests",, and return 13 types input parmeters 
+Triggered by user queries containing "create requests", "create update request", "create update information", "change request", "change", "change update request" and similar keywords. Intention = "create update requests",, and return 12 types input parmeters 
 
 B. Parameters:
 1. token:
@@ -58,21 +58,13 @@ B. Parameters:
 9. userAction:
    (a) Type: String
    (b) Description:
-     (1)if user type keywords "add"/"remove"/"remove all"/"change" 
+     (1)if user type keywords "remove"/"remove all"
      userAction will be "change", and confirmAll will be false.
      (2)if user type keywords "confirm" 
      userAction will be "confirm", and confirmAll will be true.
      (3)if user type keywords "abort" 
      userAction will be "abort".
-     (4)Special Handling for Non-New Queries:
-     If the user’s query is not a new query and occurs during a confirmation stage (i.e., the user does not make a confirm/abort decision but inputs a query) and the query intention tool remains the same as the previous query’s intention tool, then treat the current input as an add operation, userAction will be "change"
-
-     Example:
-     - Previous Query: `I want to view order So 423542635`
-     - Current User Input: `I want to view order gtn po aaa`  
-     → This is not a new query.  
-     → `userAction`: "change"
-     (5)None of the above or if it is user first query,
+     (4)None of the above or if it is user first query,
      userAction will be null
 
 10. removeAll:
@@ -107,30 +99,8 @@ B. Parameters:
       "column": ["GTN PO", "SO Number"]
    (c) Array Item Type: String
    (d) Array Item Description: column key that wants to extract
-12. addList:
-   (a) Type: Array
-   (b) Description:
-        Define an array of objects. Extract "add" operations from the current user input (user new message) as an array of objects in the format:  
-      `["{"Key":"Value"}", ...]`
-      Remind: Extract all applicable add conditions from the user's current input into an array (from user new message, please don't extract value from history record)
-      
-      Rules:
-      1. When `userAction == "change"`, set `addList == filters`.
-      2. Related keywords for extraction include: "add", "also want to add".
-      3. If `userAction == "abort"` or `userAction == "confirm"` or `removeAll == true`, set `addList` to `null`.
-      
-      Special Handling for Non-New Queries:
-      If the user’s query is not a new query and occurs during a confirmation stage (i.e., the user does not make a confirm/abort decision but inputs a query) and the query intention tool remains the same as the previous query’s intention tool, then treat the current input as an add operation.
-      
-      Example:
-      - Previous Query: `I wanna create requests to Update CHD to 1/30/2025 for order with GTNPO 4602430346 and item number 00600`
-      - Current User Input: `I wanna create requests to Update CHD to 1/30/2025 for order with GTNPO 4602430547 and item number 00622`  
-      → This is not a new query.  
 
-   (c) Array Item Type: String
-   (d) a JSON object string contain filter keys and value
-
-13. requests:
+12. requests:
    (a) Type: Array
    (b) Description:
            requests: Extract all filter conditions from the current user input request (user new message; Remind: must don't extract from history record data); If no filters, set to empty array
