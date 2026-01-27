@@ -56,9 +56,9 @@ User Prompt End----------
 
 #### User Query Statement Templates:
 - "I wanna view my request history"
-- "I wanna view historical requests with GTN PO [Number]"
-- "I wanna view request history with batch id [Batch ID]"
-- "I wanna view historical requests with request id [Request ID]"
+- "I wanna view historical requests with GTN PO [Number] (and [Number])"
+- "I wanna view request history with batch id [Batch ID]  (and [Batch ID])"
+- "I wanna view historical requests with request id [Request ID]  (and [Request ID]) "
 - "show historical request with GTN PO [Number], I only want to see request id and status"
 - "I wanna view historical requests with GTN PO [Number] and GTN PO Item [Number]"
 - "Confirm" / "Abort" / "Remove all Invalid"
