@@ -1,0 +1,125 @@
+## Generation Instruction for View Request History
+
+**Format:**
+Return a JSON array, each element is an object containing the "prompt" key:
+
+[
+  {"prompt": "prompt content 1"},
+  {"prompt": "prompt content 2"}
+]
+
+
+## Detailed Generation Rules
+
+### Basic Format Template:
+Prompt:---------
+User New Message: [User's latest message]
+
+User Token is: 
+[User Token]
+
+Here is the chat information: 
+ Chat Id : [Chat ID], Message Id : [Message ID]
+
+[Optional Resume Information Section]
+Here is the resume information: 
+Resume Id : [Resume ID]
+Resume Stage [Stage]
+
+Here is the history of the converstion:
+[History dialogue record]
+
+User Prompt End----------
+
+
+#### Scenario Types to Cover (Ensure equal probability for each scenario):
+1. **First Query** - User initiates a view request history query for the first time (no history)
+2. **Parameter Confirmation** - User confirms parameters after assistant returns confirmation list
+3. **New Query After Permission Error** - User initiates a new query after permission verification failure
+4. **Multi-Condition Query** - User uses multiple filter conditions
+5. **Field-Limited Query** - User specifies to view only some fields
+6. **Modifying Query Conditions** - User modifies query conditions during conversation (add scenario)
+
+#### Parameter Diversity:
+- **GTN PO**: 4602602420, 4801201220, 4801230665, 4602602400, 4801201200, 4801246977
+- **GTN PO Item**: 2000, 1000, 3000, 2500, 1500, 00100, 00200, 00300, 00400, 00500, 00600
+- **Batch ID**: rd_bbced569-33b4-400a-88ae-e77e53754803, rd_6c9abb88-4a78-4ef2-9c0d-e1d64a1629a5, rd_26c745ec-34ab-443a-bd7e-70607a2cc9c7, etc.
+- **Request ID**: rd_bbced569-33b4-400a-88ae-e77e53754803_13, rd_6c9abb88-4a78-4ef2-9c0d-e1d64a1629a5_0, rd_26c745ec-34ab-443a-bd7e-70607a2cc9c7_0, etc.
+- **Customer PO**: 101974, 101632, TF5729320, 101500
+- **SO Number**: 0122947951, 0141331687, 0141348888, 0148275035
+
+
+#### Conversation Stages:
+- `ParamConfirmation` - Parameter confirmation stage
+- `RequestValidation` - Request validation stage
+- Includes success status codes (200) and error status codes (403003, etc.)
+
+#### User Query Statement Templates:
+- "I wanna view my request history"
+- "I wanna view historical requests with GTN PO [Number]"
+- "I wanna view request history with batch id [Batch ID]"
+- "I wanna view historical requests with request id [Request ID]"
+- "show historical request with GTN PO [Number], I only want to see request id and status"
+- "I wanna view historical requests with GTN PO [Number] and GTN PO Item [Number]"
+- "Confirm" / "Abort" / "Remove all Invalid"
+  
+#### Technical Specifications:
+1. **UUID Format**: All IDs must conform to the 8-4-4-4-12 format
+2. **Timestamps**: Use 10-digit or 13-digit numeric timestamps
+3. **JSON Format**: Assistant responses must be valid JSON strings with `workflowType: "view_request_history"`
+4. **Dialogue Logic**: Historical dialogue content must be reasonable and coherent
+5. **Quantity Requirement**: Strictly generate the number specified by the `count` parameter
+6. **Diversity**: Ensure different users, Tokens, Chat IDs, Message IDs
+7. **Error Handling**: Include permission errors, parameter errors, and other scenarios
+8. **Response Content**: Assistant messages should use "historical requests" or "request history" in the text
+9. **History Data**: Include historical decision details, approver comments, timeline information
+
+---
+
+## Generation Logic Examples
+
+### Scenario 1: First Query (No History)
+```
+Prompt:---------
+User New Message: I wanna view my request history
+
+User Token is: 
+acc_da2b5335-71d9-4d6d-a8b4-ad515abe1879
+
+Here is the chat information: 
+ Chat Id : b37e78df-f8c1-43e2-8dcf-16ba5d54bdd0, Message Id : 625f6bfa-b05f-46a7-9428-55d3e5f11175
+
+Here is the history of the converstion:
+History 0. user : I wanna view my request history. Message Time : 1767671267
+
+User Prompt End----------
+```
+
+### Scenario 2: Parameter Confirmation Stage
+```
+Prompt:---------
+User New Message: Confirm
+
+User Token is: 
+acc_da2b5335-71d9-4d6d-a8b4-ad515abe1879
+
+Here is the chat information: 
+ Chat Id : b37e78df-f8c1-43e2-8dcf-16ba5d54bdd0, Message Id : 711976c1-b48d-41e3-aabf-56ea781b0304
+
+Here is the resume information: 
+Resume Id : 70114ec1be8b4d8d9e6e02e00637b33a
+Resume Stage ParamConfirmation
+
+Here is the history of the converstion:
+History 0. user : I wanna view my request history. Message Time : 1767671267
+History 1. assistant : {"status": "success", "code": 200, "resumeId": "70114ec1be8b4d8d9e6e02e00637b33a", "resumeStage": "ParamConfirmation", "workflowType": "view_request_history", "needConfirmList": [{"Time Range": "Last 30 days"}], "options": [{"name": "Confirm"}, {"name": "Abort"}], "needConfirmListCount": 1, "message": "I have curated a list of historical requests that you want to check, can you please check the following table and confirm?(<count>needConfirmListCount</count> historical requests)<br/><list>needConfirmList</list><br/><options>options</options><br/>"}. Message Time : 1767671267
+History 2. user : Confirm. Message Time : 1767671399
+
+User Prompt End----------
+```
+
+## Execution Instructions
+1. Ensure data diversity, correct format, and logical coherence
+2. Return the result in JSON array format
+3. Focus on historical aspects: include decision timelines, approver comments, status changes over time
+4. Emphasize completed/closed requests rather than pending ones
