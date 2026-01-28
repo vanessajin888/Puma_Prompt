@@ -1,0 +1,253 @@
+## Generation Instruction for Edit Update Request
+
+**Format:**
+Return a JSON array, each element is an object containing the "prompt" key:
+
+[
+  {"prompt": "prompt content 1"},
+  {"prompt": "prompt content 2"}
+]
+
+
+---
+
+## Detailed Generation Rules
+
+### Basic Format Template:
+
+Prompt:---------
+User New Message: [User's latest message]
+
+User Token is: 
+[User Token]
+
+Here is the chat information: 
+ Chat Id : [Chat ID], Message Id : [Message ID]
+
+[Optional Resume Information Section]
+Here is the resume information: 
+Resume Id : [Resume ID]
+Resume Stage [Stage]
+
+Here is the history of the converstion:
+[History dialogue record]
+
+User Prompt End----------
+```
+
+#### Scenario Types to Cover (Ensure equal probability for each scenario):
+1. **Initial Edit Query** - User initiates an edit request process (no history)
+2. **SelectionParamConfirmation** - User confirms selection parameters for editing
+3. **EditFormCreation** - User views/edit form details with previous values
+4. **Specific Request Edit** - User specifies specific edits for request IDs
+5. **DecisionParamConfirmation** - User confirms edit parameters
+6. **File-Based Editing** - User uploads/uses file for editing
+
+#### Conversation Stages:
+- `SelectionParamConfirmation` - Selection parameter confirmation stage
+- `EditFormCreation` - Edit form creation stage
+- `DecisionParamConfirmation` - Decision parameter confirmation stage
+
+#### Parameter Diversity:
+**Query Items:**
+- **GTN PO**: 4602602420, 4801201220, 4801230665, 4801246977, 4602602400, 4801201200
+- **GTN PO Item**: 2000, 1000, 3000, 2500, 1500, 00100, 00200, 00300, 00400, 00500, 00600, "view-order-test1", "00001001"
+- **Customer PO**: 101974, 101632, 101500, TF5729320
+- **SO Number**: 0122947951, 0141331687, 0141348888, 0148275035
+- **Request ID**: Formats like "rd_6c9abb88-4a78-4ef2-9c0d-e1d64a1629a5_0", "rd_26c745ec-34ab-443a-bd7e-70607a2cc9c7_0", "rd_b1cc3092-09f8-4334-b0ea-78ec72d76e2d_0", "rd_786ae4d3-3b09-4b9a-83a0-b2f6d0f8216f_0"
+
+**Edit Parameters:**
+- **Change Type**: "Propose CHD", "Update LCHD", "Transfer", "Factory Change"
+- **Previous New Value**: Date formats like "2026-01-13", "2026-01-21", "2026-01-31", "46054"
+- **Edited New Value**: Date formats like "2026-02-01", "2026-01-31", "2026-01-15"
+- **Previous Requestor Comment**: null, "Urgent update needed", "Customer requested change"
+- **Edited Requestor Comment**: "Updated per supplier request", "Corrected date error", "Revised timeline"
+
+**Column Fields (as per requirements):**
+- "Batch ID"
+- "Request ID" 
+- "GTN PO"
+- "GTN PO Item"
+- "Customer PO"
+- "SO Number"
+- "Edited New Value"
+- "Edited Requestor Comment"
+- "Change Type"
+- "Previous New Value"
+- "Previous Requestor Comment"
+
+#### Query Steps and Templates:
+
+**Query 1: Initial Edit Query**
+- "I wanna edit request with [item] [value]"
+- **Examples:**
+  - "I wanna edit request with SO 0141348888 and 80920590"
+  - "I wanna edit request with GTN PO 4801246977"
+  - "I wanna edit request with Customer PO TF5729320 and ..."
+
+**Query 2: Selection Confirmation**
+- "Confirm"
+- "Abort"
+
+**Query 3: Specific Request Edit**
+- "I wanna edit the request with request id [request_id] to a new value [new_value] [comment]"
+- "I wanna edit request with this file"
+- **Examples:**
+  - "I wanna edit the request with request id rd_b1cc3092-09f8-4334-b0ea-78ec72d76e2d_0 to a new value 2026-01-31"
+  - "I wanna edit request with this file"
+
+**Query 4: Edit Confirmation**
+- "Confirm"
+- "Abort"
+
+#### Technical Specifications:
+1. **UUID Format**: All IDs must conform to the 8-4-4-4-12 format
+2. **Timestamps**: Use 10-digit or 13-digit numeric timestamps
+3. **JSON Format**: Assistant responses must be valid JSON strings with `workflowType: "edit_update_request"`
+4. **Organization ID**: Always include `"organization_id": "org_imbrace"` in assistant responses
+5. **File Information**: Include file details with proper S3 URLs and Excel file formats (.xlsx)
+6. **Dialogue Logic**: Historical dialogue content must be reasonable and coherent
+7. **Quantity Requirement**: Strictly generate the number specified by the `count` parameter
+8. **Diversity**: Ensure different users, Tokens, Chat IDs, Message IDs, Resume IDs, Request IDs
+9. **Stage Progression**: Ensure logical progression through stages
+10. **Previous vs Edited Values**: Clearly distinguish between previous and edited values
+11. **Excel File Names**: Use format "edit_update_request-[resumeId].xlsx"
+
+---
+
+## Generation Logic Examples
+
+### Scenario 1: Initial Edit Query (No History)
+```
+Prompt:---------
+User New Message: I wanna edit request with SO 0141348888
+
+User Token is: 
+acc_22b85989-b2b1-4c1e-8141-5ebf41c7767a
+
+Here is the chat information: 
+ Chat Id : e43a9953-0d5e-4b28-a6d0-c35229ac52a5, Message Id : af6103be-9bcd-4e44-bb61-6b730f672874
+
+Here is the history of the converstion:
+History 0. user : I wanna edit request with SO 0141348888. Message Time : 1769584674
+
+User Prompt End----------
+```
+
+### Scenario 2: Selection Parameter Confirmation Stage
+```
+Prompt:---------
+User New Message: Confirm
+
+User Token is: 
+acc_22b85989-b2b1-4c1e-8141-5ebf41c7767a
+
+Here is the chat information: 
+ Chat Id : e43a9953-0d5e-4b28-a6d0-c35229ac52a5, Message Id : 55e63037-6c5e-4743-a7de-1ad42e889f74
+
+Here is the resume information: 
+Resume Id : 242fcf643f854344a084a4687ecad5c7
+Resume Stage : SelectionParamConfirmation
+
+Here is the history of the converstion:
+History 0. user : I wanna edit request with SO 0141348888. Message Time : 1769584674
+History 1. assistant : {"status": "success", "code": 200, "resumeId": "242fcf643f854344a084a4687ecad5c7", "resumeStage": "SelectionParamConfirmation", "workflowType": "edit_update_request", "needConfirmList": [{"SO Number": "0141348888"}], "organization_id": "org_imbrace", "needConfirmListCount": 1, "options": [{"name": "Confirm"}, {"name": "Abort"}], "message": "Here are the filtering conditions extracted from your request for editing updates. Please review and confirm if they are correct: (There are <count>needConfirmListCount</count> requests filtered)<br/><list>needConfirmList</list><br/><options>options</options>"}. Message Time : 1769584674
+History 2. user : Confirm. Message Time : 1769584709
+
+User Prompt End----------
+```
+
+### Scenario 3: Edit Form Creation Stage
+```
+Prompt:---------
+User New Message: I wanna edit request with this file
+
+User Token is: 
+acc_22b85989-b2b1-4c1e-8141-5ebf41c7767a
+
+Here is the chat information: 
+ Chat Id : e43a9953-0d5e-4b28-a6d0-c35229ac52a5, Message Id : 1fbe50ec-edf9-4315-a1ac-de895a81c257
+
+Here is the information of documents: 
+--- File: edit_update_request-242fcf643f854344a084a4687ecad5c7 ---
+File Id : bi_fa2c3285-518b-4008-8a95-975c45fa729f
+File URL : https://dev-imbrace-data.s3.ap-east-1.amazonaws.com/board/org_imbrace/file_6LNM6Qjr99CIXjwjHICZ9likaz.xlsx
+--- End of edit_update_request-242fcf643f854344a084a4687ecad5c7 ---
+
+Here is the resume information: 
+Resume Id : 242fcf643f854344a084a4687ecad5c7
+Resume Stage : EditFormCreation
+
+Here is the history of the converstion:
+History 0. user : I wanna edit request with SO 0141348888. Message Time : 1769584674
+History 1. assistant : {"status": "success", "code": 200, "resumeId": "242fcf643f854344a084a4687ecad5c7", "resumeStage": "SelectionParamConfirmation", "workflowType": "edit_update_request", "needConfirmList": [{"SO Number": "0141348888"}], "organization_id": "org_imbrace", "needConfirmListCount": 1, "options": [{"name": "Confirm"}, {"name": "Abort"}], "message": "Here are the filtering conditions extracted from your request for editing updates. Please review and confirm if they are correct: (There are <count>needConfirmListCount</count> requests filtered)<br/><list>needConfirmList</list><br/><options>options</options>"}. Message Time : 1769584674
+History 2. user : Confirm. Message Time : 1769584709
+History 3. assistant : {"status": "success", "code": 200, "resumeStage": "EditFormCreation", "resumeId": "242fcf643f854344a084a4687ecad5c7", "list": [{"Request ID": "rd_26c745ec-34ab-443a-bd7e-70607a2cc9c7_0", "GTN PO": "4801246977", "GTN PO Item": "view-order-test1", "Customer PO": "TF5729320", "SO Number": "0141348888", "Change Type": "Propose CHD", "Previous New Value": "2026-01-13", "Previous Requestor Comment": null}, {"Request ID": "rd_786ae4d3-3b09-4b9a-83a0-b2f6d0f8216f_0", "GTN PO": "4801246977", "GTN PO Item": "view-order-test1", "Customer PO": "TF5729320", "SO Number": "0141348888", "Change Type": "Propose CHD", "Previous New Value": "2026-01-13", "Previous Requestor Comment": null}, {"Request ID": "rd_de08f952-689b-4ca0-a2cc-b46d05da0247_0", "GTN PO": "4801246977", "GTN PO Item": "view-order-test1", "Customer PO": "TF5729320", "SO Number": "0141348888", "Change Type": "Propose CHD", "Previous New Value": "2026-01-13", "Previous Requestor Comment": null}, {"Request ID": "rd_e27f6fb0-caa9-478a-8341-0adff2e95909_0", "GTN PO": "4801246977", "GTN PO Item": "view-order-test1", "Customer PO": "TF5729320", "SO Number": "0141348888", "Change Type": "Propose CHD", "Previous New Value": "2026-01-13", "Previous Requestor Comment": null}, {"Request ID": "rd_79851d22-995d-4138-9c94-1450de11fe36_0", "GTN PO": "4801246977", "GTN PO Item": "00001001", "Customer PO": "TF5729320", "SO Number": "0141348888", "Change Type": "Propose CHD", "Previous New Value": "2026-01-13", "Previous Requestor Comment": null}, {"Request ID": "rd_ff7179e2-9028-4b3d-a979-80fae37f9583_0", "GTN PO": "4801246977", "GTN PO Item": "00001001", "Customer PO": "TF5729320", "SO Number": "0141348888", "Change Type": "Propose CHD", "Previous New Value": "2026-01-21", "Previous Requestor Comment": null}, {"Request ID": "rd_fa5e8f49-1f4d-41a2-9341-59240ecef651_0", "GTN PO": "4801246977", "GTN PO Item": "00001001", "Customer PO": "TF5729320", "SO Number": "0141348888", "Change Type": "Propose CHD", "Previous New Value": "2026-01-21", "Previous Requestor Comment": null}, {"Request ID": "rd_b1cc3092-09f8-4334-b0ea-78ec72d76e2d_0", "GTN PO": "4801246977", "GTN PO Item": "00001001", "Customer PO": "TF5729320", "SO Number": "0141348888", "Change Type": "Update LCHD", "Previous New Value": "2026-01-31", "Previous Requestor Comment": null}], "workflowType": "edit_update_request", "count": 8, "option": [{"name": "Abort"}], "file": {"user_id": "u_318d2978-23a9-4bb2-a88f-aea0dc76f94e", "uploader": "supplier.test.puma@gmail.com", "name": "edit_update_request-242fcf643f854344a084a4687ecad5c7", "extension": "xlsx", "sizeInBytes": 5679, "uploadDate": "2026-01-28T07:18:47.772Z", "url": "https://dev-imbrace-data.s3.ap-east-1.amazonaws.com/board/org_imbrace/file_G8Ps6x90WGcBtcE8EVOVia5ksh.xlsx", "key": "board/org_imbrace/file_G8Ps6x90WGcBtcE8EVOVia5ksh.xlsx", "error": null, "filename": "file_G8Ps6x90WGcBtcE8EVOVia5ksh.xlsx"}, "message": "Below is a summary of your request details; please provide the edited decisions and any comments. (<count>count</count> records):<br/><list>list</list><br/><file>file</file>"}. Message Time : 1769584709
+History 4. user : I wanna edit request with this file. Message Time : 1769584801
+
+User Prompt End----------
+```
+
+### Scenario 4: Specific Request Edit
+```
+Prompt:---------
+User New Message: I wanna edit the request with request id to rd_b1cc3092-09f8-4334-b0ea-78ec72d76e2d_0 to a new value 2026-01-31
+
+User Token is: 
+acc_22b85989-b2b1-4c1e-8141-5ebf41c7767a
+
+Here is the chat information: 
+ Chat Id : 4857e389-bfe1-422b-89ef-8a0e5c4056f8, Message Id : cfb09cfe-8c73-43cc-a0b4-3d2b005b78f0
+
+Here is the resume information: 
+Resume Id : e8f9e2deb6ec4974919d3069726553d9
+Resume Stage : EditFormCreation
+
+Here is the history of the converstion:
+History 0. user : I wanna edit request with SO 0141348888. Message Time : 1769582628
+History 1. assistant : {"status": "success", "code": 200, "resumeId": "e8f9e2deb6ec4974919d3069726553d9", "resumeStage": "SelectionParamConfirmation", "workflowType": "edit_update_request", "needConfirmList": [{"SO Number": "0141348888"}], "organization_id": "org_imbrace", "needConfirmListCount": 1, "options": [{"name": "Confirm"}, {"name": "Abort"}], "message": "Please review the update requests you intend to edit and confirm if the selections are correct: (There are <count>needConfirmListCount</count> requests filtered)<br/><list>needConfirmList</list><br/><options>options</options>"}. Message Time : 1769582628
+History 2. user : Confirm. Message Time : 1769582752
+History 3. assistant : {"status": "success", "code": 200, "resumeStage": "EditFormCreation", "resumeId": "e8f9e2deb6ec4974919d3069726553d9", "list": [{"Request ID": "rd_26c745ec-34ab-443a-bd7e-70607a2cc9c7_0", "GTN PO": "4801246977", "GTN PO Item": "view-order-test1", "Customer PO": "TF5729320", "SO Number": "0141348888", "Change Type": "Propose CHD", "Previous New Value": "2026-01-13", "Previous Requestor Comment": null}, {"Request ID": "rd_786ae4d3-3b09-4b9a-83a0-b2f6d0f8216f_0", "GTN PO": "4801246977", "GTN PO Item": "view-order-test1", "Customer PO": "TF5729320", "SO Number": "0141348888", "Change Type": "Propose CHD", "Previous New Value": "2026-01-13", "Previous Requestor Comment": null}, {"Request ID": "rd_de08f952-689b-4ca0-a2cc-b46d05da0247_0", "GTN PO": "4801246977", "GTN PO Item": "view-order-test1", "Customer PO": "TF5729320", "SO Number": "0141348888", "Change Type": "Propose CHD", "Previous New Value": "2026-01-13", "Previous Requestor Comment": null}, {"Request ID": "rd_e27f6fb0-caa9-478a-8341-0adff2e95909_0", "GTN PO": "4801246977", "GTN PO Item": "view-order-test1", "Customer PO": "TF5729320", "SO Number": "0141348888", "Change Type": "Propose CHD", "Previous New Value": "2026-01-13", "Previous Requestor Comment": null}, {"Request ID": "rd_79851d22-995d-4138-9c94-1450de11fe36_0", "GTN PO": "4801246977", "GTN PO Item": "00001001", "Customer PO": "TF5729320", "SO Number": "0141348888", "Change Type": "Propose CHD", "Previous New Value": "2026-01-13", "Previous Requestor Comment": null}, {"Request ID": "rd_ff7179e2-9028-4b3d-a979-80fae37f9583_0", "GTN PO": "4801246977", "GTN PO Item": "00001001", "Customer PO": "TF5729320", "SO Number": "0141348888", "Change Type": "Propose CHD", "Previous New Value": "2026-01-21", "Previous Requestor Comment": null}, {"Request ID": "rd_fa5e8f49-1f4d-41a2-9341-59240ecef651_0", "GTN PO": "4801246977", "GTN PO Item": "00001001", "Customer PO": "TF5729320", "SO Number": "0141348888", "Change Type": "Propose CHD", "Previous New Value": "2026-01-21", "Previous Requestor Comment": null}, {"Request ID": "rd_b1cc3092-09f8-4334-b0ea-78ec72d76e2d_0", "GTN PO": "4801246977", "GTN PO Item": "00001001", "Customer PO": "TF5729320", "SO Number": "0141348888", "Change Type": "Update LCHD", "Previous New Value": "46054", "Previous Requestor Comment": null}], "workflowType": "edit_update_request", "count": 8, "option": [{"name": "Abort"}], "file": {"user_id": "u_318d2978-23a9-4bb2-a88f-aea0dc76f94e", "uploader": "supplier.test.puma@gmail.com", "name": "edit_update_request-e8f9e2deb6ec4974919d3069726553d9", "extension": "xlsx", "sizeInBytes": 5678, "uploadDate": "2026-01-28T06:46:10.270Z", "url": "https://dev-imbrace-data.s3.ap-east-1.amazonaws.com/board/org_imbrace/file_TfGNW1jJLxbDe74Ja8pmyHfnd9.xlsx", "key": "board/org_imbrace/file_TfGNW1jJLxbDe74Ja8pmyHfnd9.xlsx", "error": null, "filename": "file_TfGNW1jJLxbDe74Ja8pmyHfnd9.xlsx"}, "message": "The following is a table of request details, please fill in your edited new decision and comments. (<count>count</count> records):<br/><list>list</list><br/><file>file</file>"}. Message Time : 1769582752
+History 4. user : I wanna edit the request with request id to rd_b1cc3092-09f8-4334-b0ea-78ec72d76e2d_0 to a new value 2026-01-31. Message Time : 1769584476
+
+User Prompt End----------
+```
+
+### Scenario 5: Decision Parameter Confirmation Stage
+```
+Prompt:---------
+User New Message: Confirm
+
+User Token is: 
+acc_22b85989-b2b1-4c1e-8141-5ebf41c7767a
+
+Here is the chat information: 
+ Chat Id : e43a9953-0d5e-4b28-a6d0-c35229ac52a5, Message Id : 216a5079-b93f-40dc-bfbd-b8853a387139
+
+Here is the resume information: 
+Resume Id : 242fcf643f854344a084a4687ecad5c7
+Resume Stage : DecisionParamConfirmation
+
+Here is the history of the converstion:
+History 0. user : I wanna edit request with SO 0141348888. Message Time : 1769584674
+History 1. assistant : {"status": "success", "code": 200, "resumeId": "242fcf643f854344a084a4687ecad5c7", "resumeStage": "SelectionParamConfirmation", "workflowType": "edit_update_request", "needConfirmList": [{"SO Number": "0141348888"}], "organization_id": "org_imbrace", "needConfirmListCount": 1, "options": [{"name": "Confirm"}, {"name": "Abort"}], "message": "Here are the filtering conditions extracted from your request for editing updates. Please review and confirm if they are correct: (There are <count>needConfirmListCount</count> requests filtered)<br/><list>needConfirmList</list><br/><options>options</options>"}. Message Time : 1769584674
+History 2. user : Confirm. Message Time : 1769584709
+History 3. assistant : {"status": "success", "code": 200, "resumeStage": "EditFormCreation", "resumeId": "242fcf643f854344a084a4687ecad5c7", "list": [{"Request ID": "rd_26c745ec-34ab-443a-bd7e-70607a2cc9c7_0", "GTN PO": "4801246977", "GTN PO Item": "view-order-test1", "Customer PO": "TF5729320", "SO Number": "0141348888", "Change Type": "Propose CHD", "Previous New Value": "2026-01-13", "Previous Requestor Comment": null}, {"Request ID": "rd_786ae4d3-3b09-4b9a-83a0-b2f6d0f8216f_0", "GTN PO": "4801246977", "GTN PO Item": "view-order-test1", "Customer PO": "TF5729320", "SO Number": "0141348888", "Change Type": "Propose CHD", "Previous New Value": "2026-01-13", "Previous Requestor Comment": null}, {"Request ID": "rd_de08f952-689b-4ca0-a2cc-b46d05da0247_0", "GTN PO": "4801246977", "GTN PO Item": "view-order-test1", "Customer PO": "TF5729320", "SO Number": "0141348888", "Change Type": "Propose CHD", "Previous New Value": "2026-01-13", "Previous Requestor Comment": null}, {"Request ID": "rd_e27f6fb0-caa9-478a-8341-0adff2e95909_0", "GTN PO": "4801246977", "GTN PO Item": "view-order-test1", "Customer PO": "TF5729320", "SO Number": "0141348888", "Change Type": "Propose CHD", "Previous New Value": "2026-01-13", "Previous Requestor Comment": null}, {"Request ID": "rd_79851d22-995d-4138-9c94-1450de11fe36_0", "GTN PO": "4801246977", "GTN PO Item": "00001001", "Customer PO": "TF5729320", "SO Number": "0141348888", "Change Type": "Propose CHD", "Previous New Value": "2026-01-13", "Previous Requestor Comment": null}, {"Request ID": "rd_ff7179e2-9028-4b3d-a979-80fae37f9583_0", "GTN PO": "4801246977", "GTN PO Item": "00001001", "Customer PO": "TF5729320", "SO Number": "0141348888", "Change Type": "Propose CHD", "Previous New Value": "2026-01-21", "Previous Requestor Comment": null}, {"Request ID": "rd_fa5e8f49-1f4d-41a2-9341-59240ecef651_0", "GTN PO": "4801246977", "GTN PO Item": "00001001", "Customer PO": "TF5729320", "SO Number": "0141348888", "Change Type": "Propose CHD", "Previous New Value": "2026-01-21", "Previous Requestor Comment": null}, {"Request ID": "rd_b1cc3092-09f8-4334-b0ea-78ec72d76e2d_0", "GTN PO": "4801246977", "GTN PO Item": "00001001", "Customer PO": "TF5729320", "SO Number": "0141348888", "Change Type": "Update LCHD", "Previous New Value": "2026-01-31", "Previous Requestor Comment": null}], "workflowType": "edit_update_request", "count": 8, "option": [{"name": "Abort"}], "file": {"user_id": "u_318d2978-23a9-4bb2-a88f-aea0dc76f94e", "uploader": "supplier.test.puma@gmail.com", "name": "edit_update_request-242fcf643f854344a084a4687ecad5c7", "extension": "xlsx", "sizeInBytes": 5679, "uploadDate": "2026-01-28T07:18:47.772Z", "url": "https://dev-imbrace-data.s3.ap-east-1.amazonaws.com/board/org_imbrace/file_G8Ps6x90WGcBtcE8EVOVia5ksh.xlsx", "key": "board/org_imbrace/file_G8Ps6x90WGcBtcE8EVOVia5ksh.xlsx", "error": null, "filename": "file_G8Ps6x90WGcBtcE8EVOVia5ksh.xlsx"}, "message": "Below is a summary of your request details; please provide the edited decisions and any comments. (<count>count</count> records):<br/><list>list</list><br/><file>file</file>"}. Message Time : 1769584709
+History 4. user : I wanna edit request with this file. Message Time : 1769584801
+History 5. assistant : {"status": "success", "code": 200, "resumeId": "242fcf643f854344a084a4687ecad5c7", "resumeStage": "DecisionParamConfirmation", "workflowType": "edit_update_request", "needConfirmList": [{"Request ID": "rd_b1cc3092-09f8-4334-b0ea-78ec72d76e2d_0", "Edited New Value": "2026-02-01"}], "organization_id": "org_imbrace", "needConfirmListCount": 1, "options": [{"name": "Confirm"}, {"name": "Abort"}], "message": "Please review the items identified for editing and confirm they are correct before proceeding: (There are <count>needConfirmListCount</count> requests filtered)<br/><list>needConfirmList</list><br/><options>options</options>"}. Message Time : 1769584801
+History 6. user : Confirm. Message Time : 1769584982
+
+User Prompt End----------
+```
+
+---
+
+## Execution Instructions
+
+1. Receive the `count` parameter
+2. Generate the corresponding number of prompts according to the specified rules and scenarios
+3. Ensure data diversity, correct format, and logical coherence
+4. Ensure proper stage progression: SelectionParamConfirmation → EditFormCreation → DecisionParamConfirmation
+5. Include comprehensive request details with previous and edited values
+6. Include file information with Excel file details and S3 URLs
+7. Return the result in JSON array format
