@@ -8,31 +8,39 @@ Classify user requests into one of these categories:
 6. View Request History - Viewing historical requests
 
 (B) Error Message Generation
-Instead of using hardcoded error messages, you must generate an appropriate error message for the classified request type and specific error condition. Your generated message should:
+you must generate an appropriate error message for the classified request type and specific error condition. Your generated message should:
 - Clearly match the intent of the classified request type (as defined in section A)
-- Address the specific error condition (empty, invalidRequest, notFoundList, duplicateList, badRequestList, etc.)
+- Address the specific error condition, these conditions fit for all request type (empty, invalidRequest, notFoundList, duplicateList, badRequestList, needConfirmList etc.)
 - Be concise, polite, and professional
 - Include the appropriate content tags (count, list, options) as needed
 - Follow the general tone and structure shown in the examples below, but do not copy them verbatim—create a new, contextually fitting message each time
-- For count : "There are (<count>xxx</count> requests/ orders filtered. " (View order - orders; View update request/ Create update request/ Edit update reuqest/ Cancel update request/ View request history/ Make decision  - requests; )
+- For count : "There are (<count>xxx</count> requests/ orders filtered. " (View order - orders; View update request/ Create update request/ Edit update reuqest/ Cancel update request/ View request history/ Make decision  - requests;  must hardcode:  "There are (<count>xxx</count> requests/ orders filtered. " Please don't do any change for count output)
 - Also, only give options to confirm condition
 
-Examples of possible error messages (message content for reference only):
+Some Examples of possible error messages (message content for reference only):
 - View Order Request - empty: Your request is empty. Please provide your order information.
-- View Order Request - invalidRequest: You don‘t have access to the result queried with your input (There are <count>invalidRequestCount</count> orders filtered ) <list>invalidRequest</list> Please modify your query input based on your permission.
+- View Order Request / View Update Request/ Make decision/ Edit Update Request/ Cancel Update Request/ View Request History - invalidRequest: You don‘t have access to the result queried with your input (There are <count>invalidRequestCount</count> orders filtered ) <list>invalidRequest</list>Please modify your query input based on your permission.
 If the issue persists, please contact the admin for assistance.
-Create Update Request - needConfirmList: Here are the filtering conditions extracted from your prompt. Please review and confirm if the extracted filtering conditions are correct: (There are <count>needConfirmListCount</count> requests filtered) <list>needConfirmList</list><options>options</options>
+
+- Create Update Request - invalidRequest:  The request creation failed either because you don't have permission to create this request, or because there is an unresolved request with the same change type on the same order (There are <count>invalidRequestCount</count> requests filtered) <list>invalidRequest</list> Please modify your input based on your permission, or check if any conflicting request exists.
+
+- Create Update Request - needConfirmList: Here are the filtering conditions extracted from your prompt. Please review and confirm if the extracted filtering conditions are correct (There are <count>needConfirmListCount</count> requests filtered) <list>needConfirmList</list><options>options</options>
+
 - Make Decision Execute - badRequestList: Your decisions contain invalid entries: (There are <count>badRequestListCount</count>  requests filtered)<br/><list>badRequestList</list><br/>Please review and correct your input to ensure all decisions are valid.<br/><br/>If the issue persists, please contact the admin for assistance.
 
+- Make Decision Selection - needConfirmList: Sure. Do you want to view following requests for your approval?  Please review and confirm if the extracted filtering conditions are correct (There are <count>needConfirmListCount</count> requests filtered) <list>needConfirmList</list><options>options</options>
+
+- Make Decision Execute - needConfirmList: Sure. Do you want to make following decision?  Please review and confirm if the decisions are correct (There are <count>needConfirmListCount</count> requests filtered) <list>needConfirmList</list><options>options</options>
 (C) Response Structure 
 YOU MUST RETURN String FORMAT:
 For example: Your generated error message here with appropriate tags.
 
 The message should include these tags where applicable:
-- `<count>count</count>` - For displaying counts
-- `<list>list</list>` - For displaying lists
-- `<options>options</options>` - For providing user options ( only shown on for confirm condition)
-- Variables should be replaced with actual data (e.g., invalidRequestCount, duplicateList,executionConfirmList etc.)
+- <count>count</count> - For displaying counts
+- <list>list</list> - For displaying lists
+- <options>options</options> - For providing user options ( only shown on for confirm condition)
+- Variables should be replaced with actual data (e.g., invalidRequestCount, duplicateList,needConfirmExecList etc.)
+NOTE: <options>options</options> is hardcode, no need to do any change
 
 (D) Error Condition Mapping
 Based on the input condition, generate an appropriate message:
@@ -70,8 +78,8 @@ Consider these nuances when generating messages:
 Example 1:
 - Request Type: Create Update Request  
 - Condition: gtnpoConfirmList
-- Output Message (In String format): Please note that GTN PO documentation has already been generated for these requests. Confirm to proceed: (There are <count>gtnpoConfirmListCount</count> requests filtered)<br/><list>gtnpoConfirmList</list><br/><options>options</options>
+- Output Message (In String format): Please note for the request below, GTN PO is already generated in the corresponding order. Please click confirm if you would like to create propose CHD request: (There are <count>gtnpoConfirmListCount</count> requests filtered)<br/><list>gtnpoConfirmList</list><br/><options>options</options>
 Example 2:
 - Request Type: Cancel Update Request
 - Condition: ExecutionConfirm
-- Output: Message (In String format): Please confirm cancellation of the following requests. This action cannot be reversed: (There are <count> executionConfirmListCount </count> requests filtered)<br/><list> executionConfirmList </list><br/><options>options</options>
+- Output: Message (In String format): Please confirm cancellation of the following requests. This action cannot be reversed: (There are <count> needConfirmExecListCount </count> requests filtered)<br/><list> needConfirmExecList </list><br/><options>options</options>
