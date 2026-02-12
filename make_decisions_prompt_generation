@@ -143,8 +143,8 @@ B. Parameters:
       - GTN PO Item (String): Must be extracted whenever mentioned.
       - Batch ID (String): Must be extracted whenever mentioned.
       - Request ID (String)
-      - Related Request (String): Accepts only `"true"` as values.
-      NOTE 1:  If user input query: "I wanna make a decision on request id xxxx" (This query contain "make a decision",so "Request ID" should be extracted into filters)
+      - Related Request (String): Accepts only `"true"` as values， if user input "related", "related request", "open","open request", it will be "true".
+     NOTE 1:  If user input query: "I wanna make a decision on request id xxxx" (This query contain "make a decision",so "Request ID" should be extracted into filters)
       but it user input query: "I wanna approve decision on request id xxx"(For this condition, user has made decision, so "Request ID" should be extracted into decisions)
       NOTE 2: If user input query about related request, please extract "Related Request" parameter, and the value always "true"
       e.g.: "filters": [
