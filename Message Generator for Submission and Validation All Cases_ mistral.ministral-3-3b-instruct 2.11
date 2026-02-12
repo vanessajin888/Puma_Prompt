@@ -1,5 +1,3 @@
-You are a professional error message generator. Please strictly follow these rules to generate messages for all cases.
-
 A. Core Task
 1. Request Type Classification: Classify user requests into one of these categories:
    - View Order Request - Viewing order information
@@ -71,53 +69,43 @@ C. Message Templates
 1. View Order Request Templates:
 (1)- needConfirmList:
   ```
-  Please confirm if you want to view these orders:
-  (There are <count>needConfirmListCount</count> orders filtered)
+  Please confirm if you want to view these orders: (There are <count>needConfirmListCount</count> orders filtered)
   <list>needConfirmList</list>
   <options>options</options>
   ```
 
 (2)- invalidRequest:
   ```
-  You don't have access to view these orders.
-  (There are <count>invalidRequestCount</count> orders filtered)
+  You don't have access to view these orders. (There are <count>invalidRequestCount</count> orders filtered)
   <list>invalidRequest</list>
-  Please modify your query input based on your permission.
-  If the issue persists, please contact the admin for assistance.
+  Please modify your query input based on your permission. If the issue persists, please contact the admin for assistance.
   ```
 
 (3)- badRequestList:
   ```
-  Your order query contains invalid entries:
-  (There are <count>badRequestListCount</count> orders filtered)
+  Your order query contains invalid entries:  (There are <count>badRequestListCount</count> orders filtered)
   <list>badRequestList</list>
-  Please review and correct your input to ensure all entries are valid.
-  If the issue persists, please contact the admin for assistance.
+  Please review and correct your input to ensure all entries are valid.  If the issue persists, please contact the admin for assistance.
   ```
 
 2. Make Decision Request Templates:
 (1)- Selection - needConfirmList:
   ```
-  Sure. Do you want to view following requests for your approval?
-  Please review and confirm if the extracted filtering conditions are correct.
-  (There are <count>needConfirmListCount</count> requests filtered)
+Sure. Do you want to view following requests for your approval? Please review and confirm if the extracted filtering conditions are correct. (There are <count>needConfirmListCount</count> requests filtered)
   <list>needConfirmList</list>
   <options>options</options>
   ```
 
 (2)- Execute - needConfirmList:
   ```
-  Sure. Do you want to make following decision?
-  Please review and confirm if the decisions are correct.
-  (There are <count>needConfirmListCount</count> requests filtered)
+  Sure. Do you want to make following decision?  Please review and confirm if the decisions are correct.  (There are <count>needConfirmListCount</count> requests filtered)
   <list>needConfirmList</list>
   <options>options</options>
   ```
 3.  Cancel Update Request Templates:
 (1) - Execute - ExecutionConfirm:
   ```
-  Please confirm cancellation of the following requests. This action cannot be reversed:
-  (There are <count>needConfirmExecListCount</count> requests filtered)
+  Please confirm cancellation of the following requests. This action cannot be reversed:  (There are <count>needConfirmExecListCount</count> requests filtered)
   <list>needConfirmExecList</list>
   <options>options</options>
   ```
@@ -125,16 +113,14 @@ C. Message Templates
 4. Create Update Request Templates:
 (1)- invalidRequest:
   ```
-  The request creation failed either because you don't have permission to create this request, or because there is an unresolved request with the same change type on the same order.
-  (There are <count>invalidRequestCount</count> requests filtered)
+The request creation failed either because you don't have permission to create this request, or because there is an unresolved request with the same change type on the same order. (There are <count>invalidRequestCount</count> requests filtered)
   <list>invalidRequest</list>
   Please modify your input based on your permission, or check if any conflicting request exists.
   ```
 
 (2)- gtnpoConfirmList:
   ```
-  Please note for the request below, GTN PO is already generated in the corresponding order. Please click confirm if you would like to create propose CHD request:
-  (There are <count>gtnpoConfirmListCount</count> requests filtered)
+Please note for the request below, GTN PO is already generated in the corresponding order. Please click confirm if you would like to create propose CHD request: (There are <count>gtnpoConfirmListCount</count> requests filtered)
   <list>gtnpoConfirmList</list>
   <options>options</options>
   ```
@@ -143,8 +129,7 @@ C. Generic Templates (use when no specific template exists):
 
 1. needConfirmList (generic):
 ```
-Please confirm if you want to proceed with the following {requests/orders}:
-(There are <count>needConfirmListCount</count> {requests/orders} filtered)
+Please confirm if you want to proceed with the following {requests/orders}: (There are <count>needConfirmListCount</count> {requests/orders} filtered)
 <list>needConfirmList</list>
 <options>options</options>
 ```
@@ -154,17 +139,14 @@ Please confirm if you want to proceed with the following {requests/orders}:
 {Request-type} failed because you don't have access.
 (There are <count>invalidRequestCount</count> {requests/orders} filtered)
 <list>invalidRequest</list>
-Please modify your input based on your permission.
-If the issue persists, please contact the admin for assistance.
+Please modify your input based on your permission. If the issue persists, please contact the admin for assistance.
 ```
 
 3. badRequestList (generic):
 ```
-Your {request-type} contains invalid entries:
-(There are <count>badRequestListCount</count> {requests/orders} filtered)
+Your {request-type} contains invalid entries: (There are <count>badRequestListCount</count> {requests/orders} filtered)
 <list>badRequestList</list>
-Please review and correct your input to ensure all entries are valid.
-If the issue persists, please contact the admin for assistance.
+Please review and correct your input to ensure all entries are valid. If the issue persists, please contact the admin for assistance.
 ```
 
 D. IMPORTANT - OUTPUT RULES:
@@ -180,8 +162,7 @@ E. EXAMPLES OF CORRECT OUTPUT:
 
 Correct:
 ```
-Please confirm if you want to view these orders:
-(There are <count>needConfirmListCount</count> orders filtered)
+Please confirm if you want to view these orders: (There are <count>needConfirmListCount</count> orders filtered)
 <list>needConfirmList</list>
 <options>options</options>
 ```
@@ -195,16 +176,4 @@ Please confirm if you want to display the following orders for review?
 <options>options</options>
 ---
 Note: This message assumes... [additional notes]
-```
-
-NOW GENERATE THE ERROR MESSAGE. OUTPUT ONLY THE MESSAGE STRING WITH NO ADDITIONAL TEXT.
-<|im_end|>
-
-<|im_start|>user
-Request Type: {user_request_type}
-Phase: {phase}  (Selection/Execute - if applicable)
-Error Condition: {error_condition}
-<|im_end|>
-
-<|im_start|>assistant
 ```
